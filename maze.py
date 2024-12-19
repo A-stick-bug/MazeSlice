@@ -16,15 +16,72 @@ pygame.display.set_caption('3D Maze Game')
 clock = pygame.time.Clock()
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, z):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.z = z
+        self.radius = 10
+        self.speed = 10
+        self.z_speed = 1
+
+    def handle_movement(self):
+        """todo, when moving diagonally, lower speed by 1/sqrt2"""
+        keys = pygame.key.get_pressed()
+        # Handle movement
+
+        if keys[pygame.K_UP]:
+            self.y -= self.speed
+        if keys[pygame.K_DOWN]:
+            self.y += self.speed
+        if keys[pygame.K_LEFT]:
+            self.x -= self.speed
+        if keys[pygame.K_RIGHT]:
+            self.x += self.speed
+        if keys[pygame.K_w]:
+            self.z -= self.z_speed
+        if keys[pygame.K_s]:
+            self.z += self.z_speed
+
+    def display_player(self):
+        pygame.draw.circle(
+            screen,
+            color=(255, 255, 255),
+            center=(self.x, self.y),
+            radius=self.radius
+        )
+
+    def get_position(self):
+        return self.x, self.y, self.z
+
+    def get_z(self):
+        return self.z
+
+
 class GameController:
     def __init__(self):
         self.maze = Maze("easy")
+        self.player = Player(*self.maze.get_start_location())
 
     def play(self):
-        ...
+        while True:  # todo: remove infinite loop with proper logic
+            self.perform_frame_actions()
+            clock.tick(60)  # 60 fps
+
 
     def perform_frame_actions(self):
-        ...
+        screen.fill((0, 0, 0))  # wipe screen
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        self.player.handle_movement()
+        self.maze.display_obstacles(self.player.get_z())
+        self.player.display_player()
+        pygame.display.flip()
 
 
 class Obstacle:
@@ -81,10 +138,15 @@ class Maze:
         return (radius_3d ** 2 - z_distance ** 2) ** 0.5
 
     def move_allowed(self, player):
+        raise NotImplementedError
+
+    def get_start_location(self):
+        return self.start_location
+
+    def get_end_location(self):
+        return self.end_location
 
 
 if __name__ == '__main__':
-    maze = Maze("ez")
-    maze.display_obstacles(100)
-    pygame.display.flip()
-    time.sleep(5)
+    game = GameController()
+    game.play()
