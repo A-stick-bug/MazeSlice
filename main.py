@@ -1,4 +1,5 @@
 import pygame
+import sys
 import time
 from random import randint
 
@@ -79,6 +80,7 @@ class GameController:
         for event in pygame.event.get():  # check exit game
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 return
 
         self.player.handle_movement()
