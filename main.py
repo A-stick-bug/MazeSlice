@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 from random import randint
+import atexit
 
 from collisions import collides
 
@@ -17,6 +18,12 @@ pygame.display.set_caption('3D Maze Game')
 clock = pygame.time.Clock()
 
 
+@atexit.register
+def cleanup_pygame():
+    """todo: save leaderboard and stuff"""
+    ...
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, z):
         super().__init__()
@@ -24,27 +31,35 @@ class Player(pygame.sprite.Sprite):
         self.y = y
         self.z = z
         self.radius = 10
-        self.speed = 10
+        self.speed = 5
         self.z_speed = 1
 
     def handle_movement(self):
-        """todo: when moving diagonally, lower speed by 1/sqrt2
-        fixme: don't let the player go out of bounds or through walls"""
+        """todo: improve moment, if we cant go x units in a direction, check the maximum we CAN go"""
         keys = pygame.key.get_pressed()
-        # Handle movement
 
+        movement_vector = [0, 0, 0]
         if keys[pygame.K_UP]:
-            self.y -= self.speed
+            movement_vector[1] -= self.speed
         if keys[pygame.K_DOWN]:
-            self.y += self.speed
+            movement_vector[1] += self.speed
         if keys[pygame.K_LEFT]:
-            self.x -= self.speed
+            movement_vector[0] -= self.speed
         if keys[pygame.K_RIGHT]:
-            self.x += self.speed
+            movement_vector[0] += self.speed
         if keys[pygame.K_w]:
-            self.z -= self.z_speed
+            movement_vector[2] += self.z_speed
         if keys[pygame.K_s]:
-            self.z += self.z_speed
+            movement_vector[2] -= self.z_speed
+
+        # maintain speed when moving diagonally
+        if movement_vector[0] != 0 and movement_vector[1] != 0:
+            movement_vector[0] /= 1.414
+            movement_vector[1] /= 1.414
+
+        self.x += movement_vector[0]
+        self.y += movement_vector[1]
+        self.z += movement_vector[2]
 
     def display_player(self):
         pygame.draw.circle(
@@ -57,9 +72,15 @@ class Player(pygame.sprite.Sprite):
     def get_position(self):
         return self.x, self.y, self.z
 
+    def set_position(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
     def get_z(self):
         return self.z
-    def get_radius(self ):
+
+    def get_radius(self):
         return self.radius
 
 
@@ -73,7 +94,6 @@ class GameController:
             self.perform_frame_actions()
             clock.tick(60)  # 60 fps
 
-
     def perform_frame_actions(self):
         screen.fill((0, 0, 0))  # wipe screen
 
@@ -81,9 +101,14 @@ class GameController:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-                return
 
+        # handles player movement, if collision happens, don't move
+        # todo: this can be improved, if collision happens, slide along the wall or something
+        old_location = self.player.get_position()
         self.player.handle_movement()
+        if not self.maze.is_move_allowed(self.player):  # revert to old
+            self.player.set_position(*old_location)
+
         self.maze.display_obstacles(self.player.get_z())
         self.player.display_player()
         pygame.display.flip()
@@ -136,8 +161,8 @@ class Maze:
             )
 
     def _get_cross_section_radius(self, radius_3d, z_distance):
-        """Calculates the apparent size of a sphere based on its Z distance
-        from the player."""
+        """Calculates the apparent size of a sphere based on its distance in
+        the Z dimension"""
         if z_distance >= radius_3d:  # too far to appear
             return 0
         return (radius_3d ** 2 - z_distance ** 2) ** 0.5
@@ -146,10 +171,12 @@ class Maze:
         """Check if a given character can be at a certain position in the
         maze"""
         cx, cy, cz = character.get_position()
-        char_circle = (cx,cy,cz, character.get_radius())
+        char_circle = (cx, cy, cz, character.get_radius())
 
         for x, y, z, radius in self.obstacles:
-            circle_radius = self._get_cross_section_radius(radius, z)
+            circle_radius = self._get_cross_section_radius(radius, abs(z - cz))
+            if circle_radius <= 0:
+                continue
             if collides(char_circle, (x, y, cz, circle_radius)):
                 return False
         return True

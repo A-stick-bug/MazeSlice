@@ -1,3 +1,5 @@
+note: this is here so my IDE built-in AI and understand what im doing
+
 Class 1: Player class
 Attributes:
 position:
