@@ -43,6 +43,9 @@ class Sphere:
     def get_parameters(self):
         return self.x, self.y, self.z, self.radius
 
+    def get_location(self):
+        return self.x, self.y, self.z
+
     def get_x(self):
         return self.x
 
@@ -64,6 +67,13 @@ class Circle(Sphere):
 
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
+
+    # @override
+    def display(self, screen, from_z):
+        """Display circle only if it is on the same layer as what we are
+        viewing from"""
+        if self.get_z() == from_z:
+            super().display(screen, from_z)
 
 
 class Cylinder:

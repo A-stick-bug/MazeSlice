@@ -1,8 +1,3 @@
-"""
-todo: in shapes class, override the display() for circle and
-let the player override that
-"""
-
 import pygame
 import pygame.math as pm  # for vector math
 
@@ -17,7 +12,7 @@ from shapes import Circle, Sphere, Cylinder
 # dimensions of the window
 WIDTH = 1200
 HEIGHT = 600
-Z_LAYERS = 200
+Z_LAYERS = 200  # currently this is inclusive [0,200]
 
 # initialize Pygame
 pygame.init()
@@ -91,7 +86,7 @@ class Player(Circle):
 class GameController:
     def __init__(self):
         self.maze = Maze("easy")
-        self.player = Player(*self.maze.get_start_location())
+        self.player = Player(*self.maze.get_start_location().get_location())
 
     def play(self):
         while True:  # todo: remove infinite loop with proper logic
@@ -106,8 +101,7 @@ class GameController:
                 pygame.quit()
                 sys.exit()
 
-        # handles player movement, if collision happens, don't move
-        # todo: this can be improved, if collision happens, slide along the wall or something
+        # handles player movement with collisions
         self.player.handle_movement(self.maze)
 
         self.maze.display_obstacles(self.player.get_z())
@@ -123,24 +117,27 @@ class Obstacle(Sphere):
 class Maze:
     def __init__(self, difficulty):
         self.difficulty = difficulty
-        self.obstacles = []
+        self.obstacles: list[Obstacle] = []
         self.power_ups = []
 
         margin = 50
-        self.start_location = (margin, margin, 0)
-        self.end_location = (WIDTH - margin, HEIGHT - margin, 0)
+        self.start_location = Circle(margin, margin, 0, 25)
+        self.end_location = Circle(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
         self.generate_maze_obstacles(70, 50, 90)  # PLACEHOLDER
 
     def generate_maze_obstacles(self, num_obstacles, r_min, r_max):
         """fill up `self.obstacles` with random obstacles with radius
-        in the range [r_min, r_max]
-        todo: ensure the obstacles do not overlap with the start and end locations"""
-        for _ in range(num_obstacles):
+        in the range [r_min, r_max], ensures the obstacles do not overlap with
+        the start and end locations"""
+        while len(self.obstacles) < num_obstacles:
             x = randint(0, WIDTH)
             y = randint(0, HEIGHT)
             z = randint(0, Z_LAYERS)
             radius = randint(r_min, r_max)
-            self.obstacles.append(Obstacle(x, y, z, radius))
+            obst = Obstacle(x, y, z, radius)
+            if (not obst.collides_with_circle(self.start_location) and
+                    not obst.collides_with_circle(self.end_location)):
+                self.obstacles.append(obst)
 
     def display_obstacles(self, player_z) -> None:
         """Displays 3D obstacles as a 2D cross-section using the player’s
