@@ -1,10 +1,18 @@
+"""
+todo: in shapes class, override the display() for circle and
+let the player override that
+"""
+
 import pygame
+import pygame.math as pm  # for vector math
+
 import sys
 import time
+import random
 from random import randint
 import atexit
 
-from collisions import collides
+from shapes import Circle, Sphere, Cylinder
 
 # dimensions of the window
 WIDTH = 1200
@@ -24,19 +32,17 @@ def cleanup_pygame():
     ...
 
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, z):
-        super().__init__()
-        self.x = x
-        self.y = y
-        self.z = z
-        self.radius = 10
+class Player(Circle):
+    def __init__(self, x, y, z, radius=10):
+        super().__init__(x, y, z, radius)
         self.speed = 5
         self.z_speed = 1
 
-    def handle_movement(self):
-        """todo: improve moment, if we cant go x units in a direction, check the maximum we CAN go"""
+    def handle_movement(self, maze):
+        """todo: if we cant go x units in a direction, check the maximum we CAN go, slide along the walls"""
         keys = pygame.key.get_pressed()
+
+        old_location = self.get_position()
 
         movement_vector = [0, 0, 0]
         if keys[pygame.K_UP]:
@@ -61,6 +67,10 @@ class Player(pygame.sprite.Sprite):
         self.y += movement_vector[1]
         self.z += movement_vector[2]
 
+        # can't move here, revert location
+        if not maze.is_move_allowed(self):
+            self.set_position(*old_location)
+
     def display_player(self):
         pygame.draw.circle(
             screen,
@@ -76,12 +86,6 @@ class Player(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.z = z
-
-    def get_z(self):
-        return self.z
-
-    def get_radius(self):
-        return self.radius
 
 
 class GameController:
@@ -104,28 +108,16 @@ class GameController:
 
         # handles player movement, if collision happens, don't move
         # todo: this can be improved, if collision happens, slide along the wall or something
-        old_location = self.player.get_position()
-        self.player.handle_movement()
-        if not self.maze.is_move_allowed(self.player):  # revert to old
-            self.player.set_position(*old_location)
+        self.player.handle_movement(self.maze)
 
         self.maze.display_obstacles(self.player.get_z())
         self.player.display_player()
         pygame.display.flip()
 
 
-class Obstacle:
+class Obstacle(Sphere):
     def __init__(self, x, y, z, radius):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.radius = radius
-
-    def get_circle(self):
-        return self.x, self.y, self.z, self.radius
-
-    def __iter__(self):  # allows for unpacking values
-        return iter(self.get_circle())
+        super().__init__(x, y, z, radius)
 
 
 class Maze:
@@ -140,6 +132,9 @@ class Maze:
         self.generate_maze_obstacles(70, 50, 90)  # PLACEHOLDER
 
     def generate_maze_obstacles(self, num_obstacles, r_min, r_max):
+        """fill up `self.obstacles` with random obstacles with radius
+        in the range [r_min, r_max]
+        todo: ensure the obstacles do not overlap with the start and end locations"""
         for _ in range(num_obstacles):
             x = randint(0, WIDTH)
             y = randint(0, HEIGHT)
@@ -150,35 +145,20 @@ class Maze:
     def display_obstacles(self, player_z) -> None:
         """Displays 3D obstacles as a 2D cross-section using the player’s
         z-coordinate"""
-        for x, y, z, radius in self.obstacles:
-            z_distance = abs(z - player_z)
-            circle_radius = self._get_cross_section_radius(radius, z_distance)
-            pygame.draw.circle(
-                surface=screen,
-                color=(0, 0, 255),
-                center=(x, y),
-                radius=circle_radius,
-            )
-
-    def _get_cross_section_radius(self, radius_3d, z_distance):
-        """Calculates the apparent size of a sphere based on its distance in
-        the Z dimension"""
-        if z_distance >= radius_3d:  # too far to appear
-            return 0
-        return (radius_3d ** 2 - z_distance ** 2) ** 0.5
+        for obst in self.obstacles:
+            obst.display(screen, player_z)
 
     def is_move_allowed(self, character):
         """Check if a given character can be at a certain position in the
         maze"""
-        cx, cy, cz = character.get_position()
-        char_circle = (cx, cy, cz, character.get_radius())
-
-        for x, y, z, radius in self.obstacles:
-            circle_radius = self._get_cross_section_radius(radius, abs(z - cz))
-            if circle_radius <= 0:
-                continue
-            if collides(char_circle, (x, y, cz, circle_radius)):
+        # check collisions with obstacles
+        char_circle = Circle(*character.get_parameters())
+        for obst in self.obstacles:
+            if obst.collides_with_circle(char_circle):
                 return False
+
+        # todo: check collision with map boundaries
+
         return True
 
     def get_start_location(self):
