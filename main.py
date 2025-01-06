@@ -20,6 +20,8 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('3D Maze Game')
 clock = pygame.time.Clock()
 
+DEBUG_MODE = True
+
 
 @atexit.register
 def cleanup_pygame():
@@ -112,10 +114,14 @@ class GameController:
         """Performs frame actions for when the game is in the `playing` state"""
         screen.fill((0, 0, 0))  # wipe screen
 
-        for event in pygame.event.get():  # check exit game
+        events = pygame.event.get()
+        for event in events:  # check exit game
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+        if DEBUG_MODE:
+            self.run_debug(events)
 
         # handles player movement with collisions
         self.player.handle_movement(self.maze)
@@ -129,6 +135,39 @@ class GameController:
 
     def perform_winner_frame_actions(self):
         raise NotImplementedError
+
+    def run_debug(self, frame_events):
+        """
+        Create coordinate grid for easy drawing and check frame rate
+        """
+        # 1. Draw grid
+        grid_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        for i in range(0, WIDTH, 100):  # big vertical lines
+            line = pygame.Rect(i, 0, 2, HEIGHT)
+            pygame.draw.rect(grid_surface, "red", line)
+        for i in range(0, HEIGHT, 100):  # big horizontal lines
+            line = pygame.Rect(0, i, WIDTH, 2)
+            pygame.draw.rect(grid_surface, "red", line)
+        for i in range(0, WIDTH, 20):  # small vertical lines
+            line = pygame.Rect(i, 0, 1, HEIGHT)
+            pygame.draw.rect(grid_surface, "grey", line)
+        for i in range(0, HEIGHT, 20):  # small horizontal lines
+            line = pygame.Rect(0, i, WIDTH, 1)
+            pygame.draw.rect(grid_surface, "grey", line)
+        screen.blit(grid_surface, (0, 0))  # display all grid lines
+
+        # # 2. Check FPS every 5 seconds
+        # if frame % 300 == 0 and self.game_state == "playing":
+        #     t = time.time() - start_time
+        #     fps = frame / t
+        #     print(f"Frame: {frame}, Time: {t:.2f} , FPS: {fps:.2f}")
+        #     if fps < 55:
+        #         print("LOW FPS WARNING", file=sys.stderr)
+
+        # 3. right click to get coordinates
+        for event in frame_events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                print(f"Mouse coordinates: {event.pos}")
 
 
 class Obstacle(Sphere):
