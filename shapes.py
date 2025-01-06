@@ -78,4 +78,16 @@ class Circle(Sphere):
 
 class Cylinder:
     """Represents a cylinder in 3D space using a stack of circles"""
-    ...
+
+    def __init__(self, x, y, start_z, end_z, radius):
+        """Creates a cylinder ranging from start_z to end_z inclusive"""
+        self.x = x
+        self.y = y
+        self.start_z = start_z
+        self.end_z = end_z
+        self.radius = radius
+        self.circles: list[Circle] = [...]
+
+    def display(self, screen, from_z):
+        if self.start_z <= from_z <= self.end_z:
+            ...

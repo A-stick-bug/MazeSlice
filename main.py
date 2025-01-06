@@ -37,7 +37,7 @@ class Player(Circle):
         """todo: if we cant go x units in a direction, check the maximum we CAN go, slide along the walls"""
         keys = pygame.key.get_pressed()
 
-        old_location = self.get_position()
+        old_location = self.get_location()
 
         movement_vector = [0, 0, 0]
         if keys[pygame.K_UP]:
@@ -73,9 +73,6 @@ class Player(Circle):
             center=(self.x, self.y),
             radius=self.radius
         )
-
-    def get_position(self):
-        return self.x, self.y, self.z
 
     def set_position(self, x, y, z):
         self.x = x
@@ -154,7 +151,11 @@ class Maze:
             if obst.collides_with_circle(char_circle):
                 return False
 
-        # todo: check collision with map boundaries
+        # check collision with map boundaries
+        cx, cy, cz, r = character.get_parameters()
+        if (cx < r or cx > WIDTH - r or cy < r or cy > HEIGHT - r
+                or cz < 0 or cz > Z_LAYERS):
+            return False
 
         return True
 
