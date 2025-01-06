@@ -98,3 +98,28 @@ class Cylinder:
             return False
         planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
         return planar_dist < self.radius + other.get_radius()
+    
+    def get_parameters(self):
+        return self.x, self.y, self.start_z, self.end_z ,self.radius
+
+    def get_location(self):
+        # This probably needs to change a bit later
+        return self.x, self.y, self.start_z, self.end_z
+
+    def get_x(self):
+        return self.x
+
+    def get_y(self):
+        return self.y
+
+    def get_start_z(self):
+        return self.start_z
+    
+    def get_end_z(self):
+        return self.end_z
+
+    def get_radius(self):
+        return self.radius
+
+    def __iter__(self):
+        return iter(self.get_parameters())
