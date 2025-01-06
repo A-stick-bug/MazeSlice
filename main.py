@@ -82,15 +82,34 @@ class Player(Circle):
 
 class GameController:
     def __init__(self):
+        self.game_state = "playing"  # [menu, help_menu, playing, game_over, winner]
         self.maze = Maze("easy")
         self.player = Player(*self.maze.get_start_location().get_location())
 
     def play(self):
         while True:  # todo: remove infinite loop with proper logic
-            self.perform_frame_actions()
+            if self.game_state == "menu":
+                self.perform_menu_frame_actions()
+            elif self.game_state == "help_menu":
+                self.perform_help_menu_frame_actions()
+            elif self.game_state == "playing":
+                self.perform_playing_frame_actions()
+            elif self.game_state == "game_over":
+                self.perform_game_over_frame_actions()
+            elif self.game_state == "winner":
+                self.perform_winner_frame_actions()
             clock.tick(60)  # 60 fps
 
-    def perform_frame_actions(self):
+    def perform_menu_frame_actions(self):
+        """Performs frame actions for when the game is in the `menu` state"""
+        raise NotImplementedError
+
+    def perform_help_menu_frame_actions(self):
+        """Performs frame actions for when the game is in the `help_menu` state"""
+        raise NotImplementedError
+
+    def perform_playing_frame_actions(self):
+        """Performs frame actions for when the game is in the `playing` state"""
         screen.fill((0, 0, 0))  # wipe screen
 
         for event in pygame.event.get():  # check exit game
@@ -104,6 +123,12 @@ class GameController:
         self.maze.display_obstacles(self.player.get_z())
         self.player.display_player()
         pygame.display.flip()
+
+    def perform_game_over_frame_actions(self):
+        raise NotImplementedError
+
+    def perform_winner_frame_actions(self):
+        raise NotImplementedError
 
 
 class Obstacle(Sphere):
