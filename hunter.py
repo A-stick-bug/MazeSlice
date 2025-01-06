@@ -7,12 +7,12 @@ from main import Player
 
 class Hunter(Item):
     """"""
-
-    def __init__(self, x, y, start_z, end_z, radius, speed):
+    
+    def __init__(self, x, y, start_z, end_z, radius, speed = 0.0):
         super().__init__(x, y, start_z, end_z, radius, 0)
         self.speed = speed
 
-    def handle_movement(self, player):
+    def handle_movement(self, player: Player) -> None:
         """"""
         # maybe just let hunter move freely through obstacles
 
