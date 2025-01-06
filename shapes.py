@@ -91,16 +91,16 @@ class Cylinder:
     def display(self, screen, from_z):
         if self.start_z <= from_z <= self.end_z:
             ...
-    
+
     def collides_with_circle(self, other):
         """Check if this cylinder collides with a circle"""
-        if self.start_z < other.get_z() > self.end_z or self.start_z > other.get_z() < self.end_z:
+        if not self.start_z <= other.get_z() <= self.end_z:
             return False
         planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
         return planar_dist < self.radius + other.get_radius()
-    
+
     def get_parameters(self):
-        return self.x, self.y, self.start_z, self.end_z ,self.radius
+        return self.x, self.y, self.start_z, self.end_z, self.radius
 
     def get_location(self):
         # This probably needs to change a bit later
@@ -114,7 +114,7 @@ class Cylinder:
 
     def get_start_z(self):
         return self.start_z
-    
+
     def get_end_z(self):
         return self.end_z
 
