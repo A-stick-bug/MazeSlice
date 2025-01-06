@@ -2,7 +2,6 @@
 
 from math import dist 
 
-hi 
 
 
 def _collides(circle1, circle2):
