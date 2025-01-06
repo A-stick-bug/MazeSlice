@@ -25,10 +25,10 @@ class Sphere:
         z_distance = abs(self.z - from_z)
         circle_radius = self.get_cross_section_radius(self.radius, z_distance)
         pygame.draw.circle(
-            surface=screen,
-            color=(0, 0, 255),
-            center=(self.x, self.y),
-            radius=circle_radius,
+            surface = screen,
+            color = (0, 0, 255),
+            center = (self.x, self.y),
+            radius = circle_radius,
         )
 
     def collides_with_circle(self, other):
@@ -90,7 +90,12 @@ class Cylinder:
 
     def display(self, screen, from_z):
         if self.start_z <= from_z <= self.end_z:
-            ...
+            pygame.draw.circle(
+                surface = screen,
+                color = (0, 0, 255),
+                center = (self.x, self.y),
+                radius = self.radius,
+            )
 
     def collides_with_circle(self, other):
         """Check if this cylinder collides with a circle"""
