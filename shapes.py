@@ -3,14 +3,60 @@
 import pygame
 from math import dist
 
-class Sphere:
-    """Represents a sphere in 3D space"""
+
+class Circle:
+    """Represents a circle in 3D space"""
 
     def __init__(self, x, y, z, radius):
         self.x = x
         self.y = y
         self.z = z
         self.radius = radius
+
+    def collides_with_circle(self, other):
+        """Check if this sphere collides with a circle."""
+        if other.get_z() - self.z != 0:
+            return False
+        planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
+        return planar_dist < self.radius + other.radius
+
+    def display(self, screen, from_z):
+        """Display circle only if it is on the same layer as what we are viewing from."""
+        if self.get_z() == from_z:
+            pygame.draw.circle(
+                surface=screen,
+                color=(0, 0, 255),  # Blue color for obstacles
+                center=(self.x, self.y),
+                radius=self.radius,
+            )
+
+    def get_parameters(self):
+        return self.x, self.y, self.z, self.radius
+
+    def get_location(self):
+        return self.x, self.y, self.z
+
+    def get_x(self):
+        return self.x
+
+    def get_y(self):
+        return self.y
+
+    def get_z(self):
+        return self.z
+
+    def get_radius(self):
+        return self.radius
+
+    def __iter__(self):
+        return iter(self.get_parameters())
+
+
+class Sphere(Circle):
+    """Represents a sphere in 3D space"""
+
+    def __init__(self, x, y, z, radius):
+        super().__init__(x, y, z, radius)
 
     def get_cross_section_radius(self, radius_3d, z_distance):
         """Calculates the apparent size of a sphere based on its distance in the Z dimension."""
@@ -38,46 +84,6 @@ class Sphere:
             return False
         planar_dist = dist((other.x, other.y), (self.x, self.y))
         return planar_dist < proj_rad + other.radius
-
-    def get_parameters(self):
-        return self.x, self.y, self.z, self.radius
-
-    def get_location(self):
-        return self.x, self.y, self.z
-
-    def get_x(self):
-        return self.x
-
-    def get_y(self):
-        return self.y
-
-    def get_z(self):
-        return self.z
-
-    def get_radius(self):
-        return self.radius
-
-    def __iter__(self):
-        return iter(self.get_parameters())
-
-
-class Circle(Sphere):
-    """Represents a circle in 3D space, as a sphere with thickness of 1."""
-
-    def __init__(self, x, y, z, radius):
-        super().__init__(x, y, z, radius)
-
-    def collides_with_circle(self, other):
-        """Check if this sphere collides with a circle."""
-        if other.get_z() - self.z != 0:
-            return False
-        planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
-        return planar_dist < self.radius + other.radius
-
-    def display(self, screen, from_z):
-        """Display circle only if it is on the same layer as what we are viewing from."""
-        if self.get_z() == from_z:
-            super().display(screen, from_z)
 
 
 class Cylinder:
