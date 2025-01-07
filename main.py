@@ -65,11 +65,11 @@ class Maze:
 
     def generate_maze_items(self, num_items):
         """Fill up `self.power_ups` with random items."""
-        item_types = ['speed_boost', 'dash', 'stealth']
+        item_types = ['speed_boost', 'dash', 'teleport']  # Replaced 'stealth' with 'teleport'
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(0, self.Z_LAYERS)
+            z = 0  # Fix items to ground level
             radius = 10
             item_type = random.choice(item_types)
             color = self.get_color_by_type(item_type)
@@ -86,7 +86,7 @@ class Maze:
         colors = {
             'speed_boost': (255, 0, 0),      # Red
             'dash': (0, 255, 0),             # Green
-            'stealth': (0, 0, 255),          # Blue
+            'teleport': (128, 0, 128),       # Purple
         }
         return colors.get(item_type, (255, 255, 255))  # Default white
 
@@ -104,7 +104,7 @@ class Maze:
         """Checks and collects items if the player collides with them."""
         for item in self.power_ups:
             if item.check_collision(player):
-                item.apply_effect(player)
+                item.apply_effect(player, maze=self)  # Pass maze instance
 
     def is_move_allowed(self, character):
         """Check if a given character can be at a certain position in the maze."""
@@ -118,6 +118,28 @@ class Maze:
         cx, cy, cz, r = character.get_parameters()
         if (cx < r or cx > WIDTH - r or cy < r or cy > HEIGHT - r
                 or cz < 0 or cz > self.Z_LAYERS):
+            return False
+
+        return True
+
+    def is_move_allowed_pos(self, x, y, z):
+        """
+        Checks if a specific (x, y, z) position is free (no obstacles).
+
+        :param x: X-coordinate
+        :param y: Y-coordinate
+        :param z: Z-coordinate
+        :return: True if position is free, False otherwise
+        """
+        temp_circle = Circle(x, y, z, 10)  # Assuming player radius is 10
+        for obst in self.obstacles:
+            if obst.collides_with_circle(temp_circle):
+                return False
+
+        # Check collision with map boundaries
+        if (x < temp_circle.radius or x > WIDTH - temp_circle.radius or
+            y < temp_circle.radius or y > HEIGHT - temp_circle.radius or
+            z < 0 or z > self.Z_LAYERS):
             return False
 
         return True
@@ -285,9 +307,7 @@ class GameController:
         if self.player.speed_boost_active:
             remaining = int(self.player.speed_boost_end_time - pygame.time.get_ticks() / 1000)
             self.display_text(f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0))
-        if self.player.is_stealth:
-            remaining = int(self.player.stealth_end_time - pygame.time.get_ticks() / 1000)
-            self.display_text(f"Stealth Mode! ({remaining}s)", 100, 80, 24, (0, 255, 0))
+        # Add more active effects here if needed
 
     def check_win_condition(self):
         """Check if the player has reached the end location."""

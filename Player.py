@@ -9,13 +9,13 @@ class Player(Circle):
         super().__init__(x, y, z, radius)
         # Movement attributes
         self.speed = 5
-        self.z_speed = 1
+        self.z_speed = 1  # If you intend to keep vertical movement without gravity
         self.velocity = pygame.math.Vector3(0, 0, 0)
         self.acceleration = 0.5
         self.friction = 0.1
         self.max_speed = 5
-        self.max_z_speed = 3
-        self.gravity = -0.5
+        self.max_z_speed = 3  # If vertical movement is needed
+        # Removed gravity-related attributes
         self.is_jumping = False
         self.is_on_wall = False
 
@@ -26,12 +26,10 @@ class Player(Circle):
         self.dash_cooldown = 1.0  # in seconds
         self.last_dash_time = -self.dash_cooldown
 
-        # Stealth attributes
-        self.is_stealth = False
-        self.stealth_speed_multiplier = 0.5
-        self.stealth_duration = 3.0  # in seconds
-        self.stealth_cooldown = 5.0  # in seconds
-        self.last_stealth_time = -self.stealth_cooldown
+        # Teleport attributes
+        self.is_teleporting = False
+        self.teleport_cooldown = 5.0  # in seconds
+        self.last_teleport_time = -self.teleport_cooldown
 
         # Temporary effect timers
         self.speed_boost_active = False
@@ -40,7 +38,7 @@ class Player(Circle):
     def handle_movement(self, maze):
         """
         Handles player movement with collision detection, momentum, wall grabbing,
-        dash, and stealth mechanics.
+        dash, and teleport mechanics.
         """
         keys = pygame.key.get_pressed()
         current_time = pygame.time.get_ticks() / 1000  # Current time in seconds
@@ -58,9 +56,9 @@ class Player(Circle):
         if keys[pygame.K_RIGHT]:
             accel.x += self.acceleration
         if keys[pygame.K_w]:
-            accel.z += self.acceleration
+            accel.z += self.acceleration  # If vertical movement is still desired
         if keys[pygame.K_s]:
-            accel.z -= self.acceleration
+            accel.z -= self.acceleration  # If vertical movement is still desired
 
         # Apply acceleration
         self.velocity += accel
@@ -91,17 +89,6 @@ class Player(Circle):
                 self.velocity += dash_vector
                 print("Dash activated!")
 
-        # Stealth input
-        if keys[pygame.K_LSHIFT]:
-            if not self.is_stealth and (current_time - self.last_stealth_time) >= self.stealth_cooldown:
-                self.is_stealth = True
-                self.stealth_start_time = current_time
-                self.last_stealth_time = current_time
-                # Reduce speed
-                self.max_speed *= self.stealth_speed_multiplier
-                self.velocity *= self.stealth_speed_multiplier
-                print("Stealth mode activated!")
-
         # Handle dash duration
         if self.is_dashing:
             if (current_time - self.dash_start_time) >= self.dash_duration:
@@ -111,20 +98,8 @@ class Player(Circle):
                     self.velocity = self.velocity.normalize() * self.max_speed
                 print("Dash ended.")
 
-        # Handle stealth duration
-        if self.is_stealth:
-            if (current_time - self.stealth_start_time) >= self.stealth_duration:
-                self.is_stealth = False
-                # Restore velocity after stealth
-                if self.velocity.length() > 0:
-                    self.velocity = self.velocity.normalize() / self.stealth_speed_multiplier
-                    self.velocity *= self.max_speed
-                print("Stealth mode ended.")
-
-        # Apply gravity
-        self.velocity.z += self.gravity
-        if self.velocity.z < -self.max_z_speed:
-            self.velocity.z = -self.max_z_speed
+        # Removed gravity application
+        # self.velocity.z += self.gravity  # Removed
 
         old_location = self.get_location()
 
@@ -144,7 +119,7 @@ class Player(Circle):
         else:
             self.is_on_wall = False
 
-        # Attempt to move along the Z-axis
+        # Attempt to move along the Z-axis (if vertical movement is desired)
         self.z += self.velocity.z
         if not maze.is_move_allowed(self):
             self.z = old_location[2]
@@ -159,7 +134,7 @@ class Player(Circle):
             self.velocity.x *= 0.5
             self.velocity.y *= 0.5
 
-        # Ensure Z-layer boundaries
+        # Ensure Z-layer boundaries (if vertical movement is desired)
         if self.z < 0:
             self.z = 0
             self.velocity.z = 0
@@ -172,15 +147,15 @@ class Player(Circle):
         # Handle temporary effects
         self.handle_timers()
 
-       # print("Player Position:", self.x, self.y, self.z)
+        # print("Player Position:", self.x, self.y, self.z)
 
     def display_player(self):
         """
         Renders the player as a circle on the screen.
         """
         from main import screen  # Importing here to avoid circular imports
-        if self.is_stealth:
-            color = (0, 255, 0)  # Green color when in stealth
+        if self.is_teleporting:
+            color = (255, 255, 0)  # Yellow color when teleporting
         elif self.speed_boost_active:
             color = (255, 0, 0)  # Red color when speed boost is active
         else:
@@ -212,33 +187,29 @@ class Player(Circle):
         """
         return self.x, self.y, self.z, self.radius
 
-    def check_teleport(self, location, maze):
-        '''
-        Attempts a teleport of the Player to a random spot (location) that is not covered.
-        '''
-        if location[2] != self.z:
-            return False
-
-        temp_pos = self.get_location()
-
-        self.set_position(*location)
-        is_possible = maze.is_move_allowed(self)
-        self.set_position(*temp_pos)
-        return is_possible
-
     def teleport(self, maze):
         '''
-        Teleports player to random position that is uncovered.
+        Teleports player to a random position that is uncovered on the ground.
         '''
         from main import WIDTH, HEIGHT
         has_found = False
 
-        while not has_found:
+        attempts = 0
+        max_attempts = 100  # Prevent infinite loop
+
+        while not has_found and attempts < max_attempts:
             temp_x = random.randint(self.radius, WIDTH - self.radius)
             temp_y = random.randint(self.radius, HEIGHT - self.radius)
-            if self.check_teleport((temp_x, temp_y, self.z), maze):
+            temp_z = 0  # Teleport to ground level
+
+            if maze.is_move_allowed_pos(temp_x, temp_y, temp_z):
                 has_found = True
-                self.set_position(temp_x, temp_y, self.z)
+                self.set_position(temp_x, temp_y, temp_z)
+                print(f"Player teleported to ({temp_x}, {temp_y}, {temp_z})")
+            attempts += 1
+
+        if not has_found:
+            print("Teleport failed: No free position found.")
 
     def handle_timers(self):
         """
@@ -249,3 +220,26 @@ class Player(Circle):
             self.max_speed -= 2  # Revert max_speed
             self.speed_boost_active = False
             print("Speed boost ended.")
+
+    def apply_speed_boost(self, duration=5.0):
+        """
+        Applies a speed boost to the player for a specified duration.
+        """
+        self.max_speed += 2  # Increase max_speed
+        self.speed_boost_active = True
+        self.speed_boost_end_time = pygame.time.get_ticks() / 1000 + duration
+        print("Speed boost activated!")
+
+    def reduce_dash_cooldown(self):
+        """
+        Reduces the dash cooldown period.
+        """
+        self.dash_cooldown = max(0.5, self.dash_cooldown - 0.1)
+        print(f"Dash cooldown reduced to {self.dash_cooldown} seconds.")
+
+    def reduce_teleport_cooldown(self):
+        """
+        Reduces the teleport cooldown period.
+        """
+        self.teleport_cooldown = max(2.0, self.teleport_cooldown - 0.5)
+        print(f"Teleport cooldown reduced to {self.teleport_cooldown} seconds.")

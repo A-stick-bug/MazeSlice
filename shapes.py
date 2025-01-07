@@ -13,15 +13,13 @@ class Sphere:
         self.radius = radius
 
     def get_cross_section_radius(self, radius_3d, z_distance):
-        """Calculates the apparent size of a sphere based on its distance in
-        the Z dimension."""
+        """Calculates the apparent size of a sphere based on its distance in the Z dimension."""
         if z_distance >= radius_3d:  # Too far to appear
             return 0
         return (radius_3d ** 2 - z_distance ** 2) ** 0.5
 
     def display(self, screen, from_z):
-        """Display the sphere as a projection onto a cross-section, size
-        is determined by the distance in the Z dimension."""
+        """Display the sphere as a projection onto a cross-section, size is determined by the distance in the Z dimension."""
         z_distance = abs(self.z - from_z)
         circle_radius = self.get_cross_section_radius(self.radius, z_distance)
         if circle_radius > 0:
@@ -70,8 +68,7 @@ class Circle(Sphere):
         super().__init__(x, y, z, radius)
 
     def display(self, screen, from_z):
-        """Display circle only if it is on the same layer as what we are
-        viewing from."""
+        """Display circle only if it is on the same layer as what we are viewing from."""
         if self.get_z() == from_z:
             super().display(screen, from_z)
 
@@ -86,6 +83,12 @@ class Cylinder:
         self.start_z = start_z
         self.end_z = end_z
         self.radius = radius
+
+    def get_cross_section_radius(self, radius_3d, z_distance):
+        """Calculates the apparent size of a cylinder's cross-section based on distance in Z."""
+        if z_distance >= radius_3d:  # Too far to appear
+            return 0
+        return (radius_3d ** 2 - z_distance ** 2) ** 0.5
 
     def display(self, screen, from_z):
         """Display the cylinder if the player is within its Z range."""
@@ -128,9 +131,3 @@ class Cylinder:
 
     def __iter__(self):
         return iter(self.get_parameters())
-
-    def get_cross_section_radius(self, radius_3d, z_distance):
-        """Calculates the apparent size of a cylinder's cross-section based on distance in Z."""
-        if z_distance >= radius_3d:  # Too far to appear
-            return 0
-        return (radius_3d ** 2 - z_distance ** 2) ** 0.5

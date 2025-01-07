@@ -17,7 +17,7 @@ class Item(Cylinder):
         :param start_z: Starting Z-layer
         :param end_z: Ending Z-layer
         :param radius: Radius of the item
-        :param item_type: Type of the item (e.g., 'speed_boost', 'dash', 'stealth')
+        :param item_type: Type of the item (e.g., 'speed_boost', 'dash', 'teleport')
         :param color: Color of the item for rendering
         """
         super().__init__(x, y, start_z, end_z, radius)
@@ -75,24 +75,26 @@ class Item(Cylinder):
             return True
         return False
 
-    def apply_effect(self, player):
+    def apply_effect(self, player, maze):
         """
         Applies the item's effect to the player based on its type.
 
         :param player: Instance of the Player class
+        :param maze: Instance of the Maze class
         """
         if not self.collected:
             return
 
         if self.type == 'speed_boost':
             player.apply_speed_boost()
+            print("Speed boost applied!")
             # The Player class handles reverting the speed after a duration
         elif self.type == 'dash':
-            player.dash_cooldown = max(0.5, player.dash_cooldown - 0.1)
+            player.reduce_dash_cooldown()
             print("Dash cooldown reduced!")
             # Reduces the cooldown period for dashing
-        elif self.type == 'stealth':
-            player.stealth_cooldown = max(2.0, player.stealth_cooldown - 0.5)
-            print("Stealth cooldown reduced!")
-            # Reduces the cooldown period for stealth mode
+        elif self.type == 'teleport':
+            player.teleport(maze)
+            print("Teleport activated!")
+            # Teleports the player to a random free spot
         # Add more item types and their effects as needed
