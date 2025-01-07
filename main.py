@@ -156,9 +156,11 @@ class GameController:
         self.game_state = "menu"  # [menu, help_menu, playing, game_over, winner]
         self.maze = Maze("easy")
         self.player = Player(*self.maze.get_start_location().get_location())
+        self.game_events = pygame.event.get()
 
     def play(self):
         while True:
+            self.game_events = pygame.event.get()
             if self.game_state == "menu":
                 self.perform_menu_frame_actions()
             elif self.game_state == "help_menu":
@@ -178,7 +180,7 @@ class GameController:
         self.display_text("Menu - Press Enter to Play", WIDTH // 2, HEIGHT // 2)
         pygame.display.flip()
 
-        for event in pygame.event.get():
+        for event in self.game_events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -193,7 +195,7 @@ class GameController:
         self.display_text("Help Menu - Press M to Return", WIDTH // 2, HEIGHT // 2)
         pygame.display.flip()
 
-        for event in pygame.event.get():
+        for event in self.game_events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -205,8 +207,7 @@ class GameController:
         """Performs frame actions for when the game is in the `playing` state."""
         screen.fill((0, 0, 0))  # Wipe screen
 
-        events = pygame.event.get()
-        for event in events:  # Check exit game
+        for event in self.game_events:  # Check exit game
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -215,7 +216,7 @@ class GameController:
                     self.game_state = "help_menu"
 
         if DEBUG_MODE:
-            self.run_debug(events)
+            self.run_debug(self.game_events)
 
         # Handle player movement with collisions
         self.player.handle_movement(self.maze)
@@ -246,7 +247,7 @@ class GameController:
         self.display_text("Game Over - Press R to Restart", WIDTH // 2, HEIGHT // 2)
         pygame.display.flip()
 
-        for event in pygame.event.get():
+        for event in self.game_events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -261,7 +262,7 @@ class GameController:
         self.display_text("You Won! - Press Q to Quit", WIDTH // 2, HEIGHT // 2)
         pygame.display.flip()
 
-        for event in pygame.event.get():
+        for event in self.game_events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
