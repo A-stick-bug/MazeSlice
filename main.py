@@ -46,7 +46,7 @@ class Maze:
         self.start_location = Circle(margin, margin, 0, 25)
         self.end_location = Circle(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
         self.generate_maze_obstacles(70, 50, 90)  # Adjust numbers as needed
-        self.generate_maze_items(20)  # Generate 20 items
+        self.generate_maze_items(randint(40, 120))  # Generate some items
 
     def generate_maze_obstacles(self, num_obstacles, r_min, r_max):
         """Fill up `self.obstacles` with random obstacles with radius
@@ -69,8 +69,8 @@ class Maze:
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = 0  # Fix items to ground level
-            radius = 10
+            z = randint(0, 190)  # Random z coordinate of items
+            radius = randint(8, 12)
             item_type = random.choice(item_types)
             color = self.get_color_by_type(item_type)
             item = Item(x, y, z, z + 10, radius, item_type, color)
