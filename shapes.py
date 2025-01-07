@@ -67,6 +67,13 @@ class Circle(Sphere):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
 
+    def collides_with_circle(self, other):
+        """Check if this sphere collides with a circle."""
+        if other.get_z() - self.z != 0:
+            return False
+        planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
+        return planar_dist < self.radius + other.radius
+
     def display(self, screen, from_z):
         """Display circle only if it is on the same layer as what we are viewing from."""
         if self.get_z() == from_z:
@@ -103,9 +110,9 @@ class Cylinder:
     def collides_with_circle(self, other):
         """Check if this cylinder collides with a circle."""
         # Check if the other circle's z is within the cylinder's range
-        if not (self.start_z <= other.z <= self.end_z):
+        if not (self.start_z <= other.get_z() <= self.end_z):
             return False
-        planar_dist = dist((other.x, other.y), (self.x, self.y))
+        planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
         return planar_dist < self.radius + other.radius
 
     def get_parameters(self):

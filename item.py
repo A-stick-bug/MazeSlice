@@ -38,21 +38,18 @@ class Item(Cylinder):
         """
         return self.type
 
-    def display_item(self, screen, player_z):
+    def display(self, screen, player_z):
         """
         Displays the item on the screen if it is within the visible Z-layer.
         Changes color if collected.
         """
-        if not self.collected:
-            z_distance = abs(self.z - player_z)
-            circle_radius = self.get_cross_section_radius(self.radius, z_distance)
-            if circle_radius > 0:
-                pygame.draw.circle(
-                    surface=screen,
-                    color=self.color,
-                    center=(self.x, self.y),
-                    radius=int(circle_radius)
-                )
+        if not self.collected and self.start_z <= player_z <= self.end_z:
+            pygame.draw.circle(
+                surface=screen,
+                color=self.color,
+                center=(self.x, self.y),
+                radius=int(self.radius)
+            )
 
     def check_collision(self, player):
         """

@@ -14,9 +14,8 @@ class Player(Circle):
         self.acceleration = 0.5
         self.friction = 0.1
         self.max_speed = 5
-        self.max_z_speed = 3  # If vertical movement is needed
+        self.max_z_speed = 1  # If vertical movement is needed
         # Removed gravity-related attributes
-        self.is_jumping = False
         self.is_on_wall = False
 
         # Dash attributes
@@ -55,10 +54,6 @@ class Player(Circle):
             accel.x -= self.acceleration
         if keys[pygame.K_RIGHT]:
             accel.x += self.acceleration
-        if keys[pygame.K_w]:
-            accel.z += self.acceleration  # If vertical movement is still desired
-        if keys[pygame.K_s]:
-            accel.z -= self.acceleration  # If vertical movement is still desired
 
         # Apply acceleration
         self.velocity += accel
@@ -120,13 +115,13 @@ class Player(Circle):
             self.is_on_wall = False
 
         # Attempt to move along the Z-axis (if vertical movement is desired)
-        self.z += self.velocity.z
+        if keys[pygame.K_w]:
+            self.z += self.z_speed
+        if keys[pygame.K_s]:
+            self.z -= self.z_speed
         if not maze.is_move_allowed(self):
             self.z = old_location[2]
             self.velocity.z = 0
-            self.is_jumping = False
-        else:
-            self.is_jumping = True
 
         # Wall grabbing (allow sliding along walls if on_wall)
         if self.is_on_wall:
@@ -138,11 +133,9 @@ class Player(Circle):
         if self.z < 0:
             self.z = 0
             self.velocity.z = 0
-            self.is_jumping = False
         elif self.z > maze.Z_LAYERS:
             self.z = maze.Z_LAYERS
             self.velocity.z = 0
-            self.is_jumping = False
 
         # Handle temporary effects
         self.handle_timers()

@@ -73,7 +73,7 @@ class Maze:
             radius = 10
             item_type = random.choice(item_types)
             color = self.get_color_by_type(item_type)
-            item = Item(x, y, z, z, radius, item_type, color)
+            item = Item(x, y, z, z + 10, radius, item_type, color)
             # Ensure items do not overlap with start/end locations or obstacles
             if (not item.collides_with_circle(self.start_location) and
                 not item.collides_with_circle(self.end_location) and
@@ -98,7 +98,7 @@ class Maze:
     def display_items(self, player_z) -> None:
         """Displays items in the maze based on player's Z-layer."""
         for item in self.power_ups:
-            item.display_item(screen, player_z)
+            item.display(screen, player_z)
 
     def collect_items(self, player):
         """Checks and collects items if the player collides with them."""
@@ -158,7 +158,7 @@ class GameController:
         self.player = Player(*self.maze.get_start_location().get_location())
 
     def play(self):
-        while True:  # TODO: Remove infinite loop with proper logic
+        while True:
             if self.game_state == "menu":
                 self.perform_menu_frame_actions()
             elif self.game_state == "help_menu":
@@ -311,9 +311,7 @@ class GameController:
 
     def check_win_condition(self):
         """Check if the player has reached the end location."""
-        end = self.maze.get_end_location()
-        planar_dist = pygame.math.Vector2(self.player.x - end.x, self.player.y - end.y).length()
-        if planar_dist < (self.player.radius + end.radius) and self.player.z == end.z:
+        if self.player.collides_with_circle(self.maze.get_end_location()):
             print("Win condition met!")
             return True
         return False
