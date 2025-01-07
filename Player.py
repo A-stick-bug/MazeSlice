@@ -113,14 +113,6 @@ class Player(Circle):
             self.z = old_location[2]
             self.velocity.z = 0
 
-        # Ensure Z-layer boundaries (if vertical movement is desired)
-        if self.z < 0:
-            self.z = 0
-            self.velocity.z = 0
-        elif self.z > maze.Z_LAYERS:
-            self.z = maze.Z_LAYERS
-            self.velocity.z = 0
-
         # Handle temporary effects
         self.handle_timers()
 

@@ -95,3 +95,6 @@ class Item(Cylinder):
             print("Teleport activated!")
             # Teleports the player to a random free spot
         # Add more item types and their effects as needed
+
+    def set_collected(self, val):
+        self.collected = val

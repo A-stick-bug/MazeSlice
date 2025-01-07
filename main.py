@@ -213,6 +213,9 @@ class GameController:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_h:
                     self.game_state = "help_menu"
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.reset_game()
 
         if DEBUG_MODE:
             self.run_debug()
@@ -307,9 +310,11 @@ class GameController:
 
     def reset_game(self):
         """Reset the game to initial state."""
-        self.maze = Maze("easy")
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_state = "playing"
+        for item in self.maze.power_ups:
+            item.set_collected(False)
+
 
 
 if __name__ == '__main__':
