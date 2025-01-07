@@ -68,13 +68,32 @@ class Sphere(Circle):
         """Display the sphere as a projection onto a cross-section, size is determined by the distance in the Z dimension."""
         z_distance = abs(self.z - from_z)
         circle_radius = self.get_cross_section_radius(self.radius, z_distance)
-        if circle_radius > 0:
+        if circle_radius > 0:  # visible obstacle
             pygame.draw.circle(
                 surface=screen,
                 color=(0, 0, 255),  # Blue color for obstacles
                 center=(self.x, self.y),
                 radius=int(circle_radius),
             )
+        # draw shadow of obstacle
+        shadow_z_distance = max(0, abs(self.z - from_z) - 10)
+        shadow_circle_radius = self.get_cross_section_radius(self.radius, shadow_z_distance)
+        if shadow_circle_radius > 0:
+            # surface for transparency
+            transparent_surface = pygame.Surface(
+                (self.radius * 2, self.radius * 2),
+                pygame.SRCALPHA
+            )
+            # draw on transparent surface
+            pygame.draw.circle(
+                surface=transparent_surface,
+                color=(0, 0, 255, 128),  # Blue color with 50% transparency (alpha = 128)
+                center=(self.radius, self.radius),
+                radius=shadow_circle_radius
+            )
+
+            # blit the transparent surface onto the main screen
+            screen.blit(transparent_surface, (self.x - self.radius, self.y - self.radius))
 
     def collides_with_circle(self, other):
         """Check if this sphere collides with a circle."""

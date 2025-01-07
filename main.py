@@ -316,7 +316,6 @@ class GameController:
             item.set_collected(False)
 
 
-
 if __name__ == '__main__':
     game = GameController()
     game.play()
