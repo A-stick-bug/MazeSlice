@@ -4,19 +4,16 @@ import random
 import pygame
 from shapes import Circle
 
+
 class Player(Circle):
     def __init__(self, x, y, z, radius=10):
         super().__init__(x, y, z, radius)
         # Movement attributes
-        self.speed = 5
         self.z_speed = 1  # If you intend to keep vertical movement without gravity
         self.velocity = pygame.math.Vector3(0, 0, 0)
         self.acceleration = 0.5
         self.friction = 0.1
         self.max_speed = 5
-        self.max_z_speed = 1  # If vertical movement is needed
-        # Removed gravity-related attributes
-        self.is_on_wall = False
 
         # Dash attributes
         self.is_dashing = False
@@ -69,7 +66,6 @@ class Player(Circle):
         # Clamp velocity
         self.velocity.x = max(-self.max_speed, min(self.velocity.x, self.max_speed))
         self.velocity.y = max(-self.max_speed, min(self.velocity.y, self.max_speed))
-        self.velocity.z = max(-self.max_z_speed, min(self.velocity.z, self.max_z_speed))
 
         # Dash input
         if keys[pygame.K_SPACE]:
@@ -102,17 +98,11 @@ class Player(Circle):
         self.x += self.velocity.x
         if not maze.is_move_allowed(self):
             self.x = old_location[0]
-            self.is_on_wall = True
-        else:
-            self.is_on_wall = False
 
         # Attempt to move along the Y-axis
         self.y += self.velocity.y
         if not maze.is_move_allowed(self):
             self.y = old_location[1]
-            self.is_on_wall = True
-        else:
-            self.is_on_wall = False
 
         # Attempt to move along the Z-axis (if vertical movement is desired)
         if keys[pygame.K_w]:
@@ -122,12 +112,6 @@ class Player(Circle):
         if not maze.is_move_allowed(self):
             self.z = old_location[2]
             self.velocity.z = 0
-
-        # Wall grabbing (allow sliding along walls if on_wall)
-        if self.is_on_wall:
-            # Reduce horizontal velocity when on wall
-            self.velocity.x *= 0.5
-            self.velocity.y *= 0.5
 
         # Ensure Z-layer boundaries (if vertical movement is desired)
         if self.z < 0:

@@ -76,17 +76,17 @@ class Maze:
             item = Item(x, y, z, z + 10, radius, item_type, color)
             # Ensure items do not overlap with start/end locations or obstacles
             if (not item.collides_with_circle(self.start_location) and
-                not item.collides_with_circle(self.end_location) and
-                all(not obst.collides_with_circle(item) for obst in self.obstacles)):
+                    not item.collides_with_circle(self.end_location) and
+                    all(not obst.collides_with_circle(item) for obst in self.obstacles)):
                 self.power_ups.append(item)
                 print(f"Generated item: {item_type} at ({x}, {y}, {z})")
 
     def get_color_by_type(self, item_type):
         """Returns color based on item type."""
         colors = {
-            'speed_boost': (255, 0, 0),      # Red
-            'dash': (0, 255, 0),             # Green
-            'teleport': (128, 0, 128),       # Purple
+            'speed_boost': (255, 0, 0),  # Red
+            'dash': (0, 255, 0),  # Green
+            'teleport': (128, 0, 128),  # Purple
         }
         return colors.get(item_type, (255, 255, 255))  # Default white
 
@@ -138,8 +138,8 @@ class Maze:
 
         # Check collision with map boundaries
         if (x < temp_circle.radius or x > WIDTH - temp_circle.radius or
-            y < temp_circle.radius or y > HEIGHT - temp_circle.radius or
-            z < 0 or z > self.Z_LAYERS):
+                y < temp_circle.radius or y > HEIGHT - temp_circle.radius or
+                z < 0 or z > self.Z_LAYERS):
             return False
 
         return True
@@ -171,6 +171,7 @@ class GameController:
                 self.perform_game_over_frame_actions()
             elif self.game_state == "winner":
                 self.perform_winner_frame_actions()
+            pygame.display.flip()
             clock.tick(60)  # 60 fps
 
     def perform_menu_frame_actions(self):
@@ -178,7 +179,6 @@ class GameController:
         # Placeholder for menu actions
         screen.fill((0, 0, 0))
         self.display_text("Menu - Press Enter to Play", WIDTH // 2, HEIGHT // 2)
-        pygame.display.flip()
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -193,7 +193,6 @@ class GameController:
         # Placeholder for help menu actions
         screen.fill((0, 0, 0))
         self.display_text("Help Menu - Press M to Return", WIDTH // 2, HEIGHT // 2)
-        pygame.display.flip()
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -216,36 +215,26 @@ class GameController:
                     self.game_state = "help_menu"
 
         if DEBUG_MODE:
-            self.run_debug(self.game_events)
+            self.run_debug()
 
         # Handle player movement with collisions
         self.player.handle_movement(self.maze)
-
-        # Display obstacles and items
-        self.maze.display_obstacles(self.player.get_z())
-        self.maze.display_items(self.player.get_z())
-
-        # Collect items if any
         self.maze.collect_items(self.player)
 
-        # Display player
+        # display objects and effects
+        self.maze.display_obstacles(self.player.get_z())
+        self.maze.display_items(self.player.get_z())
         self.player.display_player()
-
-        # Display active effects
         self.display_active_effects()
 
-        # Check for win condition
         if self.check_win_condition():
             self.game_state = "winner"
-
-        pygame.display.flip()
 
     def perform_game_over_frame_actions(self):
         """Performs frame actions for when the game is in the `game_over` state."""
         # Placeholder for game over actions
         screen.fill((0, 0, 0))
         self.display_text("Game Over - Press R to Restart", WIDTH // 2, HEIGHT // 2)
-        pygame.display.flip()
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -260,7 +249,6 @@ class GameController:
         # Placeholder for winner actions
         screen.fill((0, 0, 0))
         self.display_text("You Won! - Press Q to Quit", WIDTH // 2, HEIGHT // 2)
-        pygame.display.flip()
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -271,7 +259,7 @@ class GameController:
                     pygame.quit()
                     sys.exit()
 
-    def run_debug(self, frame_events):
+    def run_debug(self):
         """
         Create coordinate grid for easy drawing and check frame rate.
         """
@@ -292,7 +280,7 @@ class GameController:
         screen.blit(grid_surface, (0, 0))  # Display all grid lines
 
         # 2. Right click to get coordinates
-        for event in frame_events:
+        for event in self.game_events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 print(f"Mouse coordinates: {event.pos}")
 
