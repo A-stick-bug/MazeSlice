@@ -2,7 +2,7 @@
 
 import pygame
 from shapes import Cylinder
-from main import DEBUG_MODE
+
 
 class Item(Cylinder):
     """
@@ -44,7 +44,7 @@ class Item(Cylinder):
         Returns the color of the item.
         """
         return self.color
-    
+
     def get_color_by_type(self):
         """Returns color based on item type."""
         colors = {
@@ -84,6 +84,7 @@ class Item(Cylinder):
         planar_dist = pygame.math.Vector2(self.x - player.x, self.y - player.y).length()
         if planar_dist < (self.radius + player.radius):
             self.collected = True
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print(f"Item collected: {self.type} at ({self.x}, {self.y}, {self.z})")
             return True
@@ -99,19 +100,20 @@ class Item(Cylinder):
         if not self.collected:
             return
 
+        DEBUG = __import__("main").DEBUG_MODE
         if self.type == 'speed_boost':
             player.apply_speed_boost()
-            if DEBUG_MODE:
+            if DEBUG:
                 print("Speed boost applied!")
             # The Player class handles reverting the speed after a duration
         elif self.type == 'dash':
             player.reduce_dash_cooldown()
-            if DEBUG_MODE:
+            if DEBUG:
                 print("Dash cooldown reduced!")
             # Reduces the cooldown period for dashing
         elif self.type == 'teleport':
             player.teleport(maze)
-            if DEBUG_MODE:
+            if DEBUG:
                 print("Teleport activated!")
             # Teleports the player to a random free spot
         # Add more item types and their effects as needed
