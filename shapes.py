@@ -20,12 +20,12 @@ class Circle:
         planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
         return planar_dist < self.radius + other.radius
 
-    def display(self, screen, from_z):
+    def display(self, screen, from_z, color=(0, 0, 255)):
         """Display circle only if it is on the same layer as what we are viewing from."""
         if self.get_z() == from_z:
             pygame.draw.circle(
                 surface=screen,
-                color=(0, 0, 255),  # Blue color for obstacles
+                color=color,
                 center=(self.x, self.y),
                 radius=self.radius,
             )

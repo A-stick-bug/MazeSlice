@@ -35,6 +35,20 @@ class Obstacle(Sphere):
         super().__init__(x, y, z, radius)
 
 
+class EndLocation(Circle):
+    def __init__(self, x, y, z, radius):
+        super().__init__(x, y, z, radius)
+        self.surf = pygame.image.load(
+            "graphics/maze/end_location.png").convert_alpha()
+
+    # @override
+    def display(self, screen, from_z, color=(0,0,255)):
+        if self.z == from_z:
+            end_rect = self.surf.get_rect(
+                center=(self.x, self.y))
+            screen.blit(self.surf, end_rect)
+
+
 class Maze:
     def __init__(self, difficulty):
         self.difficulty = difficulty
@@ -44,7 +58,7 @@ class Maze:
 
         margin = 50
         self.start_location = Circle(margin, margin, 0, 25)
-        self.end_location = Circle(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
+        self.end_location = EndLocation(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
         self.generate_maze_obstacles(70, 50, 90)  # Adjust numbers as needed
         self.generate_maze_items(randint(40, 120))  # Generate some items
 
@@ -89,6 +103,10 @@ class Maze:
         """Displays items in the maze based on player's Z-layer."""
         for item in self.power_ups:
             item.display(screen, player_z)
+
+    def display_start_end(self, from_z):
+        self.start_location.display(screen, from_z, (255, 255, 0))
+        self.end_location.display(screen, from_z, (255, 255, 0))
 
     def collect_items(self, player):
         """Checks and collects items if the player collides with them."""
@@ -217,6 +235,7 @@ class GameController:
         # display objects and effects
         self.maze.display_obstacles(self.player.get_z())
         self.maze.display_items(self.player.get_z())
+        self.maze.display_start_end(self.player.get_z())
         self.player.display_player()
         self.display_active_effects()
 
