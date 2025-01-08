@@ -10,7 +10,7 @@ from Player import Player
 
 class Hunter(Circle):
     """"""
-    
+
     def __init__(self, x, y, z: int, radius, speed=0.0, color=(255, 119, 0)):
         super().__init__(x, y, z, radius)
         self.speed = speed
@@ -59,10 +59,12 @@ class Hunter(Circle):
             # draw on transparent surface
             pygame.draw.circle(
                 surface=transparent_surface,
-                color=(*self.color, alpha),  # Blue color with 50% transparency (alpha = 128)
+                # Blue color with 50% transparency (alpha = 128)
+                color=(*self.color, alpha),
                 center=(self.radius, self.radius),
                 radius=self.radius
             )
 
             # blit the transparent surface onto the main screen
-            screen.blit(transparent_surface, (self.x - self.radius, self.y - self.radius))
+            screen.blit(transparent_surface, (self.x -
+                        self.radius, self.y - self.radius))

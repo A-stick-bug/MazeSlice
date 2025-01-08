@@ -81,12 +81,14 @@ class Item(Cylinder):
             return False
 
         # Calculate planar distance
-        planar_dist = pygame.math.Vector2(self.x - player.x, self.y - player.y).length()
+        planar_dist = pygame.math.Vector2(
+            self.x - player.x, self.y - player.y).length()
         if planar_dist < (self.radius + player.radius):
             self.collected = True
             from main import DEBUG_MODE
             if DEBUG_MODE:
-                print(f"Item collected: {self.type} at ({self.x}, {self.y}, {self.z})")
+                print(
+                    f"Item collected: {self.type} at ({self.x}, {self.y}, {self.z})")
             return True
         return False
 

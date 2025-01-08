@@ -64,8 +64,10 @@ class Player(Circle):
             self.velocity.z *= (1 - self.friction)
 
         # Clamp velocity
-        self.velocity.x = max(-self.max_speed, min(self.velocity.x, self.max_speed))
-        self.velocity.y = max(-self.max_speed, min(self.velocity.y, self.max_speed))
+        self.velocity.x = max(-self.max_speed,
+                              min(self.velocity.x, self.max_speed))
+        self.velocity.y = max(-self.max_speed,
+                              min(self.velocity.y, self.max_speed))
 
         # Dash input
         if keys[pygame.K_SPACE]:
@@ -74,7 +76,8 @@ class Player(Circle):
                 self.dash_start_time = current_time
                 self.last_dash_time = current_time
                 # Increase velocity for dash
-                dash_vector = pygame.math.Vector3(self.velocity.x, self.velocity.y, self.velocity.z)
+                dash_vector = pygame.math.Vector3(
+                    self.velocity.x, self.velocity.y, self.velocity.z)
                 if dash_vector.length() != 0:
                     dash_vector = dash_vector.normalize() * self.dash_speed
                 self.velocity += dash_vector
@@ -149,7 +152,7 @@ class Player(Circle):
         Returns the current location of the player as a tuple (x, y, z).
         """
         return self.x, self.y, self.z
-    
+
     def get_z(self):
         return self.z
 
@@ -214,4 +217,5 @@ class Player(Circle):
         Reduces the teleport cooldown period.
         """
         self.teleport_cooldown = max(2.0, self.teleport_cooldown - 0.5)
-        print(f"Teleport cooldown reduced to {self.teleport_cooldown} seconds.")
+        print(
+            f"Teleport cooldown reduced to {self.teleport_cooldown} seconds.")
