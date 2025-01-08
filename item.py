@@ -8,7 +8,7 @@ class Item(Cylinder):
     Represents an item within the maze that the player can collect.
     """
 
-    def __init__(self, x, y, start_z, end_z, radius, item_type, color=(255, 215, 0)):
+    def __init__(self, x, y, start_z, end_z, radius, type):
         """
         Initializes the Item with position, size, type, and color.
 
@@ -17,12 +17,12 @@ class Item(Cylinder):
         :param start_z: Starting Z-layer
         :param end_z: Ending Z-layer
         :param radius: Radius of the item
-        :param item_type: Type of the item (e.g., 'speed_boost', 'dash', 'teleport')
+        :param type: Type of the item (e.g., 'speed_boost', 'dash', 'teleport')
         :param color: Color of the item for rendering
         """
         super().__init__(x, y, start_z, end_z, radius)
-        self.type = item_type
-        self.color = color
+        self.type = type
+        self.color = self.get_color_by_type()
         self.collected = False  # Flag to check if the item has been collected
 
     @property
@@ -37,6 +37,21 @@ class Item(Cylinder):
         Returns the type of the item.
         """
         return self.type
+
+    def get_color(self):
+        """
+        Returns the color of the item.
+        """
+        return self.color
+    
+    def get_color_by_type(self):
+        """Returns color based on item type."""
+        colors = {
+            'speed_boost': (255, 0, 0),  # Red
+            'dash': (0, 255, 0),  # Green
+            'teleport': (128, 0, 128),  # Purple
+        }
+        return colors.get(self.type, (255, 255, 255))  # Default white
 
     def display(self, screen, player_z):
         """

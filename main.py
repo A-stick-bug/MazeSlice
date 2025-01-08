@@ -72,23 +72,13 @@ class Maze:
             z = randint(0, 190)  # Random z coordinate of items
             radius = randint(8, 12)
             item_type = random.choice(item_types)
-            color = self.get_color_by_type(item_type)
-            item = Item(x, y, z, z + 10, radius, item_type, color)
+            item = Item(x, y, z, z + 10, radius, item_type)
             # Ensure items do not overlap with start/end locations or obstacles
             if (not item.collides_with_circle(self.start_location) and
                     not item.collides_with_circle(self.end_location) and
                     all(not obst.collides_with_circle(item) for obst in self.obstacles)):
                 self.power_ups.append(item)
                 print(f"Generated item: {item_type} at ({x}, {y}, {z})")
-
-    def get_color_by_type(self, item_type):
-        """Returns color based on item type."""
-        colors = {
-            'speed_boost': (255, 0, 0),  # Red
-            'dash': (0, 255, 0),  # Green
-            'teleport': (128, 0, 128),  # Purple
-        }
-        return colors.get(item_type, (255, 255, 255))  # Default white
 
     def display_obstacles(self, player_z) -> None:
         """Displays 3D obstacles as a 2D cross-section using the player’s z-coordinate."""
