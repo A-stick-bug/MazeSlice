@@ -9,6 +9,7 @@ import atexit
 from Player import Player
 from item import Item
 from shapes import Circle, Sphere, Cylinder
+from hunter import Hunter
 
 # Dimensions of the window
 WIDTH = 1200
@@ -42,7 +43,7 @@ class EndLocation(Circle):
             "graphics/maze/end_location.png").convert_alpha()
 
     # @override
-    def display(self, screen, from_z, color=(0,0,255)):
+    def display(self, screen, from_z, color=(0, 0, 255)):
         if self.z == from_z:
             end_rect = self.surf.get_rect(
                 center=(self.x, self.y))
@@ -54,36 +55,43 @@ class Maze:
         self.difficulty = difficulty
         self.obstacles: list[Obstacle] = []
         self.power_ups: list[Item] = []
+        self.hunters: list[Hunter] = []
         self.Z_LAYERS = Z_LAYERS  # Expose Z_LAYERS as an instance attribute
 
         margin = 50
         self.start_location = Circle(margin, margin, 0, 25)
-        self.end_location = EndLocation(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
+        self.end_location = EndLocation(
+            WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
         self.generate_maze_obstacles(70, 50, 90)  # Adjust numbers as needed
         self.generate_maze_items(randint(40, 120))  # Generate some items
+        self.generate_maze_hunters(randint(4, 6))  # Generate hunters
 
     def generate_maze_obstacles(self, num_obstacles, r_min, r_max):
         """Fill up `self.obstacles` with random obstacles with radius
         in the range [r_min, r_max], ensures the obstacles do not overlap with
         the start and end locations."""
         while len(self.obstacles) < num_obstacles:
-            x = randint(self.start_location.radius, WIDTH - self.start_location.radius)
-            y = randint(self.start_location.radius, HEIGHT - self.start_location.radius)
+            x = randint(self.start_location.radius,
+                        WIDTH - self.start_location.radius)
+            y = randint(self.start_location.radius,
+                        HEIGHT - self.start_location.radius)
             z = randint(0, self.Z_LAYERS)
             radius = randint(r_min, r_max)
             obst = Obstacle(x, y, z, radius)
             if (not obst.collides_with_circle(self.start_location) and
                     not obst.collides_with_circle(self.end_location)):
                 self.obstacles.append(obst)
-                print(f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
+                print(
+                    f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
 
     def generate_maze_items(self, num_items):
         """Fill up `self.power_ups` with random items."""
-        item_types = ['speed_boost', 'dash', 'teleport']  # Replaced 'stealth' with 'teleport'
+        item_types = ['speed_boost', 'dash',
+                      'teleport']  # Replaced 'stealth' with 'teleport'
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(0, 190)  # Random z coordinate of items
+            z = randint(0, 190)
             radius = randint(8, 12)
             item_type = random.choice(item_types)
             item = Item(x, y, z, z + 10, radius, item_type)
@@ -93,6 +101,17 @@ class Maze:
                     all(not obst.collides_with_circle(item) for obst in self.obstacles)):
                 self.power_ups.append(item)
                 print(f"Generated item: {item_type} at ({x}, {y}, {z})")
+
+    def generate_maze_hunters(self, num_hunters):
+        for _ in range(num_hunters):
+            x = randint(20, WIDTH - 20)
+            y = randint(20, HEIGHT - 20)
+            z = randint(40, 190)
+            radius = randint(12, 18)
+            speed = randint(50, 200) / 100
+            hunter = Hunter(x, y, z, radius, speed)
+            print(f"Generated hunter at ({x}, {y}, {z})")
+            self.hunters.append(hunter)
 
     def display_obstacles(self, player_z) -> None:
         """Displays 3D obstacles as a 2D cross-section using the player’s z-coordinate."""
@@ -104,6 +123,11 @@ class Maze:
         for item in self.power_ups:
             item.display(screen, player_z)
 
+    def display_hunters(self, player) -> None:
+        """Displays hunters in the maze based on the player's Z-layer"""
+        for hunter in self.hunters:
+            hunter.display_hunter(screen, player)
+
     def display_start_end(self, from_z):
         self.start_location.display(screen, from_z, (255, 255, 0))
         self.end_location.display(screen, from_z, (255, 255, 0))
@@ -113,6 +137,10 @@ class Maze:
         for item in self.power_ups:
             if item.check_collision(player):
                 item.apply_effect(player, maze=self)  # Pass maze instance
+
+    def move_hunters(self, player):
+        for hunter in self.hunters:
+            hunter.handle_movement(player)
 
     def is_move_allowed(self, character):
         """Check if a given character can be at a certain position in the maze."""
@@ -161,7 +189,8 @@ class Maze:
 
 class GameController:
     def __init__(self):
-        self.game_state = "menu"  # [menu, help_menu, playing, game_over, winner]
+        # [menu, help_menu, playing, game_over, winner]
+        self.game_state = "menu"
         self.maze = Maze("easy")
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_events = pygame.event.get()
@@ -186,7 +215,8 @@ class GameController:
         """Performs frame actions for when the game is in the `menu` state."""
         # Placeholder for menu actions
         screen.fill((0, 0, 0))
-        self.display_text("Menu - Press Enter to Play", WIDTH // 2, HEIGHT // 2)
+        self.display_text("Menu - Press Enter to Play",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -200,7 +230,8 @@ class GameController:
         """Performs frame actions for when the game is in the `help_menu` state."""
         # Placeholder for help menu actions
         screen.fill((0, 0, 0))
-        self.display_text("Help Menu - Press M to Return", WIDTH // 2, HEIGHT // 2)
+        self.display_text("Help Menu - Press M to Return",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -231,10 +262,12 @@ class GameController:
         # Handle player movement with collisions
         self.player.handle_movement(self.maze)
         self.maze.collect_items(self.player)
+        self.maze.move_hunters(self.player)
 
         # display objects and effects
         self.maze.display_obstacles(self.player.get_z())
         self.maze.display_items(self.player.get_z())
+        self.maze.display_hunters(self.player)
         self.maze.display_start_end(self.player.get_z())
         self.player.display_player()
         self.display_active_effects()
@@ -246,7 +279,8 @@ class GameController:
         """Performs frame actions for when the game is in the `game_over` state."""
         # Placeholder for game over actions
         screen.fill((0, 0, 0))
-        self.display_text("Game Over - Press R to Restart", WIDTH // 2, HEIGHT // 2)
+        self.display_text("Game Over - Press R to Restart",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -260,7 +294,8 @@ class GameController:
         """Performs frame actions for when the game is in the `winner` state."""
         # Placeholder for winner actions
         screen.fill((0, 0, 0))
-        self.display_text("You Won! - Press Q to Quit", WIDTH // 2, HEIGHT // 2)
+        self.display_text("You Won! - Press Q to Quit",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -306,8 +341,10 @@ class GameController:
     def display_active_effects(self):
         """Displays active effects on the screen."""
         if self.player.speed_boost_active:
-            remaining = int(self.player.speed_boost_end_time - pygame.time.get_ticks() / 1000)
-            self.display_text(f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0))
+            remaining = int(self.player.speed_boost_end_time -
+                            pygame.time.get_ticks() / 1000)
+            self.display_text(
+                f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0))
         # Add more active effects here if needed
 
     def check_win_condition(self):

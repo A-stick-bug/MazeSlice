@@ -149,6 +149,9 @@ class Player(Circle):
         Returns the current location of the player as a tuple (x, y, z).
         """
         return self.x, self.y, self.z
+    
+    def get_z(self):
+        return self.z
 
     def get_parameters(self):
         """
@@ -158,7 +161,7 @@ class Player(Circle):
 
     def teleport(self, maze):
         '''
-        Teleports player to a random position that is uncovered on the ground.
+        Teleports player to a random position that is uncovered.
         '''
         from main import WIDTH, HEIGHT
         has_found = False
