@@ -169,7 +169,7 @@ class Player(Circle):
         while not has_found and attempts < max_attempts:
             temp_x = random.randint(self.radius, WIDTH - self.radius)
             temp_y = random.randint(self.radius, HEIGHT - self.radius)
-            temp_z = 0  # Teleport to ground level
+            temp_z = self.z  # Teleport to the same z_level
 
             if maze.is_move_allowed_pos(temp_x, temp_y, temp_z):
                 has_found = True
