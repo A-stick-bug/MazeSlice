@@ -142,6 +142,10 @@ class Maze:
         for hunter in self.hunters:
             hunter.handle_movement(player)
 
+    def collide_hunters(self, player):
+        for hunter in self.hunters:
+            hunter.check_collision(player)
+
     def is_move_allowed(self, character):
         """Check if a given character can be at a certain position in the maze."""
         # Check collisions with obstacles
@@ -263,6 +267,7 @@ class GameController:
         self.player.handle_movement(self.maze)
         self.maze.collect_items(self.player)
         self.maze.move_hunters(self.player)
+        self.maze.collide_hunters(self.player)
 
         # display objects and effects
         self.maze.display_obstacles(self.player.get_z())

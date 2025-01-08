@@ -153,9 +153,6 @@ class Player(Circle):
         """
         return self.x, self.y, self.z
 
-    def get_z(self):
-        return self.z
-
     def get_parameters(self):
         """
         Returns the player's parameters needed for collision detection.

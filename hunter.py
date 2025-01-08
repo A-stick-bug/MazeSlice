@@ -17,7 +17,7 @@ class Hunter(Circle):
         self.color = color
 
     def z_distance_from_player(self, player: Player):
-        return abs(self.z - player.get_z())
+        return abs(self.z - player.z)
 
     def handle_movement(self, player: Player) -> None:
         """"""
@@ -29,10 +29,10 @@ class Hunter(Circle):
             movement_scalar = self.speed / distance_from_player
             self.x += (player.get_x() - self.x) * movement_scalar
             self.y += (player.get_y() - self.y) * movement_scalar
-            if self.z > player.get_z():
+            if self.z > player.z:
                 if random() > self.speed / 10:
                     self.z -= 1
-            elif self.z < player.get_z():
+            elif self.z < player.z:
                 if random() > self.speed / 10:
                     self.z += 1
             # separate z movement from xy, and cheap non integral speed implementation
@@ -68,3 +68,23 @@ class Hunter(Circle):
             # blit the transparent surface onto the main screen
             screen.blit(transparent_surface, (self.x -
                         self.radius, self.y - self.radius))
+
+    def check_collision(self, player: Player):
+        """
+        Checks collision with the player. If collision occurs, the player is xooked. End the game.
+        """
+        if self.z != player.z:
+            return False
+        
+        player_location = player.get_location()[:2]
+        cur_location = (self.x, self.y)
+        distance_from_player = dist(player_location, cur_location)
+
+        if distance_from_player <= (self.radius + player.radius):
+            from main import DEBUG_MODE
+            if DEBUG_MODE:
+                print(
+                    f"Player collided with hunter at ({self.x}, {self.y}, {self.z})")
+            return True
+        
+        return False
