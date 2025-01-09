@@ -13,14 +13,14 @@ class Circle:
         self.z = z
         self.radius = radius
 
-    def collides_with_circle(self, other):
+    def collides_with_circle(self, other) -> bool:
         """Check if this sphere collides with a circle."""
         if other.get_z() - self.z != 0:
             return False
         planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
         return planar_dist < self.radius + other.radius
 
-    def display(self, screen, from_z, color=(0, 0, 255)):
+    def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         """Display circle only if it is on the same layer as what we are viewing from."""
         if self.get_z() == from_z:
             pygame.draw.circle(
@@ -30,22 +30,22 @@ class Circle:
                 radius=self.radius,
             )
 
-    def get_parameters(self):
+    def get_parameters(self) -> tuple[float, float, int, int]:
         return self.x, self.y, self.z, self.radius
 
-    def get_location(self):
+    def get_location(self) -> tuple[float, float, int]:
         return self.x, self.y, self.z
 
-    def get_x(self):
+    def get_x(self) -> float:
         return self.x
 
-    def get_y(self):
+    def get_y(self) -> float:
         return self.y
 
-    def get_z(self):
+    def get_z(self) -> int:
         return self.z
 
-    def get_radius(self):
+    def get_radius(self) -> int:
         return self.radius
 
     def __iter__(self):
@@ -58,13 +58,13 @@ class Sphere(Circle):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
 
-    def get_cross_section_radius(self, radius_3d, z_distance):
+    def get_cross_section_radius(self, radius_3d, z_distance) -> float:
         """Calculates the apparent size of a sphere based on its distance in the Z dimension."""
         if z_distance >= radius_3d:  # Too far to appear
             return 0
         return (radius_3d ** 2 - z_distance ** 2) ** 0.5
 
-    def display(self, screen, from_z):
+    def display(self, screen, from_z) -> None:
         """Display the sphere as a projection onto a cross-section, size is determined by the distance in the Z dimension."""
         z_distance = abs(self.z - from_z)
         circle_radius = self.get_cross_section_radius(self.radius, z_distance)
@@ -95,7 +95,7 @@ class Sphere(Circle):
             # blit the transparent surface onto the main screen
             screen.blit(transparent_surface, (self.x - self.radius, self.y - self.radius))
 
-    def collides_with_circle(self, other):
+    def collides_with_circle(self, other) -> bool:
         """Check if this sphere collides with a circle."""
         z_dist = abs(other.z - self.z)
         proj_rad = self.get_cross_section_radius(self.radius, z_dist)
@@ -116,13 +116,7 @@ class Cylinder:
         self.end_z = end_z
         self.radius = radius
 
-    def get_cross_section_radius(self, radius_3d, z_distance):
-        """Calculates the apparent size of a cylinder's cross-section based on distance in Z."""
-        if z_distance >= radius_3d:  # Too far to appear
-            return 0
-        return (radius_3d ** 2 - z_distance ** 2) ** 0.5
-
-    def display(self, screen, from_z):
+    def display(self, screen, from_z) -> None:
         """Display the cylinder if the player is within its Z range."""
         if self.start_z <= from_z <= self.end_z:
             pygame.draw.circle(
@@ -132,7 +126,7 @@ class Cylinder:
                 radius=int(self.radius),
             )
 
-    def collides_with_circle(self, other):
+    def collides_with_circle(self, other) -> bool:
         """Check if this cylinder collides with a circle."""
         # Check if the other circle's z is within the cylinder's range
         if not (self.start_z <= other.get_z() <= self.end_z):
@@ -140,25 +134,25 @@ class Cylinder:
         planar_dist = dist((other.get_x(), other.get_y()), (self.x, self.y))
         return planar_dist < self.radius + other.radius
 
-    def get_parameters(self):
+    def get_parameters(self) -> tuple[float, float, int, int, int]:
         return self.x, self.y, self.start_z, self.end_z, self.radius
 
-    def get_location(self):
+    def get_location(self) -> tuple[float, float, int, int]:
         return self.x, self.y, self.start_z, self.end_z
 
-    def get_x(self):
+    def get_x(self) -> float:
         return self.x
 
-    def get_y(self):
+    def get_y(self) -> float:
         return self.y
 
-    def get_start_z(self):
+    def get_start_z(self) -> int:
         return self.start_z
 
-    def get_end_z(self):
+    def get_end_z(self) -> int:
         return self.end_z
 
-    def get_radius(self):
+    def get_radius(self) -> int:
         return self.radius
 
     def __iter__(self):

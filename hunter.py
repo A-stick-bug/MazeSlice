@@ -16,7 +16,7 @@ class Hunter(Circle):
         self.speed = speed
         self.color = color
 
-    def z_distance_from_player(self, player: Player):
+    def z_distance_from_player(self, player: Player) -> int:
         return abs(self.z - player.z)
 
     def handle_movement(self, player: Player) -> None:
@@ -37,7 +37,7 @@ class Hunter(Circle):
                     self.z += 1
             # separate z movement from xy, and cheap non integral speed implementation
 
-    def display_hunter(self, screen, player: Player):
+    def display_hunter(self, screen, player: Player) -> None:
         """
         displays the hunter on the screen.
         """
@@ -67,7 +67,7 @@ class Hunter(Circle):
 
             # blit the transparent surface onto the main screen
             screen.blit(transparent_surface, (self.x -
-                        self.radius, self.y - self.radius))
+                                              self.radius, self.y - self.radius))
 
     def check_collision(self, player: Player) -> bool:
         """

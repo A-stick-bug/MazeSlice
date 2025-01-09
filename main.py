@@ -43,7 +43,7 @@ class EndLocation(Circle):
             "graphics/maze/end_location.png").convert_alpha()
 
     # @override
-    def display(self, screen, from_z, color=(0, 0, 255)):
+    def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         if self.z == from_z:
             end_rect = self.surf.get_rect(
                 center=(self.x, self.y))
@@ -66,7 +66,7 @@ class Maze:
         self.generate_maze_items(randint(40, 120))  # Generate some items
         self.generate_maze_hunters(randint(4, 6))  # Generate hunters
 
-    def generate_maze_obstacles(self, num_obstacles, r_min, r_max):
+    def generate_maze_obstacles(self, num_obstacles, r_min, r_max) -> None:
         """Fill up `self.obstacles` with random obstacles with radius
         in the range [r_min, r_max], ensures the obstacles do not overlap with
         the start and end locations."""
@@ -84,7 +84,7 @@ class Maze:
                 print(
                     f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
 
-    def generate_maze_items(self, num_items):
+    def generate_maze_items(self, num_items) -> None:
         """Fill up `self.power_ups` with random items."""
         item_types = ['speed_boost', 'dash',
                       'teleport']  # Replaced 'stealth' with 'teleport'
@@ -102,7 +102,8 @@ class Maze:
                 self.power_ups.append(item)
                 print(f"Generated item: {item_type} at ({x}, {y}, {z})")
 
-    def generate_maze_hunters(self, num_hunters):
+    def generate_maze_hunters(self, num_hunters) -> None:
+        """Generate `num_hunters` hunters on the maze"""
         for _ in range(num_hunters):
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
@@ -128,27 +129,29 @@ class Maze:
         for hunter in self.hunters:
             hunter.display_hunter(screen, player)
 
-    def display_start_end(self, from_z):
+    def display_start_end(self, from_z) -> None:
         self.start_location.display(screen, from_z, (255, 255, 0))
         self.end_location.display(screen, from_z, (255, 255, 0))
 
-    def collect_items(self, player):
+    def collect_items(self, player) -> None:
         """Checks and collects items if the player collides with them."""
         for item in self.power_ups:
             if item.check_collision(player):
                 item.apply_effect(player, maze=self)  # Pass maze instance
 
-    def move_hunters(self, player):
+    def move_hunters(self, player) -> None:
+        """Update the position of the hunters based on the player's position."""
         for hunter in self.hunters:
             hunter.handle_movement(player)
 
-    def collide_hunters(self, player):
+    def collide_hunters(self, player) -> bool:
+        """Check if the player collides with any of the hunters."""
         for hunter in self.hunters:
             if hunter.check_collision(player):
                 return True
         return False
 
-    def is_move_allowed(self, character):
+    def is_move_allowed(self, character) -> bool:
         """Check if a given character can be at a certain position in the maze."""
         # Check collisions with obstacles
         char_circle = Circle(*character.get_parameters())
@@ -164,7 +167,7 @@ class Maze:
 
         return True
 
-    def is_move_allowed_pos(self, x, y, z):
+    def is_move_allowed_pos(self, x, y, z) -> bool:
         """
         Checks if a specific (x, y, z) position is free (no obstacles).
 
@@ -280,6 +283,7 @@ class GameController:
         self.player.display_player()
         self.display_active_effects()
 
+        # check if we won/lost the game
         if self.check_win_condition():
             self.game_state = "winner"
         if self.check_lose_condition():
