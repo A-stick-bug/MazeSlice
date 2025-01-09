@@ -69,13 +69,13 @@ class Hunter(Circle):
             screen.blit(transparent_surface, (self.x -
                         self.radius, self.y - self.radius))
 
-    def check_collision(self, player: Player):
+    def check_collision(self, player: Player) -> bool:
         """
         Checks collision with the player. If collision occurs, the player is xooked. End the game.
         """
         if self.z != player.z:
             return False
-        
+
         player_location = player.get_location()[:2]
         cur_location = (self.x, self.y)
         distance_from_player = dist(player_location, cur_location)
@@ -86,5 +86,5 @@ class Hunter(Circle):
                 print(
                     f"Player collided with hunter at ({self.x}, {self.y}, {self.z})")
             return True
-        
+
         return False

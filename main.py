@@ -144,7 +144,9 @@ class Maze:
 
     def collide_hunters(self, player):
         for hunter in self.hunters:
-            hunter.check_collision(player)
+            if hunter.check_collision(player):
+                return True
+        return False
 
     def is_move_allowed(self, character):
         """Check if a given character can be at a certain position in the maze."""
@@ -212,6 +214,8 @@ class GameController:
                 self.perform_game_over_frame_actions()
             elif self.game_state == "winner":
                 self.perform_winner_frame_actions()
+            elif self.game_state == "loser":
+                self.perform_loser_frame_actions()
             pygame.display.flip()
             clock.tick(60)  # 60 fps
 
@@ -267,7 +271,6 @@ class GameController:
         self.player.handle_movement(self.maze)
         self.maze.collect_items(self.player)
         self.maze.move_hunters(self.player)
-        self.maze.collide_hunters(self.player)
 
         # display objects and effects
         self.maze.display_obstacles(self.player.get_z())
@@ -279,6 +282,8 @@ class GameController:
 
         if self.check_win_condition():
             self.game_state = "winner"
+        if self.check_lose_condition():
+            self.game_state = "loser"
 
     def perform_game_over_frame_actions(self):
         """Performs frame actions for when the game is in the `game_over` state."""
@@ -300,6 +305,22 @@ class GameController:
         # Placeholder for winner actions
         screen.fill((0, 0, 0))
         self.display_text("You Won! - Press Q to Quit",
+                          WIDTH // 2, HEIGHT // 2)
+
+        for event in self.game_events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
+
+    def perform_loser_frame_actions(self):
+        """Performs frame actions for when the game is in the `lost` state."""
+        # Placeholder for loser(?!) actions
+        screen.fill((0, 0, 0))
+        self.display_text("You Lost the Game! - Press Q to Quit",
                           WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
@@ -356,6 +377,13 @@ class GameController:
         """Check if the player has reached the end location."""
         if self.player.collides_with_circle(self.maze.get_end_location()):
             print("Win condition met!")
+            return True
+        return False
+
+    def check_lose_condition(self):
+        """Check if the player lost the game."""
+        if self.maze.collide_hunters(self.player):
+            print("Lost(?) condition met!")
             return True
         return False
 
