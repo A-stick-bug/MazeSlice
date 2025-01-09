@@ -15,6 +15,7 @@ class Hunter(Circle):
         super().__init__(x, y, z, radius)
         self.speed = speed
         self.color = color
+        self.initial_location = (x, y, z)
 
     def z_distance_from_player(self, player: Player) -> int:
         return abs(self.z - player.z)
@@ -36,6 +37,12 @@ class Hunter(Circle):
                 if random() > self.speed / 10:
                     self.z += 1
             # separate z movement from xy, and cheap non integral speed implementation
+
+    def set_location(self, location):
+        self.x, self.y, self.z = location
+
+    def reset_location(self):
+        self.set_location(self.initial_location)
 
     def display_hunter(self, screen, player: Player) -> None:
         """
@@ -73,14 +80,7 @@ class Hunter(Circle):
         """
         Checks collision with the player. If collision occurs, the player is xooked. End the game.
         """
-        if self.z != player.z:
-            return False
-
-        player_location = player.get_location()[:2]
-        cur_location = (self.x, self.y)
-        distance_from_player = dist(player_location, cur_location)
-
-        if distance_from_player <= (self.radius + player.radius):
+        if super().collides_with_circle(player):
             from main import DEBUG_MODE
             if DEBUG_MODE:
                 print(

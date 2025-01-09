@@ -397,6 +397,8 @@ class GameController:
         self.game_state = "playing"
         for item in self.maze.power_ups:
             item.set_collected(False)
+        for hunter in self.maze.hunters:
+            hunter.reset_location()
 
 
 if __name__ == '__main__':
