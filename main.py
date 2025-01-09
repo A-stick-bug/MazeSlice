@@ -8,7 +8,7 @@ import atexit
 
 from Player import Player
 from item import Item
-from shapes import Circle, Sphere, Cylinder
+from shapes import Circle, Sphere
 from hunter import Hunter
 
 # Dimensions of the window
@@ -319,6 +319,9 @@ class GameController:
                 if event.key == pygame.K_q:
                     pygame.quit()
                     sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.__init__()
 
     def perform_loser_frame_actions(self):
         """Performs frame actions for when the game is in the `lost` state."""
@@ -335,6 +338,9 @@ class GameController:
                 if event.key == pygame.K_q:
                     pygame.quit()
                     sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.__init__()
 
     def run_debug(self):
         """
