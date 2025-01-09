@@ -36,6 +36,20 @@ class Obstacle(Sphere):
         super().__init__(x, y, z, radius)
 
 
+class StartLocation(Circle):
+    def __init__(self, x, y, z, radius):
+        super().__init__(x, y, z, radius)
+        self.surf = pygame.image.load(
+            "graphics/maze/start_location.png").convert_alpha()
+
+    # @override
+    def display(self, screen, from_z, color=(0, 0, 255)) -> None:
+        if self.z == from_z:
+            start_rect = self.surf.get_rect(
+                center=(self.x, self.y))
+            screen.blit(self.surf, start_rect)
+
+
 class EndLocation(Circle):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
@@ -59,7 +73,7 @@ class Maze:
         self.Z_LAYERS = Z_LAYERS  # Expose Z_LAYERS as an instance attribute
 
         margin = 50
-        self.start_location = Circle(margin, margin, 0, 25)
+        self.start_location = StartLocation(margin, margin, 0, 25)
         self.end_location = EndLocation(
             WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
         self.generate_maze_obstacles(70, 50, 90)  # Adjust numbers as needed
