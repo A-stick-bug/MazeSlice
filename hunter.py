@@ -15,6 +15,7 @@ class Hunter(Circle):
         super().__init__(x, y, z, radius)
         self.speed = speed
         self.color = color
+        self.initial_location = (x, y, z)
 
     def z_distance_from_player(self, player: Player):
         return abs(self.z - player.z)
@@ -36,6 +37,12 @@ class Hunter(Circle):
                 if random() > self.speed / 10:
                     self.z += 1
             # separate z movement from xy, and cheap non integral speed implementation
+
+    def set_location(self, location):
+        self.x, self.y, self.z = location
+    
+    def reset_location(self):
+        self.set_location(self.initial_location)
 
     def display_hunter(self, screen, player: Player):
         """
