@@ -40,7 +40,7 @@ class Hunter(Circle):
 
     def set_location(self, location):
         self.x, self.y, self.z = location
-    
+
     def reset_location(self):
         self.set_location(self.initial_location)
 
@@ -80,14 +80,7 @@ class Hunter(Circle):
         """
         Checks collision with the player. If collision occurs, the player is xooked. End the game.
         """
-        if self.z != player.z:
-            return False
-
-        player_location = player.get_location()[:2]
-        cur_location = (self.x, self.y)
-        distance_from_player = dist(player_location, cur_location)
-
-        if distance_from_player <= (self.radius + player.radius):
+        if super().collides_with_circle(player):
             from main import DEBUG_MODE
             if DEBUG_MODE:
                 print(
