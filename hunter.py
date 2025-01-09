@@ -31,10 +31,10 @@ class Hunter(Circle):
             self.x += (player.get_x() - self.x) * movement_scalar
             self.y += (player.get_y() - self.y) * movement_scalar
             if self.z > player.z:
-                if random() > self.speed / 10:
+                if random() > self.speed / 5:
                     self.z -= 1
             elif self.z < player.z:
-                if random() > self.speed / 10:
+                if random() > self.speed / 5:
                     self.z += 1
             # separate z movement from xy, and cheap non integral speed implementation
 
