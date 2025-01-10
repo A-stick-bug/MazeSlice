@@ -5,7 +5,7 @@ from random import random
 import pygame
 
 from shapes import Circle
-from Player import Player
+from player import Player
 
 
 class Hunter(Circle):

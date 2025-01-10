@@ -6,7 +6,7 @@ import random
 from random import randint
 import atexit
 
-from Player import Player
+from player import Player
 from item import Item
 from shapes import Circle, Sphere
 from hunter import Hunter
@@ -283,7 +283,7 @@ class GameController:
         if DEBUG_MODE:
             self.run_debug()
 
-        # Handle player movement with collisions
+        # handle player movement with collisions
         self.player.handle_movement(self.maze)
         self.maze.collect_items(self.player)
         self.maze.move_hunters(self.player)
@@ -334,7 +334,7 @@ class GameController:
                     sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    self.__init__()
+                    self.reset_game()
 
     def perform_loser_frame_actions(self):
         """Performs frame actions for when the game is in the `lost` state."""
@@ -353,7 +353,7 @@ class GameController:
                     sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    self.__init__()
+                    self.reset_game()
 
     def run_debug(self):
         """
@@ -406,7 +406,7 @@ class GameController:
     def check_lose_condition(self):
         """Check if the player lost the game."""
         if self.maze.collide_hunters(self.player):
-            print("Lost(?) condition met!")
+            print("Lost condition met!")
             return True
         return False
 

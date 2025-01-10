@@ -1,4 +1,4 @@
-# Player.py
+# player.py
 
 import random
 import pygame
