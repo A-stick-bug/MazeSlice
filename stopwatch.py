@@ -2,8 +2,8 @@ import time
 
 
 class Stopwatch:
-    def __init__(self, start_time=time.time(), precision=2):
-        self.start_time = start_time
+    def __init__(self, precision=2):
+        self.start_time = time.time()
         self.precision = precision
         self.elapsed_time = 0
         self.running = False

@@ -24,7 +24,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('3D Maze Game')
 clock = pygame.time.Clock()
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 
 @atexit.register
@@ -215,12 +215,16 @@ class Maze:
 class GameController:
     def __init__(self):
         # [menu, help_menu, playing, game_over, winner]
+        # game related variables
         self.game_state = "menu"
-        self.maze = Maze("easy")
-        self.player = Player(*self.maze.get_start_location().get_location())
+        self.maze = None
+        self.player = None
         self.game_events = pygame.event.get()
         self.leaderboard = Leaderboard()
-        self.stopwatch = Stopwatch()
+        self.stopwatch = Stopwatch(precision=2)
+
+        # surfaces for display
+        self.main_menu_surf = pygame.image.load("graphics/main_menu.png").convert()
 
     def play(self):
         while True:
@@ -240,21 +244,29 @@ class GameController:
             pygame.display.flip()
             clock.tick(60)  # 60 fps
 
+    def start_game(self, difficulty: str) -> None:
+        self.maze = Maze(difficulty)
+        self.player = Player(*self.maze.get_start_location().get_location())
+        self.game_state = "playing"
+        self.stopwatch.start()
+
     def perform_menu_frame_actions(self):
         """Performs frame actions for when the game is in the `menu` state."""
-        # Placeholder for menu actions
+        # display menu content
         screen.fill((0, 0, 0))
-        self.display_text("Menu - Press Enter to Play",
-                          WIDTH // 2, HEIGHT // 2)
+        screen.blit(self.main_menu_surf, (0, 0))  # display menu
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # start game
-                    self.game_state = "playing"
-                    self.stopwatch.start()
+
+            # check if the player wants to start a game in one of the
+            # available difficulties
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                # todo: handle difficulty selection
+                self.start_game("easy")
 
     def perform_help_menu_frame_actions(self):
         """Performs frame actions for when the game is in the `help_menu` state."""
@@ -303,6 +315,8 @@ class GameController:
         # check if we won/lost the game
         if self.check_win_condition():
             self.game_state = "winner"
+            self.leaderboard.add_score(self.maze.difficulty,
+                                       self.stopwatch.get_elapsed_time())
         if self.check_lose_condition():
             self.game_state = "loser"
 
