@@ -4,7 +4,8 @@ Structure of leaderboard.json:
 {
    "easy": list[float],
    "medium": list[float],
-   "hard": list[float]
+   "hard": list[float],
+   "???": list[float]
 }
 """
 

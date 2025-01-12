@@ -137,7 +137,7 @@ class Maze:
         for _ in range(num_hunters):
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(0, 200)
+            z = randint(1, Z_LAYERS)
             radius = randint(12, 18)
             speed = randint(50, 200) / 100
             hunter = Hunter(x, y, z, radius, speed)
