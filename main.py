@@ -21,7 +21,7 @@ Z_LAYERS = 200  # Currently this is inclusive [0,200]
 # Initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('3D Maze Game')
+pygame.display.set_caption("3D Maze Game")
 clock = pygame.time.Clock()
 
 DEBUG_MODE = False
@@ -42,27 +42,25 @@ class StartLocation(Circle):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
         self.surf = pygame.image.load(
-            "graphics/maze/start_location.png").convert_alpha()
+            "graphics/maze/start_location.png"
+        ).convert_alpha()
 
     # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         if self.z == from_z:
-            start_rect = self.surf.get_rect(
-                center=(self.x, self.y))
+            start_rect = self.surf.get_rect(center=(self.x, self.y))
             screen.blit(self.surf, start_rect)
 
 
 class EndLocation(Circle):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
-        self.surf = pygame.image.load(
-            "graphics/maze/end_location.png").convert_alpha()
+        self.surf = pygame.image.load("graphics/maze/end_location.png").convert_alpha()
 
     # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         if self.z == from_z:
-            end_rect = self.surf.get_rect(
-                center=(self.x, self.y))
+            end_rect = self.surf.get_rect(center=(self.x, self.y))
             screen.blit(self.surf, end_rect)
 
 
@@ -71,8 +69,7 @@ class Maze:
         # start and end locations
         margin = 50
         self.start_location = StartLocation(margin, margin, 0, 25)
-        self.end_location = EndLocation(
-            WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
+        self.end_location = EndLocation(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
 
         # generate objects inside the maze based on difficulty
         self.difficulty = difficulty
@@ -106,27 +103,32 @@ class Maze:
             z = randint(0, Z_LAYERS)
             radius = randint(r_min, r_max)
             obst = Obstacle(x, y, z, radius)
-            if (not obst.collides_with_circle(self.start_location) and
-                    not obst.collides_with_circle(self.end_location)):
+            if not obst.collides_with_circle(
+                self.start_location
+            ) and not obst.collides_with_circle(self.end_location):
                 self.obstacles.append(obst)
-                print(
-                    f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
+                print(f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
 
     def generate_maze_items(self, num_items) -> None:
         """Fill up `self.power_ups` with random items."""
-        item_types = ['speed_boost', 'dash',
-                      'teleport']  # Replaced 'stealth' with 'teleport'
+        item_types = [
+            "speed_boost",
+            "dash",
+            "teleport",
+        ]  # Replaced 'stealth' with 'teleport'
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(0, 190)
+            z = randint(-5, 195)  # -5 so items spawn more often on z = 0
             radius = randint(8, 12)
             item_type = random.choice(item_types)
             item = Item(x, y, z, z + 15, radius, item_type)
             # Ensure items do not overlap with start/end locations or obstacles
-            if (not item.collides_with_circle(self.start_location) and
-                    not item.collides_with_circle(self.end_location) and
-                    all(not obst.collides_with_circle(item) for obst in self.obstacles)):
+            if (
+                not item.collides_with_circle(self.start_location)
+                and not item.collides_with_circle(self.end_location)
+                and all(not obst.collides_with_circle(item) for obst in self.obstacles)
+            ):
                 self.power_ups.append(item)
                 print(f"Generated item: {item_type} at ({x}, {y}, {z})")
 
@@ -135,7 +137,7 @@ class Maze:
         for _ in range(num_hunters):
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(40, 190)
+            z = randint(0, 200)
             radius = randint(12, 18)
             speed = randint(50, 200) / 100
             hunter = Hunter(x, y, z, radius, speed)
@@ -190,8 +192,14 @@ class Maze:
 
         # Check collision with map boundaries
         cx, cy, cz, r = character.get_parameters()
-        if (cx < r or cx > WIDTH - r or cy < r or cy > HEIGHT - r
-                or cz < 0 or cz > Z_LAYERS):
+        if (
+            cx < r
+            or cx > WIDTH - r
+            or cy < r
+            or cy > HEIGHT - r
+            or cz < 0
+            or cz > Z_LAYERS
+        ):
             return False
 
         return True
@@ -211,9 +219,14 @@ class Maze:
                 return False
 
         # Check collision with map boundaries
-        if (x < temp_circle.radius or x > WIDTH - temp_circle.radius or
-                y < temp_circle.radius or y > HEIGHT - temp_circle.radius or
-                z < 0 or z > Z_LAYERS):
+        if (
+            x < temp_circle.radius
+            or x > WIDTH - temp_circle.radius
+            or y < temp_circle.radius
+            or y > HEIGHT - temp_circle.radius
+            or z < 0
+            or z > Z_LAYERS
+        ):
             return False
 
         return True
@@ -296,8 +309,7 @@ class GameController:
         """Performs frame actions for when the game is in the `help_menu` state."""
         # Placeholder for help menu actions
         screen.fill((0, 0, 0))
-        self.display_text("Help Menu - Press M to Return",
-                          WIDTH // 2, HEIGHT // 2)
+        self.display_text("Help Menu - Press M to Return", WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -339,8 +351,9 @@ class GameController:
         # check if we won/lost the game
         if self.check_win_condition():
             self.game_state = "winner"
-            self.leaderboard.add_score(self.maze.difficulty,
-                                       self.stopwatch.get_elapsed_time())
+            self.leaderboard.add_score(
+                self.maze.difficulty, self.stopwatch.get_elapsed_time()
+            )
         if self.check_lose_condition():
             self.game_state = "loser"
 
@@ -348,8 +361,7 @@ class GameController:
         """Performs frame actions for when the game is in the `game_over` state."""
         # Placeholder for game over actions
         screen.fill((0, 0, 0))
-        self.display_text("Game Over - Press R to Restart",
-                          WIDTH // 2, HEIGHT // 2)
+        self.display_text("Game Over - Press R to Restart", WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -363,8 +375,7 @@ class GameController:
         """Performs frame actions for when the game is in the `winner` state."""
         # Placeholder for winner actions
         screen.fill((0, 0, 0))
-        self.display_text("You Won! - Press Q to Quit",
-                          WIDTH // 2, HEIGHT // 2)
+        self.display_text("You Won! - Press Q to Quit", WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -382,8 +393,9 @@ class GameController:
         """Performs frame actions for when the game is in the `lost` state."""
         # Placeholder for loser(?!) actions
         screen.fill((0, 0, 0))
-        self.display_text("You Lost the Game! - Press Q to Quit",
-                          WIDTH // 2, HEIGHT // 2)
+        self.display_text(
+            "You Lost the Game! - Press Q to Quit", WIDTH // 2, HEIGHT // 2
+        )
 
         for event in self.game_events:
             if event.type == pygame.QUIT:
@@ -432,15 +444,19 @@ class GameController:
     def display_active_effects(self):
         """Displays active effects on the screen."""
         if self.player.speed_boost_active:
-            remaining = int(self.player.speed_boost_end_time -
-                            pygame.time.get_ticks() / 1000)
+            remaining = int(
+                self.player.speed_boost_end_time - pygame.time.get_ticks() / 1000
+            )
             self.display_text(
-                f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0))
+                f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0)
+            )
         # Add more active effects here if needed
 
     def display_stopwatch(self):
         """Display the current game's elapsed time"""
-        self.display_text(str(self.stopwatch.get_elapsed_time()), 1030, 30, 30, (255, 255, 255))
+        self.display_text(
+            str(self.stopwatch.get_elapsed_time()), 1030, 30, 30, (255, 255, 255)
+        )
 
     def check_win_condition(self):
         """Check if the player has reached the end location."""
@@ -461,6 +477,6 @@ class GameController:
         self.__init__()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     game = GameController()
     game.play()
