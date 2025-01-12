@@ -68,30 +68,42 @@ class EndLocation(Circle):
 
 class Maze:
     def __init__(self, difficulty):
-        self.difficulty = difficulty
-        self.obstacles: list[Obstacle] = []
-        self.power_ups: list[Item] = []
-        self.hunters: list[Hunter] = []
-        self.Z_LAYERS = Z_LAYERS  # Expose Z_LAYERS as an instance attribute
-
+        # start and end locations
         margin = 50
         self.start_location = StartLocation(margin, margin, 0, 25)
         self.end_location = EndLocation(
             WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
-        self.generate_maze_obstacles(70, 50, 90)  # Adjust numbers as needed
-        self.generate_maze_items(randint(40, 120))  # Generate some items
-        self.generate_maze_hunters(randint(4, 6))  # Generate hunters
+
+        # generate objects inside the maze based on difficulty
+        self.difficulty = difficulty
+        self.obstacles: list[Obstacle] = []
+        self.power_ups: list[Item] = []
+        self.hunters: list[Hunter] = []
+
+        if difficulty == "easy":
+            self.generate_maze_obstacles(90, 50, 90)
+            self.generate_maze_items(75)
+        elif difficulty == "medium":
+            self.generate_maze_obstacles(110, 50, 90)
+            self.generate_maze_items(75)
+            self.generate_maze_hunters(3)
+        elif difficulty == "hard":
+            self.generate_maze_obstacles(120, 50, 90)
+            self.generate_maze_items(75)
+            self.generate_maze_hunters(6)
+        elif difficulty == "???":
+            self.generate_maze_obstacles(0, 50, 90)
+            self.generate_maze_items(100)
+            self.generate_maze_hunters(200)
 
     def generate_maze_obstacles(self, num_obstacles, r_min, r_max) -> None:
         """Fill up `self.obstacles` with random obstacles with radius
         in the range [r_min, r_max], ensures the obstacles do not overlap with
         the start and end locations."""
         while len(self.obstacles) < num_obstacles:
-            x = randint(self.start_location.radius,
-                        WIDTH - self.start_location.radius)
-            y = randint(self.start_location.radius,
-                        HEIGHT - self.start_location.radius)
-            z = randint(0, self.Z_LAYERS)
+            x = randint(0, WIDTH)
+            y = randint(0, HEIGHT)
+            z = randint(0, Z_LAYERS)
             radius = randint(r_min, r_max)
             obst = Obstacle(x, y, z, radius)
             if (not obst.collides_with_circle(self.start_location) and
@@ -110,7 +122,7 @@ class Maze:
             z = randint(0, 190)
             radius = randint(8, 12)
             item_type = random.choice(item_types)
-            item = Item(x, y, z, z + 10, radius, item_type)
+            item = Item(x, y, z, z + 15, radius, item_type)
             # Ensure items do not overlap with start/end locations or obstacles
             if (not item.collides_with_circle(self.start_location) and
                     not item.collides_with_circle(self.end_location) and
@@ -146,6 +158,7 @@ class Maze:
             hunter.display_hunter(screen, player)
 
     def display_start_end(self, from_z) -> None:
+        """Display the start and end locations of the maze"""
         self.start_location.display(screen, from_z, (255, 255, 0))
         self.end_location.display(screen, from_z, (255, 255, 0))
 
@@ -178,7 +191,7 @@ class Maze:
         # Check collision with map boundaries
         cx, cy, cz, r = character.get_parameters()
         if (cx < r or cx > WIDTH - r or cy < r or cy > HEIGHT - r
-                or cz < 0 or cz > self.Z_LAYERS):
+                or cz < 0 or cz > Z_LAYERS):
             return False
 
         return True
@@ -200,7 +213,7 @@ class Maze:
         # Check collision with map boundaries
         if (x < temp_circle.radius or x > WIDTH - temp_circle.radius or
                 y < temp_circle.radius or y > HEIGHT - temp_circle.radius or
-                z < 0 or z > self.Z_LAYERS):
+                z < 0 or z > Z_LAYERS):
             return False
 
         return True
@@ -265,8 +278,19 @@ class GameController:
             # available difficulties
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                # todo: handle difficulty selection
-                self.start_game("easy")
+
+                # handle difficulty selection
+                if 770 <= x <= 1132:
+                    if 204 <= y <= 274:
+                        self.start_game("easy")
+                    elif 295 <= y <= 365:
+                        self.start_game("medium")
+                    elif 387 <= y <= 458:
+                        self.start_game("hard")
+                    elif 479 <= y <= 549:
+                        self.start_game("???")
+
+            # todo: check if player wants to see the help menu or leaderboard
 
     def perform_help_menu_frame_actions(self):
         """Performs frame actions for when the game is in the `help_menu` state."""

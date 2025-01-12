@@ -16,7 +16,7 @@ class Leaderboard:
     def __init__(self):
         """Try loading the leaderboard from `leaderboard.json`, otherwise
         create an empty one."""
-        self.leaderboard = {"easy": [], "medium": [], "hard": []}
+        self.leaderboard = {"easy": [], "medium": [], "hard": [], "???": []}
         try:  # try loading leaderboard
             with open("leaderboard.json", "r") as f:
                 self.leaderboard = json.load(f)
