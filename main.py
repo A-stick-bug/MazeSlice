@@ -55,7 +55,9 @@ class StartLocation(Circle):
 class EndLocation(Circle):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z, radius)
-        self.surf = pygame.image.load("graphics/maze/end_location.png").convert_alpha()
+        self.surf = pygame.image.load(
+            "graphics/maze/end_location.png"
+        ).convert_alpha()
 
     # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
@@ -104,7 +106,7 @@ class Maze:
             radius = randint(r_min, r_max)
             obst = Obstacle(x, y, z, radius)
             if not obst.collides_with_circle(
-                self.start_location
+                    self.start_location
             ) and not obst.collides_with_circle(self.end_location):
                 self.obstacles.append(obst)
                 print(f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
@@ -115,29 +117,30 @@ class Maze:
             "speed_boost",
             "dash",
             "teleport",
-        ]  # Replaced 'stealth' with 'teleport'
+        ]
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(-5, 195)  # -5 so items spawn more often on z = 0
-            radius = randint(8, 12)
+            z = randint(-5, Z_LAYERS - 5)  # -5 so items spawn more often on z = 0
+            radius = 11
             item_type = random.choice(item_types)
             item = Item(x, y, z, z + 15, radius, item_type)
-            # Ensure items do not overlap with start/end locations or obstacles
-            if (
-                not item.collides_with_circle(self.start_location)
-                and not item.collides_with_circle(self.end_location)
-                and all(not obst.collides_with_circle(item) for obst in self.obstacles)
-            ):
-                self.power_ups.append(item)
-                print(f"Generated item: {item_type} at ({x}, {y}, {z})")
+            # ensure items do not overlap with start/end locations or obstacles
+            if item.collides_with_circle(self.start_location):
+                continue
+            elif item.collides_with_circle(self.end_location):
+                continue
+            elif any(obst.collides_with_circle(item) for obst in self.obstacles):
+                continue
+            self.power_ups.append(item)
+            print(f"Generated item: {item_type} at ({x}, {y}, {z})")
 
     def generate_maze_hunters(self, num_hunters) -> None:
         """Generate `num_hunters` hunters on the maze"""
         for _ in range(num_hunters):
-            x = randint(20, WIDTH - 20)
+            x = randint(20, WIDTH - 20)  # random location and speed
             y = randint(20, HEIGHT - 20)
-            z = randint(1, Z_LAYERS)
+            z = randint(21, Z_LAYERS)
             radius = randint(12, 18)
             speed = randint(50, 200) / 100
             hunter = Hunter(x, y, z, radius, speed)
@@ -145,7 +148,8 @@ class Maze:
             self.hunters.append(hunter)
 
     def display_obstacles(self, player_z) -> None:
-        """Displays 3D obstacles as a 2D cross-section using the player’s z-coordinate."""
+        """Displays 3D obstacles as a 2D cross-section using the player’s
+        z-coordinate."""
         for obst in self.obstacles:
             obst.display(screen, player_z)
 
@@ -184,7 +188,7 @@ class Maze:
 
     def is_move_allowed(self, character) -> bool:
         """Check if a given character can be at a certain position in the maze."""
-        # Check collisions with obstacles
+        # check collisions with obstacles
         char_circle = Circle(*character.get_parameters())
         for obst in self.obstacles:
             if obst.collides_with_circle(char_circle):
@@ -192,14 +196,12 @@ class Maze:
 
         # Check collision with map boundaries
         cx, cy, cz, r = character.get_parameters()
-        if (
-            cx < r
-            or cx > WIDTH - r
-            or cy < r
-            or cy > HEIGHT - r
-            or cz < 0
-            or cz > Z_LAYERS
-        ):
+        if (cx < r
+                or cx > WIDTH - r
+                or cy < r
+                or cy > HEIGHT - r
+                or cz < 0
+                or cz > Z_LAYERS):
             return False
 
         return True
@@ -213,20 +215,18 @@ class Maze:
         :param z: Z-coordinate
         :return: True if position is free, False otherwise
         """
-        temp_circle = Circle(x, y, z, 10)  # Assuming player radius is 10
+        temp_circle = Circle(x, y, z, 10)  # assuming player radius is 10
         for obst in self.obstacles:
             if obst.collides_with_circle(temp_circle):
                 return False
 
         # Check collision with map boundaries
-        if (
-            x < temp_circle.radius
-            or x > WIDTH - temp_circle.radius
-            or y < temp_circle.radius
-            or y > HEIGHT - temp_circle.radius
-            or z < 0
-            or z > Z_LAYERS
-        ):
+        if (x < temp_circle.radius
+                or x > WIDTH - temp_circle.radius
+                or y < temp_circle.radius
+                or y > HEIGHT - temp_circle.radius
+                or z < 0
+                or z > Z_LAYERS):
             return False
 
         return True
@@ -251,42 +251,58 @@ class GameController:
 
         # surfaces for display
         self.main_menu_surf = pygame.image.load("graphics/main_menu.png").convert()
+        self.pause_menu_surf = pygame.image.load("graphics/pause_menu.png").convert()
 
-    def play(self):
+    def play(self) -> None:
+        """Main loop of the game"""
         while True:
             self.game_events = pygame.event.get()
+
+            # check if player wants to exit game
+            for event in self.game_events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
             if self.game_state == "menu":
                 self.perform_menu_frame_actions()
             elif self.game_state == "help_menu":
                 self.perform_help_menu_frame_actions()
+            elif self.game_state == "leaderboard":
+                self.perform_leaderboard_frame_actions()
             elif self.game_state == "playing":
                 self.perform_playing_frame_actions()
+            elif self.game_state == "paused":
+                self.perform_paused_frame_actions()
             elif self.game_state == "game_over":
                 self.perform_game_over_frame_actions()
             elif self.game_state == "winner":
                 self.perform_winner_frame_actions()
             elif self.game_state == "loser":
                 self.perform_loser_frame_actions()
+
             pygame.display.flip()
             clock.tick(60)  # 60 fps
 
     def start_game(self, difficulty: str) -> None:
+        """Start a game with the selected difficulty"""
         self.maze = Maze(difficulty)
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_state = "playing"
         self.stopwatch.start()
 
-    def perform_menu_frame_actions(self):
+    def pause_game(self):
+        """Pause the current game"""
+        self.stopwatch.pause()
+        self.game_state = "paused"
+
+    def perform_menu_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `menu` state."""
-        # display menu content
         screen.fill((0, 0, 0))
         screen.blit(self.main_menu_surf, (0, 0))  # display menu
 
+        # check for interactions with menu
         for event in self.game_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
             # check if the player wants to start a game in one of the
             # available difficulties
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -303,33 +319,48 @@ class GameController:
                     elif 479 <= y <= 549:
                         self.start_game("???")
 
-            # todo: check if player wants to see the help menu or leaderboard
+                # handle leaderboard button
+                elif 120 <= x <= 360 and 514 <= y <= 556:
+                    self.game_state = "leaderboard"
 
-    def perform_help_menu_frame_actions(self):
+                # handle help menu button
+                elif 380 <= x <= 618 and 514 <= y <= 556:
+                    self.game_state = "help_menu"
+
+    def perform_help_menu_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `help_menu` state."""
-        # Placeholder for help menu actions
+        # todo: implement this
         screen.fill((0, 0, 0))
         self.display_text("Help Menu - Press M to Return", WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
                     self.game_state = "menu"
 
-    def perform_playing_frame_actions(self):
-        """Performs frame actions for when the game is in the `playing` state."""
-        screen.fill((0, 0, 0))  # Wipe screen
+    def perform_leaderboard_frame_actions(self):
+        """Performs game actions for when the player is viewing the leaderboard"""
+        # todo: implement this
+        screen.fill((0, 0, 0))
+        self.display_text("Leaderboard - Press M to Return", WIDTH // 2, HEIGHT // 2)
 
-        for event in self.game_events:  # Check exit game
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+        for event in self.game_events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_m:
+                    self.game_state = "menu"
+
+    def perform_playing_frame_actions(self) -> None:
+        """Performs frame actions for when the player is in a game"""
+        screen.fill((0, 0, 0))
+        print("cleared")
+
+        for event in self.game_events:
+            # check if player wants to exit game
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_h:
                     self.game_state = "help_menu"
+                if event.key == pygame.K_p:
+                    self.pause_game()
 
         if DEBUG_MODE:
             self.run_debug()
@@ -357,16 +388,33 @@ class GameController:
         if self.check_lose_condition():
             self.game_state = "loser"
 
+    def perform_paused_frame_actions(self):
+        """Performs frame actions for when the game is paused"""
+        print("paused")
+        screen.blit(self.pause_menu_surf, (0, 0))  # display menu
+
+        # check if any of the buttons are pressed
+        for event in self.game_events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                if 416 <= x <= 735:
+                    if 177 <= y <= 248:
+                        print()
+                        ...  # resume
+                    elif 258 <= y <= 331:
+                        ...  # help menu
+                    elif 341 <= y <= 414:
+                        ...  # restart
+                    elif 423 <= y <= 496:
+                        ...  # quit to main menu
+
     def perform_game_over_frame_actions(self):
-        """Performs frame actions for when the game is in the `game_over` state."""
+        """Performs frame actions for when the player just lost a game."""
         # Placeholder for game over actions
         screen.fill((0, 0, 0))
         self.display_text("Game Over - Press R to Restart", WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     self.reset_game()
@@ -378,9 +426,6 @@ class GameController:
         self.display_text("You Won! - Press Q to Quit", WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     pygame.quit()
@@ -398,9 +443,6 @@ class GameController:
         )
 
         for event in self.game_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     pygame.quit()

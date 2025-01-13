@@ -64,14 +64,14 @@ class Sphere(Circle):
             return 0
         return (radius_3d ** 2 - z_distance ** 2) ** 0.5
 
-    def display(self, screen, from_z) -> None:
+    def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         """Display the sphere as a projection onto a cross-section, size is determined by the distance in the Z dimension."""
         z_distance = abs(self.z - from_z)
         circle_radius = self.get_cross_section_radius(self.radius, z_distance)
         if circle_radius > 0:  # visible obstacle
             pygame.draw.circle(
                 surface=screen,
-                color=(0, 0, 255),  # Blue color for obstacles
+                color=color,
                 center=(self.x, self.y),
                 radius=int(circle_radius),
             )

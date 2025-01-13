@@ -3,6 +3,8 @@ import time
 
 class Stopwatch:
     def __init__(self, precision=2):
+        """Create a stopwatch with specified precision.
+        Default state is paused"""
         self.start_time = time.time()
         self.precision = precision
         self.elapsed_time = 0
