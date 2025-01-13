@@ -291,10 +291,15 @@ class GameController:
         self.game_state = "playing"
         self.stopwatch.start()
 
-    def pause_game(self):
+    def pause_game(self) -> None:
         """Pause the current game"""
         self.stopwatch.pause()
         self.game_state = "paused"
+
+    def resume_game(self) -> None:
+        """Resume the currently paused game"""
+        self.stopwatch.start()
+        self.game_state = "playing"
 
     def perform_menu_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `menu` state."""
@@ -352,7 +357,6 @@ class GameController:
     def perform_playing_frame_actions(self) -> None:
         """Performs frame actions for when the player is in a game"""
         screen.fill((0, 0, 0))
-        print("cleared")
 
         for event in self.game_events:
             # check if player wants to exit game
@@ -398,15 +402,14 @@ class GameController:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
                 if 416 <= x <= 735:
-                    if 177 <= y <= 248:
-                        print()
-                        ...  # resume
+                    if 177 <= y <= 248:  # resume
+                        self.resume_game()
                     elif 258 <= y <= 331:
                         ...  # help menu
                     elif 341 <= y <= 414:
                         ...  # restart
-                    elif 423 <= y <= 496:
-                        ...  # quit to main menu
+                    elif 423 <= y <= 496:  # quit to menu
+                        self.reset_game()
 
     def perform_game_over_frame_actions(self):
         """Performs frame actions for when the player just lost a game."""
