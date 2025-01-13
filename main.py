@@ -345,14 +345,17 @@ class GameController:
 
     def perform_leaderboard_frame_actions(self):
         """Performs game actions for when the player is viewing the leaderboard"""
-        # todo: implement this
+        # display leaderboard
         screen.fill((0, 0, 0))
-        self.display_text("Leaderboard - Press M to Return", WIDTH // 2, HEIGHT // 2)
+        self.leaderboard.display(screen)
 
+        # check if the player wants to exit leaderboard
         for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_m:
-                    self.game_state = "menu"
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                if 1124 <= x <= 1180 and 19 <= y <= 69:
+                    self.game_state = "menu"  # return to menu
+                    break
 
     def perform_playing_frame_actions(self) -> None:
         """Performs frame actions for when the player is in a game"""
@@ -380,8 +383,8 @@ class GameController:
         self.maze.display_hunters(self.player)
         self.maze.display_start_end(self.player.get_z())
         self.player.display_player()
+        self.stopwatch.display(screen)
         self.display_active_effects()
-        self.display_stopwatch()
 
         # check if we won/lost the game
         if self.check_win_condition():
@@ -495,13 +498,6 @@ class GameController:
             self.display_text(
                 f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0)
             )
-        # Add more active effects here if needed
-
-    def display_stopwatch(self):
-        """Display the current game's elapsed time"""
-        self.display_text(
-            str(self.stopwatch.get_elapsed_time()), 1030, 30, 30, (255, 255, 255)
-        )
 
     def check_win_condition(self):
         """Check if the player has reached the end location."""

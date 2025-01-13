@@ -12,11 +12,14 @@ Structure of leaderboard.json:
 import json
 from bisect import insort
 
+import pygame
+
 
 class Leaderboard:
     def __init__(self):
         """Try loading the leaderboard from `leaderboard.json`, otherwise
         create an empty one."""
+        self.bg_surf = pygame.image.load("graphics/leaderboard_bg.png").convert()
         self.leaderboard = {"easy": [], "medium": [], "hard": [], "???": []}
         try:  # try loading leaderboard
             with open("leaderboard.json", "r") as f:
@@ -40,6 +43,45 @@ class Leaderboard:
     def get_scores(self, difficulty: str) -> list[float]:
         """Return the top 10 scores in the given difficulty level"""
         return self.leaderboard[difficulty]
+
+    def display(self, screen) -> None:
+        """Displays the leaderboard on the given screen."""
+        # colors
+        BLACK = (0, 0, 0)
+        WHITE = (255, 255, 255)
+        GRAY = (150, 150, 150)
+        CYAN = "#4FC3F7"
+
+        # clear screen and draw background for LB
+        screen.fill(BLACK)
+        screen.blit(self.bg_surf, (0, 0))
+
+        # draw title
+        font = pygame.font.Font(None, 60)  # title font
+        title_surface = font.render("Leaderboard", True, WHITE)
+        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 35))
+
+        entry_font = pygame.font.Font(None, 40)  # font for rankings
+        column_titles = self.leaderboard.keys()
+        column_spacing = screen.get_width() // len(column_titles)
+
+        # draw columns
+        for i, column_title in enumerate(column_titles):
+            x_pos = i * column_spacing + column_spacing // 2
+
+            # column subtitle
+            title_surface = entry_font.render(column_title.capitalize(), True, CYAN)
+            screen.blit(title_surface, (x_pos - title_surface.get_width() // 2, 120))
+
+            if self.leaderboard[column_title]:
+                # scores
+                for j, score in enumerate(self.leaderboard[column_title]):
+                    score_surface = entry_font.render(f"{j + 1}. {score:.2f}", True, WHITE)
+                    screen.blit(score_surface, (x_pos - score_surface.get_width() // 2, 170 + j * 40))
+            else:
+                # no scores
+                no_scores_surface = entry_font.render("No Scores", True, GRAY)
+                screen.blit(no_scores_surface, (x_pos - no_scores_surface.get_width() // 2, 170))
 
     def __str__(self):
         """Convert the leaderboard to a string as a python dictionary"""

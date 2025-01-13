@@ -33,6 +33,14 @@ class Stopwatch:
         self.start_time = time.time()
         return round(self.elapsed_time, self.precision)
 
+    def display(self, screen):
+        """Display the current game's elapsed time on the given screen"""
+        cur_time = self.get_elapsed_time()
+        # todo: implement this
+        # self.display_text(
+        #     , 1030, 30, 30, (255, 255, 255)
+        # )
+
     def reset(self):
         """Reset the stopwatch's time"""
         self.__init__()
