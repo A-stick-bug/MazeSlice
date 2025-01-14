@@ -440,6 +440,8 @@ class GameController:
         for event in self.game_events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
+                if DEBUG_MODE:
+                    print(x, y)
                 if 416 <= x <= 735:
                     if 177 <= y <= 248:  # resume
                         self.resume_game()
@@ -450,6 +452,8 @@ class GameController:
                         self.restart_game()
                     elif 423 <= y <= 496:  # quit to menu
                         self.reset_game()
+                if not (390 <= x <= 760 and 105 <= y <= 524):
+                    self.resume_game()
 
     def perform_game_over_frame_actions(self):
         """Performs frame actions for when the player just lost a game."""
