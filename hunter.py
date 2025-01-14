@@ -78,7 +78,7 @@ class Hunter(Circle):
 
     def check_collision(self, player: Player) -> bool:
         """
-        Checks collision with the player. If collision occurs, the player is xooked. End the game.
+        Checks collision with the player. If collision occurs, the player lost. End the game.
         """
         if super().collides_with_circle(player):
             from main import DEBUG_MODE
