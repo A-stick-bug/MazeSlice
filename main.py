@@ -231,11 +231,19 @@ class Maze:
 
         return True
 
-    def get_start_location(self):
+    def get_start_location(self) -> StartLocation:
         return self.start_location
 
-    def get_end_location(self):
+    def get_end_location(self) -> EndLocation:
         return self.end_location
+
+    def get_power_ups(self) -> list[Item]:
+        """Return a list of all power ups in the maze"""
+        return self.power_ups
+
+    def get_hunters(self) -> list[Hunter]:
+        """Return a list of all hunters in the maze"""
+        return self.hunters
 
 
 class GameController:
@@ -378,10 +386,10 @@ class GameController:
         self.maze.move_hunters(self.player)
 
         # display objects and effects
+        self.maze.display_start_end(self.player.get_z())
         self.maze.display_obstacles(self.player.get_z())
         self.maze.display_items(self.player.get_z())
         self.maze.display_hunters(self.player)
-        self.maze.display_start_end(self.player.get_z())
         self.player.display_player()
         self.stopwatch.display(screen)
         self.display_active_effects()
@@ -408,8 +416,8 @@ class GameController:
                         self.resume_game()
                     elif 258 <= y <= 331:
                         ...  # help menu
-                    elif 341 <= y <= 414:
-                        ...  # restart
+                    elif 341 <= y <= 414:  # restart level
+                        self.restart_game()
                     elif 423 <= y <= 496:  # quit to menu
                         self.reset_game()
 
@@ -512,7 +520,18 @@ class GameController:
             return True
         return False
 
-    def reset_game(self):
+    def restart_game(self) -> None:
+        """Restart the current level"""
+        self.player = Player(*self.maze.get_start_location().get_location())
+        self.game_state = "playing"
+        self.stopwatch.reset()
+        self.stopwatch.start()
+        for item in self.maze.get_power_ups():
+            item.set_collected(False)
+        for hunter in self.maze.get_hunters():
+            hunter.reset_location()
+
+    def reset_game(self) -> None:
         """Reset the game to initial state."""
         self.__init__()
 

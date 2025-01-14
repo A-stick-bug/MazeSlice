@@ -57,11 +57,11 @@ class Leaderboard:
         screen.blit(self.bg_surf, (0, 0))
 
         # draw title
-        font = pygame.font.Font(None, 60)  # title font
+        font = pygame.font.SysFont("comicsansms", 35)  # font for title
         title_surface = font.render("Leaderboard", True, WHITE)
-        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 35))
+        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 30))
 
-        entry_font = pygame.font.Font(None, 40)  # font for rankings
+        entry_font = pygame.font.SysFont("comicsansms", 25)  # font for rankings
         column_titles = self.leaderboard.keys()
         column_spacing = screen.get_width() // len(column_titles)
 
@@ -71,17 +71,17 @@ class Leaderboard:
 
             # column subtitle
             title_surface = entry_font.render(column_title.capitalize(), True, CYAN)
-            screen.blit(title_surface, (x_pos - title_surface.get_width() // 2, 120))
+            screen.blit(title_surface, (x_pos - title_surface.get_width() // 2, 110))
 
             if self.leaderboard[column_title]:
                 # scores
                 for j, score in enumerate(self.leaderboard[column_title]):
                     score_surface = entry_font.render(f"{j + 1}. {score:.2f}", True, WHITE)
-                    screen.blit(score_surface, (x_pos - score_surface.get_width() // 2, 170 + j * 40))
+                    screen.blit(score_surface, (x_pos - score_surface.get_width() // 2, 155 + j * 40))
             else:
                 # no scores
                 no_scores_surface = entry_font.render("No Scores", True, GRAY)
-                screen.blit(no_scores_surface, (x_pos - no_scores_surface.get_width() // 2, 170))
+                screen.blit(no_scores_surface, (x_pos - no_scores_surface.get_width() // 2, 155))
 
     def __str__(self):
         """Convert the leaderboard to a string as a python dictionary"""

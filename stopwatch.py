@@ -39,9 +39,9 @@ class Stopwatch:
         """Display the current game's elapsed time on the given screen"""
         cur_time = self.get_elapsed_time()
 
-        # draw the current time
-        font = pygame.font.SysFont(None, 36)
-        text_surface = font.render(str(cur_time), True, (255, 255, 255))
+        # draw the current time to 2 decimal places
+        font = pygame.font.SysFont("comicsansms", 25)
+        text_surface = font.render(f"{cur_time:.2f}", True, (255, 255, 255))
         text_rect = text_surface.get_rect(topleft=(980, 20))
         screen.blit(text_surface, text_rect)
 
