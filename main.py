@@ -33,33 +33,65 @@ def cleanup_pygame():
     pygame.quit()
 
 
-class Obstacle(Sphere):
-    def __init__(self, x, y, z, radius):
-        super().__init__(x, y, z, radius)
-
-
 class StartLocation(Circle):
+    """Represents a starting location as a circular object.
+
+    Attributes:
+        surf: A pygame surface for the spawn point image
+        angle: The current angle of rotation for the spawn point image
+    """
+
     def __init__(self, x, y, z, radius):
+        """Initializes the start location with its position and radius.
+
+        Args:
+            x: The x-coordinate of the spawn point
+            y: The y-coordinate of the spawn point
+            z: The z-coordinate for depth or layering
+            radius: The radius of the circle representing the start location
+        """
         super().__init__(x, y, z, radius)
         self.surf = pygame.image.load(
             "graphics/maze/start_location.png"
         ).convert_alpha()
         self.angle = 0
 
-    # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
-        if self.z == from_z:
+        """Displays the starting location on the screen
 
+        Args:
+            screen: The pygame screen where the start location should be drawn
+            from_z: The z-coordinate to check if the start location should be displayed
+            color: Color of spawn point. Defaults to blue (0, 0, 255)
+        """
+        if self.z == from_z:
             rotated_surf = pygame.transform.rotate(self.surf, self.angle)
             start_rect = rotated_surf.get_rect(center=(self.x, self.y))
             screen.blit(rotated_surf, start_rect)
 
-    def rotate(self):
+    def rotate(self) -> None:
+        """
+        Rotates the spawn point image by a small increment
+        """
         self.angle += 0.2
 
 
 class EndLocation(Circle):
+    """Represents an end location as a circular object.
+
+    Attributes:
+        surf: A pygame surface for the end location image.
+    """
+
     def __init__(self, x, y, z, radius):
+        """Initializes the end location with its position and radius.
+
+        Args:
+            x: X-coordinate of the end location.
+            y: Y-coordinate of the end location.
+            z: Z-coordinate of the end location.
+            radius: Radius of the end location.
+        """
         super().__init__(x, y, z, radius)
         self.surf = pygame.image.load(
             "graphics/maze/end_location.png"
@@ -67,14 +99,33 @@ class EndLocation(Circle):
 
     # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
+        """Displays the end location on the screen.
+
+        Args:
+            screen: The pygame screen to draw the end location on.
+            from_z: The z-coordinate to check if the end location should be displayed
+            color: Color of end location. Defaults to blue (0, 0, 255)
+        """
         if self.z == from_z:
             end_rect = self.surf.get_rect(center=(self.x, self.y))
             screen.blit(self.surf, end_rect)
 
 
 class Maze:
-    def __init__(self, difficulty):
-        # start and end locations
+    def __init__(self, difficulty: str):
+        """A maze with a specific difficulty.
+
+        Args:
+            difficulty: The difficulty of the maze
+
+        Attributes:
+            start_location: The spawn point of the player
+            end_location: The end point of the maze
+            obstacles: A list of obstacles in the maze
+            power_ups: A list of power-up items in the maze
+            hunters: A list of hunters in the maze
+            difficulty: The difficulty of the maze
+        """
         margin = 50
         self.start_location = StartLocation(margin, margin, 0, 25)
         self.end_location = EndLocation(
@@ -82,7 +133,7 @@ class Maze:
 
         # generate objects inside the maze based on difficulty
         self.difficulty = difficulty
-        self.obstacles: list[Obstacle] = []
+        self.obstacles: list[Sphere] = []
         self.power_ups: list[Item] = []
         self.hunters: list[Hunter] = []
 
@@ -102,16 +153,22 @@ class Maze:
             self.generate_maze_items(100)
             self.generate_maze_hunters(200)
 
-    def generate_maze_obstacles(self, num_obstacles, r_min, r_max) -> None:
-        """Fill up `self.obstacles` with random obstacles with radius
-        in the range [r_min, r_max], ensures the obstacles do not overlap with
-        the start and end locations."""
+    def generate_maze_obstacles(self, num_obstacles: int, r_min: int,
+                                r_max: int) -> None:
+        """
+        Fill up `self.obstacles` with randomized obstacles.
+
+        Args:
+            num_obstacles: number of obstacles to generate
+            r_min: minimum radius of obstacles
+            r_max: maximum radius of obstacles
+        """
         while len(self.obstacles) < num_obstacles:
             x = randint(0, WIDTH)
             y = randint(0, HEIGHT)
             z = randint(0, Z_LAYERS)
             radius = randint(r_min, r_max)
-            obst = Obstacle(x, y, z, radius)
+            obst = Sphere(x, y, z, radius)
             if not obst.collides_with_circle(
                     self.start_location
             ) and not obst.collides_with_circle(self.end_location):
@@ -120,8 +177,12 @@ class Maze:
                     print(
                         f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
 
-    def generate_maze_items(self, num_items) -> None:
-        """Fill up `self.power_ups` with random items."""
+    def generate_maze_items(self, num_items: int) -> None:
+        """Fill up `self.power_ups` with randomized items.
+
+        Args:
+            num_items: number of items to generate
+        """
         item_types = [
             "speed_boost",
             "dash",
@@ -130,11 +191,13 @@ class Maze:
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
+
             # -5 so items spawn more often on z = 0
             z = randint(-5, Z_LAYERS - 5)
             radius = 11
             item_type = random.choice(item_types)
             item = Item(x, y, z, z + 15, radius, item_type)
+
             # ensure items do not overlap with start/end locations or obstacles
             if item.collides_with_circle(self.start_location):
                 continue
@@ -146,8 +209,12 @@ class Maze:
             if DEBUG_MODE:
                 print(f"Generated item: {item_type} at ({x}, {y}, {z})")
 
-    def generate_maze_hunters(self, num_hunters) -> None:
-        """Generate `num_hunters` hunters on the maze"""
+    def generate_maze_hunters(self, num_hunters: int) -> None:
+        """Generate randomized hunters on the maze.
+
+        Args:
+            num_hunters: number of hunters to generate
+        """
         for _ in range(num_hunters):
             x = randint(20, WIDTH - 20)  # random location and speed
             y = randint(20, HEIGHT - 20)
@@ -159,55 +226,94 @@ class Maze:
                 print(f"Generated hunter at ({x}, {y}, {z})")
             self.hunters.append(hunter)
 
-    def display_obstacles(self, player_z) -> None:
-        """Displays 3D obstacles as a 2D cross-section using the player’s
-        z-coordinate."""
+    def display_obstacles(self, player_z: int) -> None:
+        """Displays 3D obstacles as a 2D cross-section.
+
+        Args:
+            player_z: The z-coordinate of the player to determine which
+                      obstacles are visible
+        """
         for obst in self.obstacles:
             obst.display(screen, player_z)
 
-    def display_items(self, player_z) -> None:
-        """Displays items in the maze based on player's Z-layer."""
+    def display_items(self, player_z: int) -> None:
+        """Displays items in the maze based on player's Z-layer.
+
+        Args:
+            player_z: The z-coordinate of the player to determine which
+                      items are visible
+        """
         for item in self.power_ups:
             item.display(screen, player_z)
 
-    def display_hunters(self, player) -> None:
-        """Displays hunters in the maze based on the player's Z-layer"""
+    def display_hunters(self, player: Player) -> None:
+        """Displays hunters in the maze based on the player's Z-layer
+
+        Args:
+            player: Player object used to determine the visibility of hunters
+        """
         for hunter in self.hunters:
             hunter.display_hunter(screen, player)
 
-    def display_start_end(self, from_z) -> None:
-        """Display the start and end locations of the maze"""
+    def display_start_end(self, from_z: int) -> None:
+        """Display the start and end locations of the maze
+
+        Args:
+            from_z: The z-coordinate to determine which locations are visible
+        """
         self.start_location.display(screen, from_z, (255, 255, 0))
         self.end_location.display(screen, from_z, (255, 255, 0))
 
-    def collect_items(self, player) -> None:
-        """Checks and collects items if the player collides with them."""
+    def collect_items(self, player: Player) -> None:
+        """Collect items that the player collides with.
+
+        Args:
+            player: The player object to check collisions and apply item effects
+        """
         for item in self.power_ups:
             if item.check_collision(player):
                 item.apply_effect(player, maze=self)  # Pass maze instance
 
-    def move_hunters(self, player) -> None:
-        """Update the position of the hunters based on the player's position."""
+    def move_hunters(self, player: Player) -> None:
+        """Update the position of the hunters based on the player's position.
+
+        Args:
+            player: The player object used to update hunter movements
+        """
         for hunter in self.hunters:
             hunter.handle_movement(player)
 
-    def collide_hunters(self, player) -> bool:
-        """Check if the player collides with any of the hunters."""
+    def collide_hunters(self, player: Player) -> bool:
+        """Check if the player collides with any of the hunters.
+
+        Args:
+            player: The player object to check for collisions with hunters
+
+        Returns:
+            True if the player collides with any hunter, otherwise False
+        """
         for hunter in self.hunters:
             if hunter.check_collision(player):
                 return True
         return False
 
-    def is_move_allowed(self, character) -> bool:
-        """Check if a given character can be at a certain position in the maze."""
+    def is_move_allowed(self, player: Player) -> bool:
+        """Check if a player can be at a certain position in the maze.
+
+        Args:
+            player: The player object to check for collisions with obstacles
+
+        Returns:
+            True if the move is allowed, otherwise False
+        """
         # check collisions with obstacles
-        char_circle = Circle(*character.get_parameters())
+        char_circle = Circle(*player.get_parameters())
         for obst in self.obstacles:
             if obst.collides_with_circle(char_circle):
                 return False
 
         # Check collision with map boundaries
-        cx, cy, cz, r = character.get_parameters()
+        cx, cy, cz, r = player.get_parameters()
         if (cx < r
                 or cx > WIDTH - r
                 or cy < r
@@ -218,50 +324,56 @@ class Maze:
 
         return True
 
-    def is_move_allowed_pos(self, x, y, z) -> bool:
-        """
-        Checks if a specific (x, y, z) position is free (no obstacles).
-
-        :param x: X-coordinate
-        :param y: Y-coordinate
-        :param z: Z-coordinate
-        :return: True if position is free, False otherwise
-        """
-        temp_circle = Circle(x, y, z, 10)  # assuming player radius is 10
-        for obst in self.obstacles:
-            if obst.collides_with_circle(temp_circle):
-                return False
-
-        # Check collision with map boundaries
-        if (x < temp_circle.radius
-                or x > WIDTH - temp_circle.radius
-                or y < temp_circle.radius
-                or y > HEIGHT - temp_circle.radius
-                or z < 0
-                or z > Z_LAYERS):
-            return False
-
-        return True
-
     def get_start_location(self) -> StartLocation:
+        """Returns the start location of the maze
+
+        Returns:
+            StartLocation: The start location of the maze
+        """
         return self.start_location
 
     def get_end_location(self) -> EndLocation:
+        """Returns the end location of the maze
+
+        Returns:
+            EndLocation: The end location of the maze
+        """
         return self.end_location
 
     def get_power_ups(self) -> list[Item]:
-        """Return a list of all power ups in the maze"""
+        """Return a list of all power ups in the maze
+
+        Returns:
+            list[Item]: A list of power up items in the maze
+        """
         return self.power_ups
 
     def get_hunters(self) -> list[Hunter]:
-        """Return a list of all hunters in the maze"""
+        """Return a list of all hunters in the maze
+
+        Returns:
+            list[Hunter]: A list of hunter objects in the maze
+        """
         return self.hunters
 
 
 class GameController:
+
     def __init__(self):
-        # [menu, help_menu, playing, game_over, winner]
-        # game related variables
+        """
+        Initializes the GameController to start a game.
+
+        Attributes:
+            temp_state: Temporary variable to track previous state
+            game_state: Current state of the game
+            maze: The current maze instance in the game.
+            player: The current player instance in the game.
+            game_events: Events in the current frame.
+            leaderboard: Current leaderboard
+            stopwatch: Stopwatch for the current game
+            main_menu_surf: pygame surface for the main menu display
+            pause_menu_surf: pygame surface for the pause menu display
+        """
         self.temp_state = "menu"  # temporary variable for exiting help menu
         self.game_state = "menu"
         self.maze = None
@@ -325,8 +437,7 @@ class GameController:
         self.game_state = "playing"
 
     def display_playing_objects(self) -> None:
-        """Helper function.
-        Display all objects on the map for when the player is in a game"""
+        """Display all objects on the map for when the player is in a game"""
         if self.game_state != "paused":
             self.maze.start_location.rotate()
         self.maze.display_start_end(self.player.get_z())
@@ -335,7 +446,6 @@ class GameController:
         self.maze.display_hunters(self.player)
         self.player.display_player()
         self.stopwatch.display(screen)
-        self.display_active_effects()
 
     def perform_menu_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `menu` state."""
@@ -382,7 +492,7 @@ class GameController:
                 if event.key == pygame.K_m:
                     self.game_state = self.temp_state
 
-    def perform_leaderboard_frame_actions(self):
+    def perform_leaderboard_frame_actions(self) -> None:
         """Performs game actions for when the player is viewing the leaderboard"""
         # display leaderboard
         screen.fill((0, 0, 0))
@@ -415,6 +525,7 @@ class GameController:
 
         # display objects and effects
         self.display_playing_objects()
+        self.display_active_effects()
 
         # check if we won/lost the game
         if self.check_win_condition():
@@ -425,7 +536,7 @@ class GameController:
         if self.check_lose_condition():
             self.game_state = "loser"
 
-    def perform_paused_frame_actions(self):
+    def perform_paused_frame_actions(self) -> None:
         """Performs frame actions for when the game is paused"""
 
         # display the map as a background
@@ -458,9 +569,8 @@ class GameController:
                 if not (390 <= x <= 760 and 105 <= y <= 524):
                     self.resume_game()
 
-    def perform_game_over_frame_actions(self):
+    def perform_game_over_frame_actions(self) -> None:
         """Performs frame actions for when the player just lost a game."""
-        # Placeholder for game over actions
         screen.fill((0, 0, 0))
         self.display_text("Game Over - Press R to Restart",
                           WIDTH // 2, HEIGHT // 2)
@@ -470,32 +580,32 @@ class GameController:
                 if event.key == pygame.K_r:
                     self.reset_game()
 
-    def perform_winner_frame_actions(self):
+    def perform_winner_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `winner` state."""
-        # Placeholder for winner actions
         screen.fill((0, 0, 0))
-        self.display_text("You Won! - Press to return to Main Menu",
+        self.display_text("You Won! - Click to return to Main Menu",
                           WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 self.reset_game()
 
-    def perform_loser_frame_actions(self):
+    def perform_loser_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `lost` state."""
-        # Placeholder for loser(?!) actions
         screen.fill((0, 0, 0))
         self.display_text(
-            "You Lost the Game! - Press to return to Main Menu", WIDTH // 2, HEIGHT // 2
+            "You Lost the Game! - Click to return to Main Menu", WIDTH // 2, HEIGHT // 2
         )
 
         for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 self.reset_game()
 
-    def run_debug(self):
-        """
-        Create coordinate grid for easy drawing and check frame rate.
+    def run_debug(self) -> None:
+        """Run debug features
+
+        1. Create coordinate grid for easy drawing
+        2. Allows for right-clicking to get mouse location
         """
         # 1. Draw grid
         grid_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -525,7 +635,7 @@ class GameController:
         text_rect = text_surface.get_rect(center=(x, y))
         screen.blit(text_surface, text_rect)
 
-    def display_active_effects(self):
+    def display_active_effects(self) -> None:
         """Displays active effects on the screen."""
         if self.player.speed_boost_active:
             remaining = int(
@@ -535,15 +645,24 @@ class GameController:
                 f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0)
             )
 
-    def check_win_condition(self):
-        """Check if the player has reached the end location."""
+    def check_win_condition(self) -> bool:
+        """Check if the player reached the end
+
+        Returns:
+            True if the player reached the end, otherwise False
+        """
         if self.player.collides_with_circle(self.maze.get_end_location()):
             print("Win condition met!")
             return True
         return False
 
-    def check_lose_condition(self):
-        """Check if the player lost the game."""
+    def check_lose_condition(self) -> bool:
+        """Check if the player lost the game.
+
+        Returns:
+            True if the player lost the game by touching a hunter,
+            otherwise False
+        """
         if self.maze.collide_hunters(self.player):
             print("Lost condition met!")
             return True
@@ -561,7 +680,7 @@ class GameController:
             hunter.reset_location()
 
     def reset_game(self) -> None:
-        """Reset the game to initial state."""
+        """Reset the game to initial `menu` state"""
         self.__init__()
 
 

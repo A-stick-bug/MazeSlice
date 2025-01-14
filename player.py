@@ -174,7 +174,7 @@ class Player(Circle):
             temp_y = random.randint(self.radius, HEIGHT - self.radius)
             temp_z = self.z  # Teleport to the same z_level
 
-            if maze.is_move_allowed_pos(temp_x, temp_y, temp_z):
+            if maze.is_move_allowed(Player(temp_x, temp_y, temp_z)):
                 has_found = True
                 self.set_position(temp_x, temp_y, temp_z)
                 print(f"Player teleported to ({temp_x}, {temp_y}, {temp_z})")
