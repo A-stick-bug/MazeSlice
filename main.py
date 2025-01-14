@@ -44,12 +44,16 @@ class StartLocation(Circle):
         self.surf = pygame.image.load(
             "graphics/maze/start_location.png"
         ).convert_alpha()
+        self.angle = 0
 
     # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         if self.z == from_z:
-            start_rect = self.surf.get_rect(center=(self.x, self.y))
-            screen.blit(self.surf, start_rect)
+            
+            rotated_surf = pygame.transform.rotate(self.surf, self.angle)
+            start_rect = rotated_surf.get_rect(center=(self.x, self.y))
+            screen.blit(rotated_surf, start_rect)
+            self.angle += 0.2
 
 
 class EndLocation(Circle):
