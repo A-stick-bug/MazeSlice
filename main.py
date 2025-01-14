@@ -49,11 +49,13 @@ class StartLocation(Circle):
     # @override
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
         if self.z == from_z:
-            
+
             rotated_surf = pygame.transform.rotate(self.surf, self.angle)
             start_rect = rotated_surf.get_rect(center=(self.x, self.y))
             screen.blit(rotated_surf, start_rect)
-            self.angle += 0.2
+
+    def rotate(self):
+        self.angle += 0.2
 
 
 class EndLocation(Circle):
@@ -75,7 +77,8 @@ class Maze:
         # start and end locations
         margin = 50
         self.start_location = StartLocation(margin, margin, 0, 25)
-        self.end_location = EndLocation(WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
+        self.end_location = EndLocation(
+            WIDTH - margin, HEIGHT - margin, Z_LAYERS, 25)
 
         # generate objects inside the maze based on difficulty
         self.difficulty = difficulty
@@ -113,7 +116,8 @@ class Maze:
                     self.start_location
             ) and not obst.collides_with_circle(self.end_location):
                 self.obstacles.append(obst)
-                print(f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
+                print(
+                    f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
 
     def generate_maze_items(self, num_items) -> None:
         """Fill up `self.power_ups` with random items."""
@@ -125,7 +129,8 @@ class Maze:
         while len(self.power_ups) < num_items:
             x = randint(20, WIDTH - 20)
             y = randint(20, HEIGHT - 20)
-            z = randint(-5, Z_LAYERS - 5)  # -5 so items spawn more often on z = 0
+            # -5 so items spawn more often on z = 0
+            z = randint(-5, Z_LAYERS - 5)
             radius = 11
             item_type = random.choice(item_types)
             item = Item(x, y, z, z + 15, radius, item_type)
@@ -263,8 +268,10 @@ class GameController:
         self.stopwatch = Stopwatch(precision=2)
 
         # surfaces for display
-        self.main_menu_surf = pygame.image.load("graphics/main_menu.png").convert_alpha()
-        self.pause_menu_surf = pygame.image.load("graphics/pause_menu.png").convert_alpha()
+        self.main_menu_surf = pygame.image.load(
+            "graphics/main_menu.png").convert_alpha()
+        self.pause_menu_surf = pygame.image.load(
+            "graphics/pause_menu.png").convert_alpha()
 
     def play(self) -> None:
         """Main loop of the game"""
@@ -317,6 +324,8 @@ class GameController:
     def display_playing_objects(self) -> None:
         """Helper function.
         Display all objects on the map for when the player is in a game"""
+        if self.game_state != "paused":
+            self.maze.start_location.rotate()
         self.maze.display_start_end(self.player.get_z())
         self.maze.display_obstacles(self.player.get_z())
         self.maze.display_items(self.player.get_z())
@@ -361,7 +370,8 @@ class GameController:
         """Performs frame actions for when the game is in the `help_menu` state."""
         # todo: implement this
         screen.fill((0, 0, 0))
-        self.display_text("Help Menu - Press M to Return", WIDTH // 2, HEIGHT // 2)
+        self.display_text("Help Menu - Press M to Return",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
@@ -421,7 +431,8 @@ class GameController:
         # display pause menu on top of a shaded background
         overlay_surf = pygame.Surface((screen.get_width(), screen.get_height()),
                                       pygame.SRCALPHA)
-        overlay_surf.fill((0, 0, 0, 128))  # black with 128 alpha for background
+        # black with 128 alpha for background
+        overlay_surf.fill((0, 0, 0, 128))
         screen.blit(overlay_surf, (0, 0))
         screen.blit(self.pause_menu_surf, (0, 0))
 
@@ -444,7 +455,8 @@ class GameController:
         """Performs frame actions for when the player just lost a game."""
         # Placeholder for game over actions
         screen.fill((0, 0, 0))
-        self.display_text("Game Over - Press R to Restart", WIDTH // 2, HEIGHT // 2)
+        self.display_text("Game Over - Press R to Restart",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
@@ -455,7 +467,8 @@ class GameController:
         """Performs frame actions for when the game is in the `winner` state."""
         # Placeholder for winner actions
         screen.fill((0, 0, 0))
-        self.display_text("You Won! - Press Q to Quit", WIDTH // 2, HEIGHT // 2)
+        self.display_text("You Won! - Press Q to Quit",
+                          WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
