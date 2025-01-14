@@ -250,8 +250,8 @@ class GameController:
         self.stopwatch = Stopwatch(precision=2)
 
         # surfaces for display
-        self.main_menu_surf = pygame.image.load("graphics/main_menu.png").convert()
-        self.pause_menu_surf = pygame.image.load("graphics/pause_menu.png").convert()
+        self.main_menu_surf = pygame.image.load("graphics/main_menu.png").convert_alpha()
+        self.pause_menu_surf = pygame.image.load("graphics/pause_menu.png").convert_alpha()
 
     def play(self) -> None:
         """Main loop of the game"""
@@ -397,7 +397,6 @@ class GameController:
 
     def perform_paused_frame_actions(self):
         """Performs frame actions for when the game is paused"""
-        print("paused")
         screen.blit(self.pause_menu_surf, (0, 0))  # display menu
 
         # check if any of the buttons are pressed

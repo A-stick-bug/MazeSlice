@@ -19,7 +19,7 @@ class Leaderboard:
     def __init__(self):
         """Try loading the leaderboard from `leaderboard.json`, otherwise
         create an empty one."""
-        self.bg_surf = pygame.image.load("graphics/leaderboard_bg.png").convert()
+        self.bg_surf = pygame.image.load("graphics/leaderboard_bg.png").convert_alpha()
         self.leaderboard = {"easy": [], "medium": [], "hard": [], "???": []}
         try:  # try loading leaderboard
             with open("leaderboard.json", "r") as f:
@@ -35,7 +35,7 @@ class Leaderboard:
     def add_score(self, difficulty: str, score: float) -> None:
         """Add a score to the leaderboard in the given difficulty level,
         Increasing property wil lbe maintained"""
-        insort(self.leaderboard[difficulty], score)
+        insort(self.leaderboard[difficulty], score)  # insert, list stays sorted
         if len(self.leaderboard[difficulty]) > 10:
             self.leaderboard[difficulty].pop()
         self.save_to_file()
@@ -89,7 +89,8 @@ class Leaderboard:
 
 
 if __name__ == '__main__':
-    leaderboard = Leaderboard()  # testing code
+    # testing code
+    leaderboard = Leaderboard()
     leaderboard.add_score("easy", 10)
     leaderboard.add_score("easy", 20)
     leaderboard.add_score("easy", 15)

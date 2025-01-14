@@ -1,5 +1,7 @@
 import time
 
+import pygame
+
 
 class Stopwatch:
     def __init__(self, precision=2):
@@ -36,10 +38,13 @@ class Stopwatch:
     def display(self, screen):
         """Display the current game's elapsed time on the given screen"""
         cur_time = self.get_elapsed_time()
-        # todo: implement this
-        # self.display_text(
-        #     , 1030, 30, 30, (255, 255, 255)
-        # )
+
+        # draw the current time
+        font = pygame.font.SysFont(None, 36)
+        text_surface = font.render(str(cur_time), True, (255, 255, 255))
+        text_rect = text_surface.get_rect(topleft=(980, 20))
+        screen.blit(text_surface, text_rect)
+
 
     def reset(self):
         """Reset the stopwatch's time"""
@@ -47,6 +52,7 @@ class Stopwatch:
 
 
 if __name__ == '__main__':
+    # testing code
     stopwatch = Stopwatch()
     stopwatch.start()
     print(stopwatch.get_elapsed_time())
