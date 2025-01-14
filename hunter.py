@@ -38,7 +38,7 @@ class Hunter(Circle):
                     self.z += 1
             # separate z movement from xy, and cheap non integral speed implementation
 
-    def set_location(self, location):
+    def set_location(self, location) -> None:
         self.x, self.y, self.z = location
 
     def reset_location(self):

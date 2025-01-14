@@ -9,7 +9,7 @@ class Item(Cylinder):
     Represents an item within the maze that the player can collect.
     """
 
-    def __init__(self, x, y, start_z, end_z, radius, type):
+    def __init__(self, x, y, start_z, end_z, radius, type: str):
         """
         Initializes the Item with position, size, type, and color.
 
@@ -33,7 +33,7 @@ class Item(Cylinder):
         """
         return (self.start_z + self.end_z) / 2
 
-    def get_type(self):
+    def get_type(self) -> str:
         """
         Returns the type of the item.
         """
@@ -54,7 +54,7 @@ class Item(Cylinder):
         }
         return colors.get(self.type, (255, 255, 255))  # Default white
 
-    def display(self, screen, player_z):
+    def display(self, screen, player_z) -> None:
         """
         Displays the item on the screen if it is within the visible Z-layer.
         Changes color if collected.
@@ -67,7 +67,7 @@ class Item(Cylinder):
                 radius=int(self.radius)
             )
 
-    def check_collision(self, player):
+    def check_collision(self, player) -> bool:
         """
         Checks collision with the player. If collision occurs, mark as collected.
 
@@ -92,7 +92,7 @@ class Item(Cylinder):
             return True
         return False
 
-    def apply_effect(self, player, maze):
+    def apply_effect(self, player, maze) -> None:
         """
         Applies the item's effect to the player based on its type.
 
@@ -120,5 +120,5 @@ class Item(Cylinder):
             # Teleports the player to a random free spot
         # Add more item types and their effects as needed
 
-    def set_collected(self, val):
+    def set_collected(self, val) -> None:
         self.collected = val
