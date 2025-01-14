@@ -9,7 +9,7 @@ from player import Player
 
 
 class Hunter(Circle):
-    """"""
+    """represents a hunter which moves towards the player and kills them."""
 
     def __init__(self, x, y, z: int, radius, speed=0.0, color=(255, 119, 0)):
         super().__init__(x, y, z, radius)
@@ -21,7 +21,7 @@ class Hunter(Circle):
         return abs(self.z - player.z)
 
     def handle_movement(self, player: Player) -> None:
-        """"""
+        """handles the movement of the hunter based on where the player is."""
         # maybe just let hunter move freely through obstacles
         if self.z_distance_from_player(player) <= 20:
             player_location = player.get_location()[:2]
