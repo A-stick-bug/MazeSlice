@@ -116,8 +116,9 @@ class Maze:
                     self.start_location
             ) and not obst.collides_with_circle(self.end_location):
                 self.obstacles.append(obst)
-                print(
-                    f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
+                if DEBUG_MODE:
+                    print(
+                        f"Generated obstacle at ({x}, {y}, {z}) with radius {radius}")
 
     def generate_maze_items(self, num_items) -> None:
         """Fill up `self.power_ups` with random items."""
@@ -153,7 +154,8 @@ class Maze:
             radius = randint(12, 18)
             speed = randint(50, 200) / 100
             hunter = Hunter(x, y, z, radius, speed)
-            print(f"Generated hunter at ({x}, {y}, {z})")
+            if DEBUG_MODE:
+                print(f"Generated hunter at ({x}, {y}, {z})")
             self.hunters.append(hunter)
 
     def display_obstacles(self, player_z) -> None:
