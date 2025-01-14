@@ -250,6 +250,7 @@ class GameController:
     def __init__(self):
         # [menu, help_menu, playing, game_over, winner]
         # game related variables
+        self.temp_state = "menu"  # temporary variable for exiting help menu
         self.game_state = "menu"
         self.maze = None
         self.player = None
@@ -309,6 +310,17 @@ class GameController:
         self.stopwatch.start()
         self.game_state = "playing"
 
+    def display_playing_objects(self) -> None:
+        """Helper function.
+        Display all objects on the map for when the player is in a game"""
+        self.maze.display_start_end(self.player.get_z())
+        self.maze.display_obstacles(self.player.get_z())
+        self.maze.display_items(self.player.get_z())
+        self.maze.display_hunters(self.player)
+        self.player.display_player()
+        self.stopwatch.display(screen)
+        self.display_active_effects()
+
     def perform_menu_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `menu` state."""
         screen.fill((0, 0, 0))
@@ -338,6 +350,7 @@ class GameController:
 
                 # handle help menu button
                 elif 380 <= x <= 618 and 514 <= y <= 556:
+                    self.temp_state = self.game_state
                     self.game_state = "help_menu"
 
     def perform_help_menu_frame_actions(self) -> None:
@@ -348,8 +361,9 @@ class GameController:
 
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
+                # exit help menu, revert to previous state
                 if event.key == pygame.K_m:
-                    self.game_state = "menu"
+                    self.game_state = self.temp_state
 
     def perform_leaderboard_frame_actions(self):
         """Performs game actions for when the player is viewing the leaderboard"""
@@ -363,18 +377,15 @@ class GameController:
                 x, y = pygame.mouse.get_pos()
                 if 1124 <= x <= 1180 and 19 <= y <= 69:
                     self.game_state = "menu"  # return to menu
-                    break
 
     def perform_playing_frame_actions(self) -> None:
         """Performs frame actions for when the player is in a game"""
         screen.fill((0, 0, 0))
 
+        # check player actions for pausing
         for event in self.game_events:
-            # check if player wants to exit game
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_h:
-                    self.game_state = "help_menu"
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_p:  # pause game
                     self.pause_game()
 
         if DEBUG_MODE:
@@ -386,13 +397,7 @@ class GameController:
         self.maze.move_hunters(self.player)
 
         # display objects and effects
-        self.maze.display_start_end(self.player.get_z())
-        self.maze.display_obstacles(self.player.get_z())
-        self.maze.display_items(self.player.get_z())
-        self.maze.display_hunters(self.player)
-        self.player.display_player()
-        self.stopwatch.display(screen)
-        self.display_active_effects()
+        self.display_playing_objects()
 
         # check if we won/lost the game
         if self.check_win_condition():
@@ -405,7 +410,16 @@ class GameController:
 
     def perform_paused_frame_actions(self):
         """Performs frame actions for when the game is paused"""
-        screen.blit(self.pause_menu_surf, (0, 0))  # display menu
+
+        # display the map as a background
+        self.display_playing_objects()
+
+        # display pause menu on top of a shaded background
+        overlay_surf = pygame.Surface((screen.get_width(), screen.get_height()),
+                                      pygame.SRCALPHA)
+        overlay_surf.fill((0, 0, 0, 128))  # black with 128 alpha for background
+        screen.blit(overlay_surf, (0, 0))
+        screen.blit(self.pause_menu_surf, (0, 0))
 
         # check if any of the buttons are pressed
         for event in self.game_events:
@@ -414,8 +428,9 @@ class GameController:
                 if 416 <= x <= 735:
                     if 177 <= y <= 248:  # resume
                         self.resume_game()
-                    elif 258 <= y <= 331:
-                        ...  # help menu
+                    elif 258 <= y <= 331:  # help menu
+                        self.temp_state = self.game_state
+                        self.game_state = "help_menu"
                     elif 341 <= y <= 414:  # restart level
                         self.restart_game()
                     elif 423 <= y <= 496:  # quit to menu
