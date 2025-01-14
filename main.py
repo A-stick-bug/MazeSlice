@@ -143,7 +143,8 @@ class Maze:
             elif any(obst.collides_with_circle(item) for obst in self.obstacles):
                 continue
             self.power_ups.append(item)
-            print(f"Generated item: {item_type} at ({x}, {y}, {z})")
+            if DEBUG_MODE:
+                print(f"Generated item: {item_type} at ({x}, {y}, {z})")
 
     def generate_maze_hunters(self, num_hunters) -> None:
         """Generate `num_hunters` hunters on the maze"""
