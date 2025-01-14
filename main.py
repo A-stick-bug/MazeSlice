@@ -473,34 +473,24 @@ class GameController:
         """Performs frame actions for when the game is in the `winner` state."""
         # Placeholder for winner actions
         screen.fill((0, 0, 0))
-        self.display_text("You Won! - Press Q to Quit",
+        self.display_text("You Won! - Press to return to Main Menu",
                           WIDTH // 2, HEIGHT // 2)
 
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    pygame.quit()
-                    sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    self.reset_game()
+                self.reset_game()
 
     def perform_loser_frame_actions(self):
         """Performs frame actions for when the game is in the `lost` state."""
         # Placeholder for loser(?!) actions
         screen.fill((0, 0, 0))
         self.display_text(
-            "You Lost the Game! - Press Q to Quit", WIDTH // 2, HEIGHT // 2
+            "You Lost the Game! - Press to return to Main Menu", WIDTH // 2, HEIGHT // 2
         )
 
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    pygame.quit()
-                    sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    self.reset_game()
+                self.reset_game()
 
     def run_debug(self):
         """
