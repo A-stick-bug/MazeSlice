@@ -410,8 +410,6 @@ class GameController:
                 self.perform_playing_frame_actions()
             elif self.game_state == "paused":
                 self.perform_paused_frame_actions()
-            elif self.game_state == "game_over":
-                self.perform_game_over_frame_actions()
             elif self.game_state == "winner":
                 self.perform_winner_frame_actions()
             elif self.game_state == "loser":
@@ -570,17 +568,6 @@ class GameController:
                 if not (390 <= x <= 760 and 105 <= y <= 524):
                     self.resume_game()
 
-    def perform_game_over_frame_actions(self) -> None:
-        """Performs frame actions for when the player just lost a game."""
-        screen.fill((0, 0, 0))
-        self.display_text("Game Over - Press R to Restart",
-                          WIDTH // 2, HEIGHT // 2)
-
-        for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    self.reset_game()
-
     def perform_winner_frame_actions(self) -> None:
         """Performs frame actions for when the game is in the `winner` state."""
         screen.fill((0, 0, 0))
@@ -678,7 +665,7 @@ class GameController:
         return False
 
     def restart_game(self) -> None:
-        """Restart the current level"""
+        """Restart the current level."""
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_state = "playing"
         self.stopwatch.reset()
