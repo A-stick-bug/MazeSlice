@@ -2,8 +2,10 @@
 
 import random
 import pygame
+import math
 from shapes import Circle
 
+EXPERIMENTAL_SLIDING = True
 
 class Player(Circle):
     """
@@ -138,15 +140,38 @@ class Player(Circle):
 
         old_location = self.get_location()
 
-        # Attempt to move along the X-axis
-        self.x += self.velocity.x
-        if not maze.is_move_allowed(self):
-            self.x = old_location[0]
+        if not EXPERIMENTAL_SLIDING:
+            # Attempt to move along the X-axis
+            self.x += self.velocity.x
+            if not maze.is_move_allowed(self):
+                self.x = old_location[0]
 
-        # Attempt to move along the Y-axis
-        self.y += self.velocity.y
-        if not maze.is_move_allowed(self):
-            self.y = old_location[1]
+            # Attempt to move along the Y-axis
+            self.y += self.velocity.y
+            if not maze.is_move_allowed(self):
+                self.y = old_location[1]
+            
+        else:
+            self.x += self.velocity.x
+            self.y += self.velocity.y
+            if not maze.is_move_allowed(self):
+                self.x, self.y = old_location[:2]
+                max_angle = 60
+                for angle in range(1, max_angle + 1):
+                    rad = angle / 180 * math.pi
+                    self.x += math.cos(rad) * self.velocity.x - math.sin(rad) * self.velocity.y
+                    self.y += math.sin(rad) * self.velocity.x + math.cos(rad) * self.velocity.y
+                    if not maze.is_move_allowed(self):
+                        self.x, self.y = old_location[:2]
+                    else:
+                        break
+                    rad = - rad
+                    self.x += math.cos(rad) * self.velocity.x - math.sin(rad) * self.velocity.y
+                    self.y += math.sin(rad) * self.velocity.x + math.cos(rad) * self.velocity.y
+                    if not maze.is_move_allowed(self):
+                        self.x, self.y = old_location[:2]
+                    else:
+                        break
 
         # Attempt to move along the Z-axis (if vertical movement is desired)
         if keys[pygame.K_w]:
