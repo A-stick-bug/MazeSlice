@@ -1,16 +1,15 @@
-# main.py
-
-import pygame
-import sys
+import atexit
 import random
 from random import randint
-import atexit
+import sys
 
-from player import Player
-from item import Item
-from shapes import Circle, Sphere
+import pygame
+
 from hunter import Hunter
+from item import Item
 from leaderboard import Leaderboard
+from player import Player
+from shapes import Circle, Sphere
 from stopwatch import Stopwatch
 
 # Dimensions of the window
