@@ -58,7 +58,7 @@ class Hunter(Circle):
                     self.z += 1
 
     def set_location(self, location: tuple[float, float, int]) -> None:
-        """Sets the hunter's location."""
+        """Sets the hunter's location to location."""
         self.x, self.y, self.z = location
 
     def reset_location(self) -> None:
