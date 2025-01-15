@@ -35,7 +35,7 @@ class Lightning():
         # Generation of individual segments.
         self.lightning_segments = []
         curr_pos = list(start[:])
-        print(curr_pos)
+        # print(curr_pos)
 
         # Used for keeping track of when each segment should display.
         curr_time = 0
@@ -67,7 +67,7 @@ class Lightning():
                 new_pos = curr_pos[:]
                 new_pos[0] += vec[0]
                 new_pos[1] += vec[1]
-                print(curr_pos, new_pos)
+                # print(curr_pos, new_pos)
                 # Check if this segment shortens the distance.
                 if dist(curr_pos, end) > dist(new_pos, end):
                     color = (

@@ -29,7 +29,10 @@ DEBUG_MODE = False
 
 @atexit.register
 def cleanup_pygame():
-    """Cleanup Pygame on exit."""
+    """Cleanup Pygame on exit.
+
+    Ensures that pygame always closes properly no matter how
+    the program ends"""
     pygame.quit()
 
 

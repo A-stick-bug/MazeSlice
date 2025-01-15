@@ -5,6 +5,7 @@ import pygame
 from player import Player
 from shapes import Cylinder
 
+
 class Item(Cylinder):
     """
     Represents an item within the maze that the player can collect.
