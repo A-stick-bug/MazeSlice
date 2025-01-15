@@ -20,7 +20,7 @@ Z_LAYERS = 200  # currently this is inclusive [0,200]
 # initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("3D Maze Game")
+pygame.display.set_caption("MazeSlice")
 clock = pygame.time.Clock()
 
 DEBUG_MODE = False

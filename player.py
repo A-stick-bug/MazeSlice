@@ -53,15 +53,15 @@ class Player(Circle):
         # Load and scale the player images
         try:
             # Default sprite
-            self.original_surf = pygame.image.load("graphics/maze/linty.png").convert_alpha()
+            self.original_surf = pygame.image.load("graphics/player/linty.png").convert_alpha()
             self.original_surf = pygame.transform.scale(self.original_surf, (self.radius * 2, self.radius * 2))
 
             # Dash sprite
-            self.dash_surf = pygame.image.load("graphics/maze/lintydash.png").convert_alpha()
+            self.dash_surf = pygame.image.load("graphics/player/lintydash.png").convert_alpha()
             self.dash_surf = pygame.transform.scale(self.dash_surf, (self.radius * 2, self.radius * 2))
 
             # Teleport sprite
-            self.teleport_surf = pygame.image.load("graphics/maze/lintyteleport.png").convert_alpha()
+            self.teleport_surf = pygame.image.load("graphics/player/lintyteleport.png").convert_alpha()
             self.teleport_surf = pygame.transform.scale(self.teleport_surf, (self.radius * 2, self.radius * 2))
 
             # Set the current sprite to the default
