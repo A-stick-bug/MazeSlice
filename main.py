@@ -24,7 +24,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("MazeSlice")
 clock = pygame.time.Clock()
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 
 @atexit.register
@@ -457,6 +457,9 @@ class GameController:
             elif self.game_state == "loser":
                 self.perform_loser_frame_actions()
 
+            if DEBUG_MODE:
+                self.run_debug()
+
             pygame.display.flip()
             clock.tick(60)  # 60 fps
 
@@ -557,9 +560,6 @@ class GameController:
                 if event.key == pygame.K_p:  # pause game
                     self.pause_game()
 
-        if DEBUG_MODE:
-            self.run_debug()
-
         # handle player movement with collisions
         self.player.handle_movement(self.maze)
         self.maze.collect_items(self.player)
@@ -572,6 +572,7 @@ class GameController:
         # check if we won/lost the game
         if self.check_win_condition():
             self.game_state = "winner"
+            self.stopwatch.pause()
             self.leaderboard.add_score(
                 self.maze.difficulty, self.stopwatch.get_elapsed_time()
             )
@@ -617,6 +618,10 @@ class GameController:
         """Performs actions for when the player won."""
         screen.fill((0, 0, 0))
         screen.blit(self.winner_menu, (0, 0))  # display menu
+
+        # display score
+        end_time = self.stopwatch.get_elapsed_time()
+        self.display_text(f"Score: {end_time}s", 330, 200, 35, (255, 255, 255))
 
         # check if any of the buttons are pressed
         for event in self.game_events:

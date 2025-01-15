@@ -92,7 +92,7 @@ class Leaderboard:
                 # scores
                 for j, score in enumerate(self.leaderboard[column_title]):
                     score_surface = entry_font.render(
-                        f"{j + 1}. {score:.2f}", True, WHITE
+                        f"{j + 1}. {score:.2f}s", True, WHITE
                     )
                     screen.blit(
                         score_surface,

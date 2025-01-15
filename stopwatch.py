@@ -75,7 +75,7 @@ class Stopwatch:
 
         # Draw the current time to the specified precision
         font = pygame.font.SysFont("comicsansms", 25)
-        text_surface = font.render(f"{cur_time:.2f}", True, (255, 255, 255))
+        text_surface = font.render(f"{cur_time:.2f}s", True, (255, 255, 255))
         text_rect = text_surface.get_rect(topleft=(980, 20))
         screen.blit(text_surface, text_rect)
 
