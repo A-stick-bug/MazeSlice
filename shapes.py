@@ -222,27 +222,17 @@ class Sphere(Circle):
 
 
 class Cylinder:
-    """
-    Represents a cylinder in 3D space using a stack of circles.
+    """Represents a cylinder in 3D space using a stack of circles."""
 
-    Attributes:
-        x (float): The x-coordinate of the cylinder's center.
-        y (float): The y-coordinate of the cylinder's center.
-        start_z (int): The starting z-coordinate (layer) of the cylinder.
-        end_z (int): The ending z-coordinate (layer) of the cylinder.
-        radius (int): The radius of the cylinder.
-    """
-
-    def __init__(self, x, y, start_z, end_z, radius):
-        """
-        Initializes the Cylinder instance with position, z-range, and radius.
+    def __init__(self, x: float, y: float, start_z: int, end_z: int, radius: int):
+        """Initializes the Cylinder instance with position, z-range, and radius.
 
         Args:
-            x (float): The x-coordinate of the cylinder's center.
-            y (float): The y-coordinate of the cylinder's center.
-            start_z (int): The starting z-coordinate (layer) of the cylinder.
-            end_z (int): The ending z-coordinate (layer) of the cylinder.
-            radius (int): The radius of the cylinder.
+            x: The x-coordinate of the cylinder's center.
+            y: The y-coordinate of the cylinder's center.
+            start_z: The starting z-coordinate (layer) of the cylinder.
+            end_z: The ending z-coordinate (layer) of the cylinder.
+            radius: The radius of the cylinder.
         """
         self.x = x
         self.y = y
@@ -251,8 +241,7 @@ class Cylinder:
         self.radius = radius
 
     def display(self, screen, from_z) -> None:
-        """
-        Renders the cylinder on the given Pygame screen if the viewing layer is within its z-range.
+        """Renders the cylinder on the given Pygame screen if the viewing layer is within its z-range.
 
         Args:
             screen (pygame.Surface): The Pygame surface to draw the cylinder on.
@@ -266,17 +255,15 @@ class Cylinder:
                 radius=int(self.radius),
             )
 
-    def collides_with_circle(self, other) -> bool:
-        """
-        Determines whether this cylinder collides with another circle.
+    def collides_with_circle(self, other: Circle) -> bool:
+        """Determines whether this cylinder collides with another circle.
 
         Collision is based on the circle being within the cylinder's z-range and overlapping planar distances.
 
         Args:
-            other (Circle): Another circle to check collision against.
+            other: A circle to check collision against.
 
-        Returns:
-            bool: True if the cylinder collides with the circle, False otherwise.
+        Returns True if the cylinder collides with the circle, False otherwise.
         """
         # Check if the other circle's z is within the cylinder's range
         if not (self.start_z <= other.get_z() <= self.end_z):
@@ -285,71 +272,56 @@ class Cylinder:
         return planar_dist < self.radius + other.radius
 
     def get_parameters(self) -> tuple[float, float, int, int, int]:
-        """
-        Retrieves the cylinder's parameters.
+        """Retrieves the cylinder's parameters.
 
-        Returns:
-            tuple: A tuple containing (x, y, start_z, end_z, radius).
+        Returns a tuple containing (x, y, start_z, end_z, radius).
         """
         return self.x, self.y, self.start_z, self.end_z, self.radius
 
     def get_location(self) -> tuple[float, float, int, int]:
-        """
-        Retrieves the cylinder's current location and z-range.
+        """Retrieves the cylinder's current location and z-range.
 
-        Returns:
-            tuple: A tuple containing (x, y, start_z, end_z).
+        Returns a tuple containing (x, y, start_z, end_z).
         """
         return self.x, self.y, self.start_z, self.end_z
 
     def get_x(self) -> float:
-        """
-        Retrieves the x-coordinate of the cylinder's center.
+        """Retrieves the x-coordinate of the cylinder's center.
 
-        Returns:
-            float: The x-coordinate.
+        Returns the x-coordinate.
         """
         return self.x
 
     def get_y(self) -> float:
-        """
-        Retrieves the y-coordinate of the cylinder's center.
+        """Retrieves the y-coordinate of the cylinder's center.
 
-        Returns:
-            float: The y-coordinate.
+        Returns the y-coordinate.
         """
         return self.y
 
     def get_start_z(self) -> int:
-        """
-        Retrieves the starting z-coordinate (layer) of the cylinder.
+        """Retrieves the starting z-coordinate (layer) of the cylinder.
 
-        Returns:
-            int: The starting z-coordinate.
+        Returns the starting z-coordinate.
         """
         return self.start_z
 
     def get_end_z(self) -> int:
-        """
-        Retrieves the ending z-coordinate (layer) of the cylinder.
+        """Retrieves the ending z-coordinate (layer) of the cylinder.
 
-        Returns:
-            int: The ending z-coordinate.
+        Returns the ending z-coordinate.
         """
         return self.end_z
 
     def get_radius(self) -> int:
-        """
-        Retrieves the radius of the cylinder.
+        """Retrieves the radius of the cylinder.
 
-        Returns:
-            int: The radius.
+        Returns the radius.
         """
         return self.radius
 
     def __iter__(self):
-        """
-        Allows iteration over the cylinder's parameters.
+        """Allows iteration over the cylinder's parameters.
 
         Yields:
             float/int: The x, y, start_z, end_z, and radius of the cylinder in order.
