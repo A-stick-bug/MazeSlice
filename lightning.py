@@ -20,7 +20,7 @@ class LightningSegment():
 
     def display(self, surface: pygame.Surface):
         pygame.draw.line(surface, self.color,
-                         self.start_position, self.end_position)
+                         self.start_position, self.end_position, 3)
 
 
 class Lightning():
@@ -45,7 +45,7 @@ class Lightning():
         # As distance always decreases, this while loop eventually finishes.
         while True:
             # If close enough to end position, make a segment connecting it directly.
-            if dist(curr_pos, end) <= 25:
+            if dist(curr_pos, end) <= 50:
                 color = (
                     random.randint(224, 255),
                     random.randint(206, 238),
@@ -57,7 +57,7 @@ class Lightning():
                     (new_lightning_segment, (curr_time, curr_time + duration)))
                 break
 
-            distance = random.randint(15, 25)
+            distance = random.randint(35, 60)
 
             # Randomly generate potential segments.
             # There are always more than 1 / 3 chance of succeeding.

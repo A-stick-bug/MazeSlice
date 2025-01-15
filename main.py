@@ -272,22 +272,32 @@ class Maze:
         for lightning in self.lightnings:
             lightning.display(screen)
 
+        # Get rid of Unused lightnings.
+        for i in range(len(self.lightnings) - 1, -1, -1):
+            if self.lightnings[i].check_used == False:
+                self.lightnings.pop(i)
+
     def collect_items(self, player: Player) -> None:
         """Collect items that the player collides with.
 
         Args:
             player: The player object to check collisions and apply item effects
         """
+        old_location = player.get_location()[:2]
+        teleported = False
+
         for item in self.power_ups:
             if item.check_collision(player):
                 # If teleport, make lightning object
                 if item.type == "teleport":
-                    old_location = player.get_location()[:2]
-                    item.apply_effect(player, maze=self)  # Pass maze instance
-                    new_location = player.get_location()[:2]
-                    self.lightnings.append(Lightning(old_location, new_location))
+                    teleported = True
 
                 item.apply_effect(player, maze=self)  # Pass maze instance
+
+        if teleported:
+            new_location = player.get_location()[:2]
+            self.lightnings.append(
+                Lightning(old_location, new_location))
 
     def move_hunters(self, player: Player) -> None:
         """Update the position of the hunters based on the player's position.
