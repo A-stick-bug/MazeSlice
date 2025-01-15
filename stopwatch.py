@@ -1,26 +1,47 @@
 import time
-
 import pygame
 
 
 class Stopwatch:
+    """
+    A simple stopwatch class to track elapsed time with start, pause, reset, and display functionalities.
+
+    Attributes:
+        start_time (float): The timestamp when the stopwatch was last started.
+        precision (int): The number of decimal places to round the elapsed time.
+        elapsed_time (float): The total accumulated elapsed time.
+        running (bool): Indicates whether the stopwatch is currently running.
+    """
+
     def __init__(self, precision=2):
-        """Create a stopwatch with specified precision.
-        Default state is paused"""
+        """
+        Initializes the Stopwatch instance with specified precision. The stopwatch starts in a paused state.
+
+        Args:
+            precision (int, optional): Number of decimal places for elapsed time. Defaults to 2.
+        """
         self.start_time = time.time()
         self.precision = precision
         self.elapsed_time = 0
         self.running = False
 
     def start(self):
-        """Start the stopwatch if it is paused"""
+        """
+        Starts the stopwatch if it is currently paused.
+
+        If the stopwatch is already running, this method has no effect.
+        """
         if self.running:  # already started
             return
         self.start_time = time.time()
         self.running = True
 
     def pause(self):
-        """Pause the stopwatch"""
+        """
+        Pauses the stopwatch.
+
+        If the stopwatch is already paused, this method has no effect.
+        """
         if not self.running:  # already paused
             return
         self.elapsed_time += time.time() - self.start_time
@@ -28,47 +49,63 @@ class Stopwatch:
         self.running = False
 
     def get_elapsed_time(self):
-        """Returns the total elapsed time of the stopwatch in seconds,
-        rounded to the stopwatch's precision"""
+        """
+        Retrieves the total elapsed time in seconds, rounded to the specified precision.
+
+        If the stopwatch is running, it includes the time since it was last started.
+
+        Returns:
+            float: The total elapsed time in seconds, rounded to the stopwatch's precision.
+        """
         if self.running:
-            self.elapsed_time += time.time() - self.start_time
-        self.start_time = time.time()
+            current_elapsed = self.elapsed_time + (time.time() - self.start_time)
+            return round(current_elapsed, self.precision)
         return round(self.elapsed_time, self.precision)
 
     def display(self, screen):
-        """Display the current game's elapsed time on the given screen"""
+        """
+        Renders the current elapsed time onto the given Pygame screen.
+
+        The time is displayed in white color at the position (980, 20) with two decimal places.
+
+        Args:
+            screen (pygame.Surface): The Pygame surface where the time will be displayed.
+        """
         cur_time = self.get_elapsed_time()
 
-        # draw the current time to 2 decimal places
+        # Draw the current time to the specified precision
         font = pygame.font.SysFont("comicsansms", 25)
         text_surface = font.render(f"{cur_time:.2f}", True, (255, 255, 255))
         text_rect = text_surface.get_rect(topleft=(980, 20))
         screen.blit(text_surface, text_rect)
 
-
     def reset(self):
-        """Reset the stopwatch's time"""
+        """
+        Resets the stopwatch's elapsed time and pauses it.
+
+        After resetting, the stopwatch starts in a paused state with zero elapsed time.
+        """
         self.__init__()
 
 
 if __name__ == '__main__':
-    # testing code
+    # Testing code for the Stopwatch class
     stopwatch = Stopwatch()
     stopwatch.start()
-    print(stopwatch.get_elapsed_time())
+    print("Elapsed Time after starting:", stopwatch.get_elapsed_time())
 
     time.sleep(1)
 
     stopwatch.pause()
-    print(stopwatch.get_elapsed_time())
+    print("Elapsed Time after pausing:", stopwatch.get_elapsed_time())
 
     time.sleep(3)
 
     stopwatch.start()
-    print(stopwatch.get_elapsed_time())
+    print("Elapsed Time after restarting:", stopwatch.get_elapsed_time())
     time.sleep(1)
     stopwatch.pause()
-    print(stopwatch.get_elapsed_time())
+    print("Elapsed Time after second pausing:", stopwatch.get_elapsed_time())
 
     stopwatch.reset()
-    print(stopwatch.get_elapsed_time())
+    print("Elapsed Time after resetting:", stopwatch.get_elapsed_time())
