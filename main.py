@@ -32,7 +32,8 @@ def cleanup_pygame():
     """Cleanup Pygame on exit.
 
     Ensures that pygame always closes properly no matter how
-    the program ends"""
+    the program ends
+    """
     pygame.quit()
 
 
@@ -275,9 +276,9 @@ class Maze:
         for lightning in self.lightnings:
             lightning.display(screen)
 
-        # Get rid of Unused lightnings.
+        # get rid of unused lightnings.
         for i in range(len(self.lightnings) - 1, -1, -1):
-            if self.lightnings[i].check_used == False:
+            if not self.lightnings[i].check_used():
                 self.lightnings.pop(i)
 
     def collect_items(self, player: Player) -> None:
@@ -295,7 +296,7 @@ class Maze:
                 if item.type == "teleport":
                     teleported = True
 
-                item.apply_effect(player, maze=self)  # Pass maze instance
+                item.apply_effect(player, maze=self)
 
         if teleported:
             new_location = player.get_location()[:2]

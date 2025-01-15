@@ -7,7 +7,7 @@ import random
 
 def dist(a, b):
     """Distance helper function to optimize time"""
-    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+    return math.isqrt(int(a[0] - b[0]) ** 2 + int(a[1] - b[1]) ** 2)
 
 
 class LightningSegment():
@@ -43,9 +43,12 @@ class Lightning():
 
         # Loop to generate each segment. Ends if finished.
         # As distance always decreases, this while loop eventually finishes.
+        total_cnt = 0
         while True:
-            # If close enough to end position, make a segment connecting it directly.
-            if dist(curr_pos, end) <= 50:
+            total_cnt += 1
+            # If close enough to end position, or there are too many segments
+            # make a segment connecting it directly.
+            if dist(curr_pos, end) <= 50 or total_cnt > 20:
                 color = (
                     random.randint(224, 255),
                     random.randint(206, 238),
