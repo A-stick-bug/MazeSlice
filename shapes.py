@@ -283,47 +283,4 @@ class Cylinder:
 
         Returns a tuple containing (x, y, start_z, end_z).
         """
-        return self.x, self.y, self.start_z, self.end_z
-
-    def get_x(self) -> float:
-        """Retrieves the x-coordinate of the cylinder's center.
-
-        Returns the x-coordinate.
-        """
-        return self.x
-
-    def get_y(self) -> float:
-        """Retrieves the y-coordinate of the cylinder's center.
-
-        Returns the y-coordinate.
-        """
-        return self.y
-
-    def get_start_z(self) -> int:
-        """Retrieves the starting z-coordinate (layer) of the cylinder.
-
-        Returns the starting z-coordinate.
-        """
-        return self.start_z
-
-    def get_end_z(self) -> int:
-        """Retrieves the ending z-coordinate (layer) of the cylinder.
-
-        Returns the ending z-coordinate.
-        """
-        return self.end_z
-
-    def get_radius(self) -> int:
-        """Retrieves the radius of the cylinder.
-
-        Returns the radius.
-        """
-        return self.radius
-
-    def __iter__(self):
-        """Allows iteration over the cylinder's parameters.
-
-        Yields:
-            float/int: The x, y, start_z, end_z, and radius of the cylinder in order.
-        """
-        return iter(self.get_parameters())
+        return self.get_parameters()[4:]
