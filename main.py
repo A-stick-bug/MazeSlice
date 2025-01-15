@@ -33,7 +33,7 @@ def cleanup_pygame():
 
 
 class StartLocation(Circle):
-    """Represents a starting location as a circular object.
+    """A starting location represented as a circular object.
 
     Attributes:
         surf: A pygame surface for the spawn point image
@@ -74,7 +74,7 @@ class StartLocation(Circle):
 
 
 class EndLocation(Circle):
-    """Represents an end location as a circular object.
+    """An end location represented as a circular object.
 
     Attributes:
         surf: A pygame surface for the end location image.
@@ -156,9 +156,9 @@ class Maze:
         Fill up `self.obstacles` with randomized obstacles.
 
         Args:
-            num_obstacles: number of obstacles to generate
-            r_min: minimum radius of obstacles
-            r_max: maximum radius of obstacles
+            num_obstacles: Number of obstacles to generate
+            r_min: Minimum radius of obstacles
+            r_max: Maximum radius of obstacles
         """
         while len(self.obstacles) < num_obstacles:
             x = randint(0, WIDTH)
@@ -178,7 +178,7 @@ class Maze:
         """Fill up `self.power_ups` with randomized items.
 
         Args:
-            num_items: number of items to generate
+            num_items: Number of items to generate
         """
         item_types = [
             "speed_boost",
@@ -210,7 +210,7 @@ class Maze:
         """Generate randomized hunters on the maze.
 
         Args:
-            num_hunters: number of hunters to generate
+            num_hunters: Number of hunters to generate
         """
         for _ in range(num_hunters):
             x = randint(20, WIDTH - 20)  # random location and speed
@@ -355,21 +355,25 @@ class Maze:
 
 
 class GameController:
+    """Management system for the game.
+
+    Attributes:
+        temp_state: Temporary variable to track previous state
+        game_state: Current state of the game
+        maze: The current maze instance in the game.
+        player: The current player instance in the game.
+        game_events: Events in the current frame.
+        leaderboard: Current leaderboard
+        stopwatch: Stopwatch for the current game
+        main_menu_surf: pygame surface for the main menu display
+        pause_menu_surf: pygame surface for the pause menu display
+    """
 
     def __init__(self):
-        """
-        Initializes the GameController to start a game.
+        """Initializes the GameController to start a game.
 
-        Attributes:
-            temp_state: Temporary variable to track previous state
-            game_state: Current state of the game
-            maze: The current maze instance in the game.
-            player: The current player instance in the game.
-            game_events: Events in the current frame.
-            leaderboard: Current leaderboard
-            stopwatch: Stopwatch for the current game
-            main_menu_surf: pygame surface for the main menu display
-            pause_menu_surf: pygame surface for the pause menu display
+        Initializes all game variables except `player` and `maze` which
+        will be initialized when the difficulty is selected.
         """
         self.temp_state = "menu"  # temporary variable for exiting help menu
         self.game_state = "menu"
@@ -619,11 +623,11 @@ class GameController:
         """Utility method to display text on the screen.
 
         Args:
-            text: string to display
-            x: x-coordinate of text
-            y: y-coordinate of text
-            font_size: font size of text
-            color: color of text
+            text: String to display
+            x: X-coordinate of text
+            y: Y-coordinate of text
+            font_size: Font size of text
+            color: Color of text
         """
         font = pygame.font.SysFont(None, font_size)
         text_surface = font.render(text, True, color)
