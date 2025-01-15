@@ -101,19 +101,21 @@ class Hunter(Circle):
 
             # Blit the transparent surface onto the main screen
             screen.blit(
-                transparent_surface, (self.x - self.radius, self.y - self.radius)
+                transparent_surface, (self.x - self.radius,
+                                      self.y - self.radius)
             )
 
     def check_collision(self, player: Player) -> bool:
         """Checks collision with the player. If collision occurs, end the game.
-        
+
         Returns True if collides with player and False otherwise.
         """
         if super().collides_with_circle(player):
             from main import DEBUG_MODE
 
             if DEBUG_MODE:
-                print(f"Player collided with hunter at ({self.x}, {self.y}, {self.z})")
+                print(
+                    f"Player collided with hunter at ({self.x}, {self.y}, {self.z})")
             return True
 
         return False

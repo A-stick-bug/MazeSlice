@@ -118,6 +118,7 @@ class Maze:
         obstacles: A list of obstacles in the maze
         power_ups: A list of power-up items in the maze
         hunters: A list of hunters in the maze
+        lightnings: A list of lightnings in the maze to display
         difficulty: The difficulty of the maze
     """
 
@@ -137,6 +138,7 @@ class Maze:
         self.obstacles: list[Sphere] = []
         self.power_ups: list[Item] = []
         self.hunters: list[Hunter] = []
+        self.lightnings: list[Lightning] = []
 
         if difficulty == "easy":
             self.generate_maze_obstacles(90, 50, 90)
@@ -265,6 +267,11 @@ class Maze:
         self.start_location.display(screen, from_z, (255, 255, 0))
         self.end_location.display(screen, from_z, (255, 255, 0))
 
+    def display_lightnings(self) -> None:
+        """Display the lightnings of the maze."""
+        for lightning in self.lightnings:
+            lightning.display(screen)
+
     def collect_items(self, player: Player) -> None:
         """Collect items that the player collides with.
 
@@ -273,6 +280,13 @@ class Maze:
         """
         for item in self.power_ups:
             if item.check_collision(player):
+                # If teleport, make lightning object
+                if item.type == "teleport":
+                    old_location = player.get_location()[:2]
+                    item.apply_effect(player, maze=self)  # Pass maze instance
+                    new_location = player.get_location()[:2]
+                    self.lightnings.append(Lightning(old_location, new_location))
+
                 item.apply_effect(player, maze=self)  # Pass maze instance
 
     def move_hunters(self, player: Player) -> None:
@@ -449,6 +463,7 @@ class GameController:
         self.maze.display_obstacles(self.player.get_z())
         self.maze.display_items(self.player.get_z())
         self.maze.display_hunters(self.player)
+        self.maze.display_lightnings()
         self.player.display_player()
         self.stopwatch.display(screen)
 

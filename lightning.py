@@ -5,12 +5,17 @@ import pygame
 import random
 
 
+def dist(a, b):
+    """Distance helper function to optimize time"""
+    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+
+
 class LightningSegment():
     """Individual segment of lightning."""
 
     def __init__(self, start: tuple[float, float], end: tuple[float, float], color: tuple[int, int, int]):
-        self.start_position = start
-        self.end_position = end
+        self.start_position = start[:]
+        self.end_position = end[:]
         self.color = color
 
     def display(self, surface: pygame.Surface):
@@ -19,9 +24,9 @@ class LightningSegment():
 
 
 class Lightning():
-    """Lightning to be displayed upon teleportation."""
+    """Lightning to be displayed in the maze upon teleportation."""
 
-    def __init__(self, start: tuple[float, float], end: tuple[float, float]):
+    def __init__(self, start: list[float, float], end: list[float, float]):
         """"""
         self.start_position = start
         self.end_position = end
@@ -29,7 +34,8 @@ class Lightning():
 
         # Generation of individual segments.
         self.lightning_segments = []
-        curr_pos = start
+        curr_pos = list(start[:])
+        print(curr_pos)
 
         # Used for keeping track of when each segment should display.
         curr_time = 0
@@ -38,28 +44,41 @@ class Lightning():
         # Loop to generate each segment. Ends if finished.
         # As distance always decreases, this while loop eventually finishes.
         while True:
+            # If close enough to end position, make a segment connecting it directly.
+            if dist(curr_pos, end) <= 25:
+                color = (
+                    random.randint(224, 255),
+                    random.randint(206, 238),
+                    random.randint(16, 48)
+                )
+                new_lightning_segment = LightningSegment(
+                    curr_pos, end, color)
+                self.lightning_segments.append(
+                    (new_lightning_segment, (curr_time, curr_time + duration)))
+                break
+
             distance = random.randint(15, 25)
 
             # Randomly generate potential segments.
             # There are always more than 1 / 3 chance of succeeding.
             while True:
                 angle = random.random() * 2 * math.pi
-                vec = (distance * math.cos(angle), distance * math.sin(angle))
-                new_pos = curr_pos
+                vec = [distance * math.cos(angle), distance * math.sin(angle)]
+                new_pos = curr_pos[:]
                 new_pos[0] += vec[0]
                 new_pos[1] += vec[1]
-
+                print(curr_pos, new_pos)
                 # Check if this segment shortens the distance.
-                if math.dist(curr_pos, end) > math.dist(new_pos, end):
+                if dist(curr_pos, end) > dist(new_pos, end):
                     color = (
-                        random.randint(255, 224),
-                        random.randint(238, 206),
-                        random.randint(48, 16)
+                        random.randint(224, 255),
+                        random.randint(206, 238),
+                        random.randint(16, 48)
                     )
                     new_lightning_segment = LightningSegment(
                         curr_pos, new_pos, color)
                     self.lightning_segments.append(
-                        new_lightning_segment, (curr_time, curr_time + duration))
+                        (new_lightning_segment, (curr_time, curr_time + duration)))
 
                     # Set current position to new position.
                     curr_pos = new_pos
@@ -71,25 +90,13 @@ class Lightning():
             if random.random() > 0.5:
                 curr_time += 1
 
-            # If close enough to end position, make a segment connecting it directly.
-            if math.dist(curr_pos, end) <= 25:
-                color = (
-                    random.randint(255, 224),
-                    random.randint(238, 206),
-                    random.randint(48, 16)
-                )
-            new_lightning_segment = LightningSegment(
-                curr_pos, new_pos, color)
-            self.lightning_segments.append(
-                new_lightning_segment, (curr_time, curr_time + duration))
-
     def display(self, surface: pygame.Surface):
         for lightning_segment in self.lightning_segments:
             time_range = lightning_segment[1]
 
             # Displays only if in correct time range.
             if time_range[0] <= self.time <= time_range[1]:
-                lightning_segment[0].display()
+                lightning_segment[0].display(surface)
 
         # Increments time.
         # Only advances if called. This will be paused when the game is paused.
