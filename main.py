@@ -387,6 +387,8 @@ class GameController:
             "graphics/main_menu.png").convert_alpha()
         self.pause_menu_surf = pygame.image.load(
             "graphics/pause_menu.png").convert_alpha()
+        self.help_menu_surf = pygame.image.load(
+            "graphics/help_menu.png").convert_alpha()
 
     def play(self) -> None:
         """Main loop of the game"""
@@ -480,16 +482,16 @@ class GameController:
                     self.game_state = "help_menu"
 
     def perform_help_menu_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `help_menu` state."""
-        # todo: implement this
+        """Performs actions for when the help_menu is on."""
+
         screen.fill((0, 0, 0))
-        self.display_text("Help Menu - Press M to Return",
-                          WIDTH // 2, HEIGHT // 2)
+        screen.blit(self.help_menu_surf, (0, 0))  # display menu
 
         for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
-                # exit help menu, revert to previous state
-                if event.key == pygame.K_m:
+            # exit help menu, revert to previous state
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                if 1124 <= x <= 1180 and 19 <= y <= 69:
                     self.game_state = self.temp_state
 
     def perform_leaderboard_frame_actions(self) -> None:
@@ -566,6 +568,8 @@ class GameController:
                         self.restart_game()
                     elif 423 <= y <= 496:  # quit to menu
                         self.reset_game()
+
+                # clicked outside to resume game
                 if not (390 <= x <= 760 and 105 <= y <= 524):
                     self.resume_game()
 
