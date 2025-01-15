@@ -2,6 +2,7 @@
 
 import pygame
 from shapes import Cylinder
+from player import Player
 
 
 class Item(Cylinder):
@@ -67,11 +68,14 @@ class Item(Cylinder):
                 radius=int(self.radius),
             )
 
-    def check_collision(self, player) -> bool:
-        """
-        Checks collision with the player. If collision occurs, mark as collected.
+    def check_collision(self, player: Player) -> bool:
+        """Checks collision with the player. If collision occurs, mark as
+        collected.
 
-        :param player: Instance of the Player class
+        Args:
+            Player: The player to check collision with.
+
+        Returns True if collides with player, False otherwise.
         """
         if self.collected:
             return False
@@ -91,33 +95,38 @@ class Item(Cylinder):
             return True
         return False
 
-    def apply_effect(self, player, maze) -> None:
-        """
-        Applies the item's effect to the player based on its type.
+    def apply_effect(self, player: Player, maze) -> None:
+        """Applies the item's effect to the player based on its type.
 
-        :param player: Instance of the Player class
-        :param maze: Instance of the Maze class
+        Args:
+            player: The player to apply the effect to.
+            maze (Maze): Instance of the Maze class.
         """
+
+        # If did not collide with player, return immediately.
         if not self.collected:
             return
 
         DEBUG = __import__("main").DEBUG_MODE
+
         if self.type == "speed_boost":
             player.apply_speed_boost()
             if DEBUG:
                 print("Speed boost applied!")
             # The Player class handles reverting the speed after a duration
+
         elif self.type == "dash":
+            # Reduces the cooldown period for dashing
             player.reduce_dash_cooldown()
             if DEBUG:
                 print("Dash cooldown reduced!")
-            # Reduces the cooldown period for dashing
+
         elif self.type == "teleport":
+            # Teleports the player to a random free spot
             player.teleport(maze)
             if DEBUG:
                 print("Teleport activated!")
-            # Teleports the player to a random free spot
-        # Add more item types and their effects as needed
 
     def set_collected(self, val) -> None:
+        """Sets collected to the argument val."""
         self.collected = val
