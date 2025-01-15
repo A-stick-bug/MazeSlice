@@ -360,9 +360,9 @@ class GameController:
     Attributes:
         temp_state: Temporary variable to track previous state
         game_state: Current state of the game
-        maze: The current maze instance in the game.
-        player: The current player instance in the game.
-        game_events: Events in the current frame.
+        maze: The current maze instance in the game
+        player: The current player instance in the game
+        game_events: Events in the current frame
         leaderboard: Current leaderboard
         stopwatch: Stopwatch for the current game
         main_menu_surf: pygame surface for the main menu display
@@ -597,19 +597,19 @@ class GameController:
         """
         # 1. Draw grid
         grid_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-        for i in range(0, WIDTH, 100):  # Big vertical lines
+        for i in range(0, WIDTH, 100):  # big vertical lines
             line = pygame.Rect(i, 0, 2, HEIGHT)
             pygame.draw.rect(grid_surface, "red", line)
-        for i in range(0, HEIGHT, 100):  # Big horizontal lines
+        for i in range(0, HEIGHT, 100):  # big horizontal lines
             line = pygame.Rect(0, i, WIDTH, 2)
             pygame.draw.rect(grid_surface, "red", line)
-        for i in range(0, WIDTH, 20):  # Small vertical lines
+        for i in range(0, WIDTH, 20):  # small vertical lines
             line = pygame.Rect(i, 0, 1, HEIGHT)
             pygame.draw.rect(grid_surface, "grey", line)
-        for i in range(0, HEIGHT, 20):  # Small horizontal lines
+        for i in range(0, HEIGHT, 20):  # small horizontal lines
             line = pygame.Rect(0, i, WIDTH, 1)
             pygame.draw.rect(grid_surface, "grey", line)
-        screen.blit(grid_surface, (0, 0))  # Display all grid lines
+        screen.blit(grid_surface, (0, 0))
 
         # 2. Right click to get coordinates
         for event in self.game_events:
