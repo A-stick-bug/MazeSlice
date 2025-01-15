@@ -40,7 +40,7 @@ class StartLocation(Circle):
         angle: The current angle of rotation for the spawn point image
     """
 
-    def __init__(self, x, y, z, radius):
+    def __init__(self, x: float, y: float, z: int, radius: int):
         """Initializes the start location with its position and radius.
 
         Args:
@@ -80,7 +80,7 @@ class EndLocation(Circle):
         surf: A pygame surface for the end location image
     """
 
-    def __init__(self, x, y, z, radius):
+    def __init__(self, x: float, y: float, z: int, radius: int):
         """Initializes the end location with its position and radius.
 
         Args:
