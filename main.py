@@ -1,10 +1,9 @@
-# main.py
-
-import pygame
+import atexit
 import sys
 import random
 from random import randint
-import atexit
+
+import pygame
 
 from player import Player
 from item import Item
@@ -13,12 +12,12 @@ from hunter import Hunter
 from leaderboard import Leaderboard
 from stopwatch import Stopwatch
 
-# Dimensions of the window
+# dimensions of the window
 WIDTH = 1200
 HEIGHT = 600
-Z_LAYERS = 200  # Currently this is inclusive [0,200]
+Z_LAYERS = 200  # currently this is inclusive [0,200]
 
-# Initialize Pygame
+# initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("3D Maze Game")
@@ -57,7 +56,7 @@ class StartLocation(Circle):
         self.angle = 0
 
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
-        """Displays the starting location on the screen
+        """Displays the starting location on the screen.
 
         Args:
             screen: The pygame screen where the start location should be drawn
@@ -70,9 +69,7 @@ class StartLocation(Circle):
             screen.blit(rotated_surf, start_rect)
 
     def rotate(self) -> None:
-        """
-        Rotates the spawn point image by a small increment
-        """
+        """Rotates the spawn point image by a small increment."""
         self.angle += 0.2
 
 
@@ -247,7 +244,7 @@ class Maze:
             item.display(screen, player_z)
 
     def display_hunters(self, player: Player) -> None:
-        """Displays hunters in the maze based on the player's Z-layer
+        """Displays hunters in the maze based on the player's Z-layer.
 
         Args:
             player: Player object used to determine the visibility of hunters
@@ -256,7 +253,7 @@ class Maze:
             hunter.display_hunter(screen, player)
 
     def display_start_end(self, from_z: int) -> None:
-        """Display the start and end locations of the maze
+        """Display the start and end locations of the maze.
 
         Args:
             from_z: The z-coordinate to determine which locations are visible
@@ -312,7 +309,7 @@ class Maze:
             if obst.collides_with_circle(char_circle):
                 return False
 
-        # Check collision with map boundaries
+        # check collision with map boundaries
         cx, cy, cz, r = player.get_parameters()
         if (cx < r
                 or cx > WIDTH - r
@@ -325,7 +322,7 @@ class Maze:
         return True
 
     def get_start_location(self) -> StartLocation:
-        """Returns the start location of the maze
+        """Returns the start location of the maze.
 
         Returns:
             StartLocation: The start location of the maze
@@ -333,7 +330,7 @@ class Maze:
         return self.start_location
 
     def get_end_location(self) -> EndLocation:
-        """Returns the end location of the maze
+        """Returns the end location of the maze.
 
         Returns:
             EndLocation: The end location of the maze
@@ -341,7 +338,7 @@ class Maze:
         return self.end_location
 
     def get_power_ups(self) -> list[Item]:
-        """Return a list of all power ups in the maze
+        """Return a list of all power ups in the maze.
 
         Returns:
             list[Item]: A list of power up items in the maze
@@ -349,7 +346,7 @@ class Maze:
         return self.power_ups
 
     def get_hunters(self) -> list[Hunter]:
-        """Return a list of all hunters in the maze
+        """Return a list of all hunters in the maze.
 
         Returns:
             list[Hunter]: A list of hunter objects in the maze
@@ -387,9 +384,11 @@ class GameController:
             "graphics/main_menu.png").convert_alpha()
         self.pause_menu_surf = pygame.image.load(
             "graphics/pause_menu.png").convert_alpha()
+        self.help_menu_surf = pygame.image.load(
+            "graphics/help_menu.png").convert_alpha()
 
     def play(self) -> None:
-        """Main loop of the game"""
+        """Main loop of the game."""
         while True:
             self.game_events = pygame.event.get()
 
@@ -409,8 +408,6 @@ class GameController:
                 self.perform_playing_frame_actions()
             elif self.game_state == "paused":
                 self.perform_paused_frame_actions()
-            elif self.game_state == "game_over":
-                self.perform_game_over_frame_actions()
             elif self.game_state == "winner":
                 self.perform_winner_frame_actions()
             elif self.game_state == "loser":
@@ -420,24 +417,24 @@ class GameController:
             clock.tick(60)  # 60 fps
 
     def start_game(self, difficulty: str) -> None:
-        """Start a game with the selected difficulty"""
+        """Start a game with the selected difficulty."""
         self.maze = Maze(difficulty)
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_state = "playing"
         self.stopwatch.start()
 
     def pause_game(self) -> None:
-        """Pause the current game"""
+        """Pause the current game."""
         self.stopwatch.pause()
         self.game_state = "paused"
 
     def resume_game(self) -> None:
-        """Resume the currently paused game"""
+        """Resume the currently paused game."""
         self.stopwatch.start()
         self.game_state = "playing"
 
     def display_playing_objects(self) -> None:
-        """Display all objects on the map for when the player is in a game"""
+        """Display all objects on the map."""
         if self.game_state != "paused":
             self.maze.start_location.rotate()
         self.maze.display_start_end(self.player.get_z())
@@ -448,7 +445,7 @@ class GameController:
         self.stopwatch.display(screen)
 
     def perform_menu_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `menu` state."""
+        """Display menu and handle clicks on buttons."""
         screen.fill((0, 0, 0))
         screen.blit(self.main_menu_surf, (0, 0))  # display menu
 
@@ -480,23 +477,22 @@ class GameController:
                     self.game_state = "help_menu"
 
     def perform_help_menu_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `help_menu` state."""
+        """Display help menu and handle clicks on buttons."""
         # todo: implement this
         screen.fill((0, 0, 0))
-        self.display_text("Help Menu - Press M to Return",
-                          WIDTH // 2, HEIGHT // 2)
+        screen.blit(self.help_menu_surf, (0, 0))  # display menu
 
+        # check if the player wants to exit help menu
         for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
-                # exit help menu, revert to previous state
-                if event.key == pygame.K_m:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                if 1124 <= x <= 1180 and 19 <= y <= 69:
                     self.game_state = self.temp_state
 
     def perform_leaderboard_frame_actions(self) -> None:
-        """Performs game actions for when the player is viewing the leaderboard"""
-        # display leaderboard
+        """Display leaderboard and handle clicks on buttons."""
         screen.fill((0, 0, 0))
-        self.leaderboard.display(screen)
+        self.leaderboard.display(screen)  # display background
 
         # check if the player wants to exit leaderboard
         for event in self.game_events:
@@ -506,7 +502,7 @@ class GameController:
                     self.game_state = "menu"  # return to menu
 
     def perform_playing_frame_actions(self) -> None:
-        """Performs frame actions for when the player is in a game"""
+        """Display game and let player control character."""
         screen.fill((0, 0, 0))
 
         # check player actions for pausing
@@ -537,7 +533,7 @@ class GameController:
             self.game_state = "loser"
 
     def perform_paused_frame_actions(self) -> None:
-        """Performs frame actions for when the game is paused"""
+        """Display pause menu and handle clicks on buttons."""
 
         # display the map as a background
         self.display_playing_objects()
@@ -566,22 +562,13 @@ class GameController:
                         self.restart_game()
                     elif 423 <= y <= 496:  # quit to menu
                         self.reset_game()
+
+                # clicked outside the box to resume game
                 if not (390 <= x <= 760 and 105 <= y <= 524):
                     self.resume_game()
 
-    def perform_game_over_frame_actions(self) -> None:
-        """Performs frame actions for when the player just lost a game."""
-        screen.fill((0, 0, 0))
-        self.display_text("Game Over - Press R to Restart",
-                          WIDTH // 2, HEIGHT // 2)
-
-        for event in self.game_events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    self.reset_game()
-
     def perform_winner_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `winner` state."""
+        """Display 'winner' and handle clicks on buttons."""
         screen.fill((0, 0, 0))
         self.display_text("You Won! - Click to return to Main Menu",
                           WIDTH // 2, HEIGHT // 2)
@@ -591,7 +578,7 @@ class GameController:
                 self.reset_game()
 
     def perform_loser_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `lost` state."""
+        """Display 'loser' and handle clicks on buttons."""
         screen.fill((0, 0, 0))
         self.display_text(
             "You Lost the Game! - Click to return to Main Menu", WIDTH // 2, HEIGHT // 2
@@ -602,34 +589,42 @@ class GameController:
                 self.reset_game()
 
     def run_debug(self) -> None:
-        """Run debug features
+        """Run debug features.
 
         1. Create coordinate grid for easy drawing
         2. Allows for right-clicking to get mouse location
         """
-        # 1. Draw grid
+        # 1. draw grid
         grid_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-        for i in range(0, WIDTH, 100):  # Big vertical lines
+        for i in range(0, WIDTH, 100):  # big vertical lines
             line = pygame.Rect(i, 0, 2, HEIGHT)
             pygame.draw.rect(grid_surface, "red", line)
-        for i in range(0, HEIGHT, 100):  # Big horizontal lines
+        for i in range(0, HEIGHT, 100):  # big horizontal lines
             line = pygame.Rect(0, i, WIDTH, 2)
             pygame.draw.rect(grid_surface, "red", line)
-        for i in range(0, WIDTH, 20):  # Small vertical lines
+        for i in range(0, WIDTH, 20):  # small vertical lines
             line = pygame.Rect(i, 0, 1, HEIGHT)
             pygame.draw.rect(grid_surface, "grey", line)
-        for i in range(0, HEIGHT, 20):  # Small horizontal lines
+        for i in range(0, HEIGHT, 20):  # small horizontal lines
             line = pygame.Rect(0, i, WIDTH, 1)
             pygame.draw.rect(grid_surface, "grey", line)
-        screen.blit(grid_surface, (0, 0))  # Display all grid lines
+        screen.blit(grid_surface, (0, 0))
 
-        # 2. Right click to get coordinates
+        # 2. right click to get coordinates
         for event in self.game_events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 print(f"Mouse coordinates: {event.pos}")
 
-    def display_text(self, text, x, y, font_size=36, color=(255, 255, 255)):
-        """Utility method to display text on the screen."""
+    def display_text(self, text, x, y, font_size=36, color=(255, 255, 255)) -> None:
+        """Utility method to display text on the screen.
+
+        Args:
+            text: string to display
+            x: x-coordinate of text
+            y: y-coordinate of text
+            font_size: font size of text
+            color: color of text
+        """
         font = pygame.font.SysFont(None, font_size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(center=(x, y))
@@ -646,7 +641,7 @@ class GameController:
             )
 
     def check_win_condition(self) -> bool:
-        """Check if the player reached the end
+        """Check if the player reached the end.
 
         Returns:
             True if the player reached the end, otherwise False
@@ -669,12 +664,12 @@ class GameController:
         return False
 
     def restart_game(self) -> None:
-        """Restart the current level"""
+        """Restart the current level."""
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_state = "playing"
         self.stopwatch.reset()
         self.stopwatch.start()
-        for item in self.maze.get_power_ups():
+        for item in self.maze.get_power_ups():  # respawn item
             item.set_collected(False)
         for hunter in self.maze.get_hunters():
             hunter.reset_location()
