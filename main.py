@@ -487,6 +487,7 @@ class GameController:
         screen.fill((0, 0, 0))
         screen.blit(self.help_menu_surf, (0, 0))  # display menu
 
+        # check if player wants to exit help menu
         for event in self.game_events:
             # exit help menu, revert to previous state
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
