@@ -1,4 +1,5 @@
 import atexit
+import math
 import random
 from random import randint
 import sys
@@ -488,7 +489,6 @@ class GameController:
         self.maze.display_obstacles(self.player.get_z())
         self.maze.display_items(self.player.get_z())
         self.maze.display_hunters(self.player)
-        self.maze.display_lightnings()
         self.player.display_player()
         self.stopwatch.display(screen)
 
@@ -692,8 +692,13 @@ class GameController:
 
     def display_active_effects(self) -> None:
         """Displays active effects on the screen."""
+
+        # lightning effect from teleport
+        self.maze.display_lightnings()
+
+        # speed boost timer
         if self.player.speed_boost_active:
-            remaining = int(
+            remaining = math.ceil(
                 self.player.speed_boost_end_time - pygame.time.get_ticks() / 1000
             )
             self.display_text(
