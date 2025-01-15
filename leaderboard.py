@@ -41,7 +41,12 @@ class Leaderboard:
 
     def add_score(self, difficulty: str, score: float) -> None:
         """Add a score to the leaderboard in the given difficulty level,
-        Increasing property will be maintained"""
+        Increasing property will be maintained
+        
+        Args:
+            difficulty: the difficulty level
+            score: the score of this run. Equal to the elapsed time from stopwatch.
+        """
         insort(self.leaderboard[difficulty], score)  # insert, list stays sorted
         if len(self.leaderboard[difficulty]) > 10:
             self.leaderboard[difficulty].pop()
