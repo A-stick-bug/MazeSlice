@@ -77,17 +77,17 @@ class EndLocation(Circle):
     """An end location represented as a circular object.
 
     Attributes:
-        surf: A pygame surface for the end location image.
+        surf: A pygame surface for the end location image
     """
 
     def __init__(self, x, y, z, radius):
         """Initializes the end location with its position and radius.
 
         Args:
-            x: X-coordinate of the end location.
-            y: Y-coordinate of the end location.
-            z: Z-coordinate of the end location.
-            radius: Radius of the end location.
+            x: X-coordinate of the end location
+            y: Y-coordinate of the end location
+            z: Z-coordinate of the end location
+            radius: Radius of the end location
         """
         super().__init__(x, y, z, radius)
         self.surf = pygame.image.load(
