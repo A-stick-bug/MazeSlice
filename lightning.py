@@ -25,7 +25,7 @@ class LightningSegment:
         Args:
             start: The start location of the segment.
             end: The end location of the segment.
-            color: The color of the segment used for displaying purposes.
+            color: The color of the segment used for displaying.
         """
         self.start_position = start
         self.end_position = end
@@ -63,7 +63,7 @@ class Lightning:
 
         # Used for keeping track of when each segment should display.
         curr_time = 0
-        duration = 120
+        duration = 60
 
         # Loop to generate each segment. Ends if finished.
         # As distance always decreases, this while loop eventually finishes.

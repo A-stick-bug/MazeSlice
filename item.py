@@ -126,6 +126,6 @@ class Item(Cylinder):
             if DEBUG:
                 print("Teleport activated!")
 
-    def set_collected(self, val) -> None:
+    def set_collected(self, val: bool) -> None:
         """Sets collected to the argument val."""
         self.collected = val
