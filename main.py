@@ -436,7 +436,7 @@ class GameController:
         self.game_state = "playing"
 
     def display_playing_objects(self) -> None:
-        """Display all objects on the map for when the player is in a game."""
+        """Display all objects on the map."""
         if self.game_state != "paused":
             self.maze.start_location.rotate()
         self.maze.display_start_end(self.player.get_z())
@@ -447,7 +447,7 @@ class GameController:
         self.stopwatch.display(screen)
 
     def perform_menu_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `menu` state."""
+        """Performs actions for when the menu is on."""
         screen.fill((0, 0, 0))
         screen.blit(self.main_menu_surf, (0, 0))  # display menu
 
@@ -479,7 +479,7 @@ class GameController:
                     self.game_state = "help_menu"
 
     def perform_help_menu_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `help_menu` state."""
+        """Performs actions for when the help_menu is on."""
         # todo: implement this
         screen.fill((0, 0, 0))
         self.display_text("Help Menu - Press M to Return",
@@ -492,7 +492,7 @@ class GameController:
                     self.game_state = self.temp_state
 
     def perform_leaderboard_frame_actions(self) -> None:
-        """Performs game actions for when the player is viewing the leaderboard."""
+        """Performs actions for when the player is viewing the leaderboard."""
         # display leaderboard
         screen.fill((0, 0, 0))
         self.leaderboard.display(screen)
@@ -505,7 +505,7 @@ class GameController:
                     self.game_state = "menu"  # return to menu
 
     def perform_playing_frame_actions(self) -> None:
-        """Performs frame actions for when the player is in a game."""
+        """Performs actions for when the player is in a game."""
         screen.fill((0, 0, 0))
 
         # check player actions for pausing
@@ -536,7 +536,7 @@ class GameController:
             self.game_state = "loser"
 
     def perform_paused_frame_actions(self) -> None:
-        """Performs frame actions for when the game is paused."""
+        """Performs actions for when the game is paused."""
 
         # display the map as a background
         self.display_playing_objects()
@@ -569,7 +569,7 @@ class GameController:
                     self.resume_game()
 
     def perform_winner_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `winner` state."""
+        """Performs actions for when the player won."""
         screen.fill((0, 0, 0))
         self.display_text("You Won! - Click to return to Main Menu",
                           WIDTH // 2, HEIGHT // 2)
@@ -579,7 +579,7 @@ class GameController:
                 self.reset_game()
 
     def perform_loser_frame_actions(self) -> None:
-        """Performs frame actions for when the game is in the `lost` state."""
+        """Performs actions for when the player lost."""
         screen.fill((0, 0, 0))
         self.display_text(
             "You Lost the Game! - Click to return to Main Menu", WIDTH // 2, HEIGHT // 2
