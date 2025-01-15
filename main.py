@@ -24,7 +24,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("MazeSlice")
 clock = pygame.time.Clock()
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 
 @atexit.register
@@ -428,6 +428,8 @@ class GameController:
             "graphics/help_menu.png").convert_alpha()
         self.loser_menu = pygame.image.load(
             "graphics/loser_menu.png").convert_alpha()
+        self.winner_menu = pygame.image.load(
+            "graphics/winner_menu.png").convert_alpha()
 
     def play(self) -> None:
         """Main loop of the game."""
@@ -614,12 +616,17 @@ class GameController:
     def perform_winner_frame_actions(self) -> None:
         """Performs actions for when the player won."""
         screen.fill((0, 0, 0))
-        self.display_text("You Won! - Click to return to Main Menu",
-                          WIDTH // 2, HEIGHT // 2)
+        screen.blit(self.winner_menu, (0, 0))  # display menu
 
+        # check if any of the buttons are pressed
         for event in self.game_events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                self.reset_game()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                if 104 <= x <= 552:
+                    if 238 <= y <= 350:  # restart level
+                        self.restart_game()
+                    elif 384 <= y <= 495:  # quit to menu
+                        self.reset_game()
 
     def perform_loser_frame_actions(self) -> None:
         """Performs actions for when the player lost."""
@@ -673,7 +680,7 @@ class GameController:
             font_size: Font size of text
             color: Color of text
         """
-        font = pygame.font.SysFont(None, font_size)
+        font = pygame.font.SysFont("comicsansms", font_size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect(center=(x, y))
         screen.blit(text_surface, text_rect)
@@ -685,7 +692,7 @@ class GameController:
                 self.player.speed_boost_end_time - pygame.time.get_ticks() / 1000
             )
             self.display_text(
-                f"Speed Boost Active! ({remaining}s)", 100, 50, 24, (255, 0, 0)
+                f"Speed Boost Active! ({remaining}s)", 590, 41, 20, (255, 0, 0)
             )
 
     def check_win_condition(self) -> bool:
