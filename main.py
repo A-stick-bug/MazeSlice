@@ -385,6 +385,10 @@ class Maze:
         """
         return self.hunters
 
+    def clear_lightnings(self) -> None:
+        """Remove effects by clearing `self.lightnings`"""
+        self.lightnings.clear()
+
 
 class GameController:
     """Management system for the game.
@@ -422,6 +426,8 @@ class GameController:
             "graphics/pause_menu.png").convert_alpha()
         self.help_menu_surf = pygame.image.load(
             "graphics/help_menu.png").convert_alpha()
+        self.loser_menu = pygame.image.load(
+            "graphics/loser_menu.png").convert_alpha()
 
     def play(self) -> None:
         """Main loop of the game."""
@@ -618,13 +624,17 @@ class GameController:
     def perform_loser_frame_actions(self) -> None:
         """Performs actions for when the player lost."""
         screen.fill((0, 0, 0))
-        self.display_text(
-            "You Lost the Game! - Click to return to Main Menu", WIDTH // 2, HEIGHT // 2
-        )
+        screen.blit(self.loser_menu, (0, 0))  # display menu
 
+        # check if any of the buttons are pressed
         for event in self.game_events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                self.reset_game()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = pygame.mouse.get_pos()
+                if 104 <= x <= 552:
+                    if 238 <= y <= 350:  # restart level
+                        self.restart_game()
+                    elif 384 <= y <= 495:  # quit to menu
+                        self.reset_game()
 
     def run_debug(self) -> None:
         """Run debug features.
@@ -711,6 +721,7 @@ class GameController:
             item.set_collected(False)
         for hunter in self.maze.get_hunters():
             hunter.reset_location()
+        self.maze.clear_lightnings()
 
     def reset_game(self) -> None:
         """Reset the game to initial `menu` state."""
