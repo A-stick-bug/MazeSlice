@@ -109,18 +109,21 @@ class EndLocation(Circle):
 
 
 class Maze:
+    """A maze with a specific difficulty.
+
+    Attributes:
+        start_location: The spawn point of the player
+        end_location: The end point of the maze
+        obstacles: A list of obstacles in the maze
+        power_ups: A list of power-up items in the maze
+        hunters: A list of hunters in the maze
+        difficulty: The difficulty of the maze
+    """
+
     def __init__(self, difficulty: str):
-        """A maze with a specific difficulty.
+        """Initialize a maze with a specific difficulty.
 
         Args:
-            difficulty: The difficulty of the maze
-
-        Attributes:
-            start_location: The spawn point of the player
-            end_location: The end point of the maze
-            obstacles: A list of obstacles in the maze
-            power_ups: A list of power-up items in the maze
-            hunters: A list of hunters in the maze
             difficulty: The difficulty of the maze
         """
         margin = 50
