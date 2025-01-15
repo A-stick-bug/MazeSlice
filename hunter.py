@@ -12,10 +12,12 @@ class Hunter(Circle):
     """Represents a hunter which moves towards the player and kills them.
 
     Attributes:
-        initial_location: Initial location of the hunter.
+        initial_location (tuple[float, float, int]): Initial location of the hunter.
     """
 
-    def __init__(self, x, y, z: int, radius, speed=0.0, color=(255, 119, 0)):
+    def __init__(
+        self, x: float, y: float, z: int, radius: int, speed=0.0, color=(255, 119, 0)
+    ):
         """Initializes a hunter with its position, radius, speed and color.
 
         Args:
@@ -55,16 +57,21 @@ class Hunter(Circle):
                 if random() > self.speed / 5:
                     self.z += 1
 
-    def set_location(self, location) -> None:
+    def set_location(self, location: tuple[float, float, int]) -> None:
         """Sets the hunter's location."""
         self.x, self.y, self.z = location
 
-    def reset_location(self):
+    def reset_location(self) -> None:
         """Resets the location of the hunter."""
         self.set_location(self.initial_location)
 
-    def display_hunter(self, screen, player: Player) -> None:
-        """Displays the hunter on the screen."""
+    def display_hunter(self, screen: pygame.Surface, player: Player) -> None:
+        """Displays the hunter on the screen.
+
+        Args:
+            screen: The pygame screen where the hunter should be drawn
+            player: The player.
+        """
         # Checks for difference of Z-coordinate from the player.
         z_distance_from_player = self.z_distance_from_player(player)
         if z_distance_from_player == 0:
@@ -98,7 +105,10 @@ class Hunter(Circle):
             )
 
     def check_collision(self, player: Player) -> bool:
-        """Checks collision with the player. If collision occurs, end the game."""
+        """Checks collision with the player. If collision occurs, end the game.
+        
+        Returns True if collides with player and False otherwise.
+        """
         if super().collides_with_circle(player):
             from main import DEBUG_MODE
 
