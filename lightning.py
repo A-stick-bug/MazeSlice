@@ -6,7 +6,7 @@ import random
 
 
 def dist(a, b):
-    """Distance helper function to optimize time"""
+    """Distance helper function to optimize time."""
     return math.isqrt(int(a[0] - b[0]) ** 2 + int(a[1] - b[1]) ** 2)
 
 
@@ -24,7 +24,11 @@ class LightningSegment():
 
 
 class Lightning:
-    """Lightning to be displayed in the maze upon teleportation."""
+    """Lightning to be displayed in the maze upon teleportation.
+    
+    Attributes:
+        
+    """
 
     def __init__(self, start: list[float, float], end: list[float, float]):
         """"""
@@ -43,6 +47,7 @@ class Lightning:
 
         # Loop to generate each segment. Ends if finished.
         # As distance always decreases, this while loop eventually finishes.
+        # But this is also laggy so the max amount of segments is capped.
         total_cnt = 0
         while True:
             total_cnt += 1
@@ -72,6 +77,7 @@ class Lightning:
                 new_pos[1] += vec[1]
                 # print(curr_pos, new_pos)
                 # Check if this segment shortens the distance.
+                # Terminates if a suitable new position is found.
                 if dist(curr_pos, end) > dist(new_pos, end):
                     color = (
                         random.randint(224, 255),
@@ -85,8 +91,6 @@ class Lightning:
 
                     # Set current position to new position.
                     curr_pos = new_pos
-
-                    # Breaks this while loop.
                     break
 
             # Increments current time.

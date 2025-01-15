@@ -30,20 +30,17 @@ class Item(Cylinder):
 
     @property
     def z(self):
-        """
-        Returns the midpoint Z-coordinate of the item.
+        """Returns the midpoint Z-coordinate of the item.
         """
         return (self.start_z + self.end_z) / 2
 
     def get_type(self) -> str:
-        """
-        Returns the type of the item.
+        """Returns the type of the item.
         """
         return self.type
 
     def get_color(self):
-        """
-        Returns the color of the item.
+        """Returns the color of the item.
         """
         return self.color
 
@@ -57,9 +54,8 @@ class Item(Cylinder):
         return colors.get(self.type, (255, 255, 255))  # Default white
 
     def display(self, screen, player_z) -> None:
-        """
-        Displays the item on the screen if it is within the visible Z-layer.
-        Changes color if collected.
+        """Displays the item on the screen if it is within the visible Z-layer.
+        Not displayed if collected.
         """
         if not self.collected and self.start_z <= player_z <= self.end_z:
             pygame.draw.circle(
