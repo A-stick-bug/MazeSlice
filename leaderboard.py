@@ -1,14 +1,3 @@
-"""
-Leaderboard that keeps track of top 10 scores in each difficulty level.
-Structure of leaderboard.json:
-{
-   "easy": list[float],
-   "medium": list[float],
-   "hard": list[float],
-   "???": list[float]
-}
-"""
-
 import json
 from bisect import insort
 
@@ -16,8 +5,23 @@ import pygame
 
 
 class Leaderboard:
+    """
+    Leaderboard that keeps track of top 10 scores in each difficulty level.
+
+    Structure of leaderboard.json:
+    {
+    "easy": list[float],
+    "medium": list[float],
+    "hard": list[float],
+    "???": list[float]
+    }
+    """
+
     def __init__(self):
-        """Try loading the leaderboard from `leaderboard.json`, otherwise
+        """
+        Initializes the leaderboard.
+
+        Try loading the leaderboard from `leaderboard.json`, otherwise
         create an empty one."""
         self.bg_surf = pygame.image.load("graphics/leaderboard_bg.png").convert_alpha()
         self.leaderboard = {"easy": [], "medium": [], "hard": [], "???": []}
@@ -34,7 +38,7 @@ class Leaderboard:
 
     def add_score(self, difficulty: str, score: float) -> None:
         """Add a score to the leaderboard in the given difficulty level,
-        Increasing property wil lbe maintained"""
+        Increasing property will be maintained"""
         insort(self.leaderboard[difficulty], score)  # insert, list stays sorted
         if len(self.leaderboard[difficulty]) > 10:
             self.leaderboard[difficulty].pop()
@@ -59,7 +63,10 @@ class Leaderboard:
         # draw title
         font = pygame.font.SysFont("comicsansms", 35)  # font for title
         title_surface = font.render("Leaderboard", True, WHITE)
-        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 30))
+        screen.blit(
+            title_surface,
+            (screen.get_width() // 2 - title_surface.get_width() // 2, 30),
+        )
 
         entry_font = pygame.font.SysFont("comicsansms", 25)  # font for rankings
         column_titles = self.leaderboard.keys()
@@ -76,19 +83,26 @@ class Leaderboard:
             if self.leaderboard[column_title]:
                 # scores
                 for j, score in enumerate(self.leaderboard[column_title]):
-                    score_surface = entry_font.render(f"{j + 1}. {score:.2f}", True, WHITE)
-                    screen.blit(score_surface, (x_pos - score_surface.get_width() // 2, 155 + j * 40))
+                    score_surface = entry_font.render(
+                        f"{j + 1}. {score:.2f}", True, WHITE
+                    )
+                    screen.blit(
+                        score_surface,
+                        (x_pos - score_surface.get_width() // 2, 155 + j * 40),
+                    )
             else:
                 # no scores
                 no_scores_surface = entry_font.render("No Scores", True, GRAY)
-                screen.blit(no_scores_surface, (x_pos - no_scores_surface.get_width() // 2, 155))
+                screen.blit(
+                    no_scores_surface, (x_pos - no_scores_surface.get_width() // 2, 155)
+                )
 
     def __str__(self):
         """Convert the leaderboard to a string as a python dictionary"""
         return str(self.leaderboard)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # testing code
     leaderboard = Leaderboard()
     leaderboard.add_score("easy", 10)
