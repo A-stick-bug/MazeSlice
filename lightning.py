@@ -11,7 +11,7 @@ def dist(a, b):
 
 
 class LightningSegment:
-    """Represents individual segment of lightning."""
+    """Represents an individual segment of lightning."""
 
     def __init__(
         self,
@@ -19,11 +19,20 @@ class LightningSegment:
         end: tuple[float, float],
         color: tuple[int, int, int],
     ):
+        """Initializes a lightning segment with its start position, end
+        position and color.
+
+        Args:
+            start: The start location of the segment.
+            end: The end location of the segment.
+            color: The color of the segment used for displaying purposes.
+        """
         self.start_position = start
         self.end_position = end
         self.color = color
 
     def display(self, surface: pygame.Surface):
+        """Display the lightning segment as a line on the given pygame surface.."""
         pygame.draw.line(surface, self.color, self.start_position, self.end_position, 3)
 
 
@@ -31,11 +40,18 @@ class Lightning:
     """Lightning to be displayed in the maze upon teleportation.
 
     Attributes:
-
+        time: The number of frames since the lightning has been generated.
+        lightning_segments: The individual segments of the lightning
+        collected in a list.
     """
 
     def __init__(self, start: list[float, float], end: list[float, float]):
-        """"""
+        """Initializes the lightning.
+
+        Args:
+            start: The starting position of the lightning.
+            end: The ending position of the lightning.
+        """
         self.start_position = start
         self.end_position = end
         self.time = 0
@@ -55,6 +71,7 @@ class Lightning:
         total_cnt = 0
         while True:
             total_cnt += 1
+
             # If close enough to end position, or there are too many segments
             # make a segment connecting it directly.
             if dist(curr_pos, end) <= 50 or total_cnt > 20:
@@ -79,7 +96,7 @@ class Lightning:
                 new_pos = curr_pos[:]
                 new_pos[0] += vec[0]
                 new_pos[1] += vec[1]
-                # print(curr_pos, new_pos)
+
                 # Check if this segment shortens the distance.
                 # Terminates if a suitable new position is found.
                 if dist(curr_pos, end) > dist(new_pos, end):
@@ -97,11 +114,15 @@ class Lightning:
                     curr_pos = new_pos
                     break
 
-            # Increments current time.
-            if random.random() > 0.5:
-                curr_time += 1
+            # Increments the time for which this segment should start displaying.
+            curr_time += random.randint(0, 2)
 
     def display(self, surface: pygame.Surface):
+        """Display the lightning onto the given surface.
+
+        Args:
+            surface: The pygame surface to draw the lightning on.
+        """
         for lightning_segment in self.lightning_segments:
             time_range = lightning_segment[1]
 
@@ -114,6 +135,12 @@ class Lightning:
         self.time += 1
 
     def check_used(self) -> bool:
+        """Checks if this lightning is being displayed.
+        
+        Since it might be expensive to display a lightning, the lightning can
+        be removed if unused.
+        
+        Returns True if used and False otherwise."""
         if self.time > self.lightning_segments[-1][1][1]:
             return False
         return True
