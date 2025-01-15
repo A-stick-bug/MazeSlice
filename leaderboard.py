@@ -5,8 +5,7 @@ import pygame
 
 
 class Leaderboard:
-    """
-    Leaderboard that keeps track of top 10 scores in each difficulty level.
+    """Leaderboard that keeps track of top 10 scores in each difficulty level.
 
     Attributes:
         bg_surf: A pygame surface for the background.
@@ -23,8 +22,7 @@ class Leaderboard:
     """
 
     def __init__(self):
-        """
-        Initializes the leaderboard.
+        """Initializes the leaderboard.
 
         Try loading the leaderboard from `leaderboard.json`, otherwise
         create an empty one."""
@@ -105,16 +103,3 @@ class Leaderboard:
     def __str__(self):
         """Convert the leaderboard to a string as a python dictionary"""
         return str(self.leaderboard)
-
-
-if __name__ == "__main__":
-    # testing code
-    leaderboard = Leaderboard()
-    leaderboard.add_score("easy", 10)
-    leaderboard.add_score("easy", 20)
-    leaderboard.add_score("easy", 15)
-    leaderboard.add_score("hard", 5)
-    leaderboard.add_score("hard", 1)
-    leaderboard.add_score("medium", 3)
-
-    print(leaderboard)
