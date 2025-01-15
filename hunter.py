@@ -65,6 +65,7 @@ class Hunter(Circle):
 
     def display_hunter(self, screen, player: Player) -> None:
         """Displays the hunter on the screen."""
+        # Checks for difference of Z-coordinate from the player.
         z_distance_from_player = self.z_distance_from_player(player)
         if z_distance_from_player == 0:
             pygame.draw.circle(
