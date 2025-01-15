@@ -56,7 +56,7 @@ class StartLocation(Circle):
         self.angle = 0
 
     def display(self, screen, from_z, color=(0, 0, 255)) -> None:
-        """Displays the starting location on the screen
+        """Displays the starting location on the screen.
 
         Args:
             screen: The pygame screen where the start location should be drawn
@@ -69,9 +69,7 @@ class StartLocation(Circle):
             screen.blit(rotated_surf, start_rect)
 
     def rotate(self) -> None:
-        """
-        Rotates the spawn point image by a small increment
-        """
+        """Rotates the spawn point image by a small increment."""
         self.angle += 0.2
 
 
@@ -246,7 +244,7 @@ class Maze:
             item.display(screen, player_z)
 
     def display_hunters(self, player: Player) -> None:
-        """Displays hunters in the maze based on the player's Z-layer
+        """Displays hunters in the maze based on the player's Z-layer.
 
         Args:
             player: Player object used to determine the visibility of hunters
@@ -255,7 +253,7 @@ class Maze:
             hunter.display_hunter(screen, player)
 
     def display_start_end(self, from_z: int) -> None:
-        """Display the start and end locations of the maze
+        """Display the start and end locations of the maze.
 
         Args:
             from_z: The z-coordinate to determine which locations are visible
@@ -324,7 +322,7 @@ class Maze:
         return True
 
     def get_start_location(self) -> StartLocation:
-        """Returns the start location of the maze
+        """Returns the start location of the maze.
 
         Returns:
             StartLocation: The start location of the maze
@@ -332,7 +330,7 @@ class Maze:
         return self.start_location
 
     def get_end_location(self) -> EndLocation:
-        """Returns the end location of the maze
+        """Returns the end location of the maze.
 
         Returns:
             EndLocation: The end location of the maze
@@ -340,7 +338,7 @@ class Maze:
         return self.end_location
 
     def get_power_ups(self) -> list[Item]:
-        """Return a list of all power ups in the maze
+        """Return a list of all power ups in the maze.
 
         Returns:
             list[Item]: A list of power up items in the maze
@@ -348,7 +346,7 @@ class Maze:
         return self.power_ups
 
     def get_hunters(self) -> list[Hunter]:
-        """Return a list of all hunters in the maze
+        """Return a list of all hunters in the maze.
 
         Returns:
             list[Hunter]: A list of hunter objects in the maze
@@ -392,7 +390,7 @@ class GameController:
             "graphics/pause_menu.png").convert_alpha()
 
     def play(self) -> None:
-        """Main loop of the game"""
+        """Main loop of the game."""
         while True:
             self.game_events = pygame.event.get()
 
@@ -423,24 +421,24 @@ class GameController:
             clock.tick(60)  # 60 fps
 
     def start_game(self, difficulty: str) -> None:
-        """Start a game with the selected difficulty"""
+        """Start a game with the selected difficulty."""
         self.maze = Maze(difficulty)
         self.player = Player(*self.maze.get_start_location().get_location())
         self.game_state = "playing"
         self.stopwatch.start()
 
     def pause_game(self) -> None:
-        """Pause the current game"""
+        """Pause the current game."""
         self.stopwatch.pause()
         self.game_state = "paused"
 
     def resume_game(self) -> None:
-        """Resume the currently paused game"""
+        """Resume the currently paused game."""
         self.stopwatch.start()
         self.game_state = "playing"
 
     def display_playing_objects(self) -> None:
-        """Display all objects on the map for when the player is in a game"""
+        """Display all objects on the map for when the player is in a game."""
         if self.game_state != "paused":
             self.maze.start_location.rotate()
         self.maze.display_start_end(self.player.get_z())
