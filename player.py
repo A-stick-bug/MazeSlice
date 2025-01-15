@@ -7,6 +7,7 @@ from shapes import Circle
 
 EXPERIMENTAL_SLIDING = True
 
+
 class Player(Circle):
     """
     Represents the player in the game, handling movement, actions like dashing and teleporting,
@@ -150,7 +151,7 @@ class Player(Circle):
             self.y += self.velocity.y
             if not maze.is_move_allowed(self):
                 self.y = old_location[1]
-            
+
         else:
             self.x += self.velocity.x
             self.y += self.velocity.y
