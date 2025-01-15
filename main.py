@@ -12,12 +12,12 @@ from player import Player
 from shapes import Circle, Sphere
 from stopwatch import Stopwatch
 
-# Dimensions of the window
+# dimensions of the window
 WIDTH = 1200
 HEIGHT = 600
-Z_LAYERS = 200  # Currently this is inclusive [0,200]
+Z_LAYERS = 200  # currently this is inclusive [0,200]
 
-# Initialize Pygame
+# initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("3D Maze Game")
@@ -496,7 +496,7 @@ class GameController:
                     self.game_state = self.temp_state
 
     def perform_leaderboard_frame_actions(self) -> None:
-        """Performs game actions for when the player is viewing the leaderboard"""
+        """Performs game actions for when the player is viewing the leaderboard."""
         # display leaderboard
         screen.fill((0, 0, 0))
         self.leaderboard.display(screen)
@@ -509,7 +509,7 @@ class GameController:
                     self.game_state = "menu"  # return to menu
 
     def perform_playing_frame_actions(self) -> None:
-        """Performs frame actions for when the player is in a game"""
+        """Performs frame actions for when the player is in a game."""
         screen.fill((0, 0, 0))
 
         # check player actions for pausing
@@ -540,7 +540,7 @@ class GameController:
             self.game_state = "loser"
 
     def perform_paused_frame_actions(self) -> None:
-        """Performs frame actions for when the game is paused"""
+        """Performs frame actions for when the game is paused."""
 
         # display the map as a background
         self.display_playing_objects()
@@ -605,7 +605,7 @@ class GameController:
                 self.reset_game()
 
     def run_debug(self) -> None:
-        """Run debug features
+        """Run debug features.
 
         1. Create coordinate grid for easy drawing
         2. Allows for right-clicking to get mouse location
@@ -657,7 +657,7 @@ class GameController:
             )
 
     def check_win_condition(self) -> bool:
-        """Check if the player reached the end
+        """Check if the player reached the end.
 
         Returns:
             True if the player reached the end, otherwise False
@@ -691,7 +691,7 @@ class GameController:
             hunter.reset_location()
 
     def reset_game(self) -> None:
-        """Reset the game to initial `menu` state"""
+        """Reset the game to initial `menu` state."""
         self.__init__()
 
 
