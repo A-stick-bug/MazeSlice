@@ -48,9 +48,9 @@ class Item(Cylinder):
     def get_color_by_type(self):
         """Returns color based on item type."""
         colors = {
-            'speed_boost': (255, 0, 0),  # Red
-            'dash': (0, 255, 0),  # Green
-            'teleport': (128, 0, 128),  # Purple
+            "speed_boost": (255, 0, 0),  # Red
+            "dash": (0, 255, 0),  # Green
+            "teleport": (128, 0, 128),  # Purple
         }
         return colors.get(self.type, (255, 255, 255))  # Default white
 
@@ -64,7 +64,7 @@ class Item(Cylinder):
                 surface=screen,
                 color=self.color,
                 center=(self.x, self.y),
-                radius=int(self.radius)
+                radius=int(self.radius),
             )
 
     def check_collision(self, player) -> bool:
@@ -81,14 +81,13 @@ class Item(Cylinder):
             return False
 
         # Calculate planar distance
-        planar_dist = pygame.math.Vector2(
-            self.x - player.x, self.y - player.y).length()
+        planar_dist = pygame.math.Vector2(self.x - player.x, self.y - player.y).length()
         if planar_dist < (self.radius + player.radius):
             self.collected = True
             from main import DEBUG_MODE
+
             if DEBUG_MODE:
-                print(
-                    f"Item collected: {self.type} at ({self.x}, {self.y}, {self.z})")
+                print(f"Item collected: {self.type} at ({self.x}, {self.y}, {self.z})")
             return True
         return False
 
@@ -103,17 +102,17 @@ class Item(Cylinder):
             return
 
         DEBUG = __import__("main").DEBUG_MODE
-        if self.type == 'speed_boost':
+        if self.type == "speed_boost":
             player.apply_speed_boost()
             if DEBUG:
                 print("Speed boost applied!")
             # The Player class handles reverting the speed after a duration
-        elif self.type == 'dash':
+        elif self.type == "dash":
             player.reduce_dash_cooldown()
             if DEBUG:
                 print("Dash cooldown reduced!")
             # Reduces the cooldown period for dashing
-        elif self.type == 'teleport':
+        elif self.type == "teleport":
             player.teleport(maze)
             if DEBUG:
                 print("Teleport activated!")
