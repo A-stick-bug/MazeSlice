@@ -1,9 +1,9 @@
 # item.py
 
 import pygame
-from shapes import Cylinder
-from player import Player
 
+from player import Player
+from shapes import Cylinder
 
 class Item(Cylinder):
     """

@@ -8,6 +8,7 @@ import pygame
 from hunter import Hunter
 from item import Item
 from leaderboard import Leaderboard
+from lightning import Lightning
 from player import Player
 from shapes import Circle, Sphere
 from stopwatch import Stopwatch

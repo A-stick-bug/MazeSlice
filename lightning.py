@@ -1,8 +1,8 @@
 # lightning.py
 
+import math
 import pygame
 import random
-import math
 
 
 class LightningSegment():
