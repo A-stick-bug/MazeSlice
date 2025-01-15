@@ -14,8 +14,8 @@ class LightningSegment():
     """Individual segment of lightning."""
 
     def __init__(self, start: tuple[float, float], end: tuple[float, float], color: tuple[int, int, int]):
-        self.start_position = start[:]
-        self.end_position = end[:]
+        self.start_position = start
+        self.end_position = end
         self.color = color
 
     def display(self, surface: pygame.Surface):
@@ -23,7 +23,7 @@ class LightningSegment():
                          self.start_position, self.end_position, 3)
 
 
-class Lightning():
+class Lightning:
     """Lightning to be displayed in the maze upon teleportation."""
 
     def __init__(self, start: list[float, float], end: list[float, float]):
@@ -34,7 +34,7 @@ class Lightning():
 
         # Generation of individual segments.
         self.lightning_segments = []
-        curr_pos = list(start[:])
+        curr_pos = list(start)
         # print(curr_pos)
 
         # Used for keeping track of when each segment should display.
