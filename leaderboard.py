@@ -8,6 +8,11 @@ class Leaderboard:
     """
     Leaderboard that keeps track of top 10 scores in each difficulty level.
 
+    Attributes:
+        bg_surf: A pygame surface for the background.
+        leaderboard: A dictionary storing an array of the highest scores for
+        each difficulty.
+
     Structure of leaderboard.json:
     {
     "easy": list[float],
