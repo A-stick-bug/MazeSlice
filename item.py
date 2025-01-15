@@ -7,21 +7,24 @@ from shapes import Cylinder
 
 
 class Item(Cylinder):
-    """
-    Represents an item within the maze that the player can collect.
+    """Represents an item within the maze that the player can collect.
+
+    Attributes:
+        collected: True if collected by player and False otherwise.
     """
 
-    def __init__(self, x, y, start_z, end_z, radius, type: str):
+    def __init__(self, x : float, y : float, start_z: int, end_z: int, radius: int, type: str):
         """
         Initializes the Item with position, size, type, and color.
 
-        :param x: X-coordinate
-        :param y: Y-coordinate
-        :param start_z: Starting Z-layer
-        :param end_z: Ending Z-layer
-        :param radius: Radius of the item
-        :param type: Type of the item (e.g., 'speed_boost', 'dash', 'teleport')
-        :param color: Color of the item for rendering
+        Args:
+            x: The x-coordinate of the item's center.
+            y: The y-coordinate of the item's center.
+            start_z: The starting z-coordinate (layer) of the item.
+            end_z: The ending z-coordinate (layer) of the item.
+            radius: The radius of the item.
+            type: Type of the item ('speed_boost', 'dash', 'teleport').
+            color: Color of the item for rendering.
         """
         super().__init__(x, y, start_z, end_z, radius)
         self.type = type

@@ -6,28 +6,32 @@ import random
 
 
 def dist(a, b):
-    """Distance helper function to optimize time."""
+    """Distance helper function to optimize time, just for this program."""
     return math.isqrt(int(a[0] - b[0]) ** 2 + int(a[1] - b[1]) ** 2)
 
 
-class LightningSegment():
-    """Individual segment of lightning."""
+class LightningSegment:
+    """Represents individual segment of lightning."""
 
-    def __init__(self, start: tuple[float, float], end: tuple[float, float], color: tuple[int, int, int]):
+    def __init__(
+        self,
+        start: tuple[float, float],
+        end: tuple[float, float],
+        color: tuple[int, int, int],
+    ):
         self.start_position = start
         self.end_position = end
         self.color = color
 
     def display(self, surface: pygame.Surface):
-        pygame.draw.line(surface, self.color,
-                         self.start_position, self.end_position, 3)
+        pygame.draw.line(surface, self.color, self.start_position, self.end_position, 3)
 
 
 class Lightning:
     """Lightning to be displayed in the maze upon teleportation.
-    
+
     Attributes:
-        
+
     """
 
     def __init__(self, start: list[float, float], end: list[float, float]):
@@ -57,12 +61,12 @@ class Lightning:
                 color = (
                     random.randint(224, 255),
                     random.randint(206, 238),
-                    random.randint(16, 48)
+                    random.randint(16, 48),
                 )
-                new_lightning_segment = LightningSegment(
-                    curr_pos, end, color)
+                new_lightning_segment = LightningSegment(curr_pos, end, color)
                 self.lightning_segments.append(
-                    (new_lightning_segment, (curr_time, curr_time + duration)))
+                    (new_lightning_segment, (curr_time, curr_time + duration))
+                )
                 break
 
             distance = random.randint(35, 60)
@@ -82,12 +86,12 @@ class Lightning:
                     color = (
                         random.randint(224, 255),
                         random.randint(206, 238),
-                        random.randint(16, 48)
+                        random.randint(16, 48),
                     )
-                    new_lightning_segment = LightningSegment(
-                        curr_pos, new_pos, color)
+                    new_lightning_segment = LightningSegment(curr_pos, new_pos, color)
                     self.lightning_segments.append(
-                        (new_lightning_segment, (curr_time, curr_time + duration)))
+                        (new_lightning_segment, (curr_time, curr_time + duration))
+                    )
 
                     # Set current position to new position.
                     curr_pos = new_pos
