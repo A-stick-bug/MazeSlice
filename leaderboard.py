@@ -100,7 +100,3 @@ class Leaderboard:
                 screen.blit(
                     no_scores_surface, (x_pos - no_scores_surface.get_width() // 2, 155)
                 )
-
-    def __str__(self):
-        """Convert the leaderboard to a string as a python dictionary"""
-        return str(self.leaderboard)
