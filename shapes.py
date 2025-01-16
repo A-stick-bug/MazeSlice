@@ -150,6 +150,8 @@ class Sphere(Circle):
                                  z_distance: int) -> float:
         """Calculates the apparent radius of the sphere's cross-section.
 
+        Computation is done using the Pythagorean Theorem.
+
         Args:
             radius_3d: The actual radius of the sphere
             z_distance: The absolute distance in the z-axis from the viewing layer
@@ -203,6 +205,8 @@ class Sphere(Circle):
 
     def collides_with_circle(self, other) -> bool:
         """Determines whether this sphere collides with a circle.
+
+        Computation is done using the Pythagorean Theorem.
 
         Args:
             other: Circle to check collision against.
