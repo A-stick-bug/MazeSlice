@@ -17,7 +17,7 @@ from stopwatch import Stopwatch
 # dimensions of the window
 WIDTH = 1200
 HEIGHT = 600
-Z_LAYERS = 200  # currently this is inclusive [0,200]
+Z_LAYERS = 200  # inclusive interval [0,200]
 
 # initialize Pygame
 pygame.init()
@@ -25,6 +25,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("MazeSlice")
 clock = pygame.time.Clock()
 
+# set this to true for debug print statements and debug display on the screen
 DEBUG_MODE = False
 
 
@@ -564,7 +565,7 @@ class GameController:
         # check player actions for pausing
         for event in self.game_events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:  # pause game
+                if event.key == pygame.K_p:
                     self.pause_game()
 
         # handle player movement with collisions
