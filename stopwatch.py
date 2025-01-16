@@ -4,7 +4,7 @@ import pygame
 
 class Stopwatch:
     """
-    A simple stopwatch class to track elapsed time with start, pause, reset, and display functionalities.
+    Stopwatch with start, pause, and reset functionalities.
 
     Attributes:
         start_time (float): The timestamp when the stopwatch was last started.
@@ -15,7 +15,7 @@ class Stopwatch:
 
     def __init__(self, precision=2):
         """
-        Initializes the Stopwatch instance with specified precision. The stopwatch starts in a paused state.
+        Initializes the Stopwatch instance with specified precision.
 
         Args:
             precision (int, optional): Number of decimal places for elapsed time. Defaults to 2.

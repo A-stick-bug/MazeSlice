@@ -40,7 +40,7 @@ def cleanup_pygame():
 
 
 class StartLocation(Circle):
-    """A starting location represented as a circular object.
+    """A starting location for the player.
 
     Attributes:
         surf: A pygame surface for the start location image
@@ -83,7 +83,7 @@ class StartLocation(Circle):
 
 
 class EndLocation(Circle):
-    """An end location represented as a circular object.
+    """An end location that the player tries to reach.
 
     Attributes:
         surf: A pygame surface for the end location image
