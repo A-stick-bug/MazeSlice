@@ -28,10 +28,10 @@ class Leaderboard:
         create an empty one."""
         self.bg_surf = pygame.image.load("graphics/leaderboard_bg.png").convert_alpha()
         self.leaderboard = {"easy": [], "medium": [], "hard": [], "???": []}
-        try:  # try loading leaderboard
+        try:  # Try loading leaderboard.
             with open("leaderboard.json", "r") as f:
                 self.leaderboard = json.load(f)
-        except (ValueError, FileNotFoundError):  # create empty one
+        except (ValueError, FileNotFoundError):  # Create an empty json file.
             self.save_to_file()
 
     def save_to_file(self) -> None:
@@ -47,16 +47,12 @@ class Leaderboard:
             difficulty: the difficulty level
             score: the score of this run. Equal to the elapsed time from stopwatch.
         """
-        insort(self.leaderboard[difficulty], score)  # insert, list stays sorted
+        insort(self.leaderboard[difficulty], score)  # Insert, list stays .
         if len(self.leaderboard[difficulty]) > 10:
             self.leaderboard[difficulty].pop()
         self.save_to_file()
 
-    def get_scores(self, difficulty: str) -> list[float]:
-        """Return the top 10 scores in the given difficulty level"""
-        return self.leaderboard[difficulty]
-
-    def display(self, screen) -> None:
+    def display(self, screen: pygame.Surface) -> None:
         """Displays the leaderboard on the given screen."""
         # colors
         BLACK = (0, 0, 0)
@@ -64,11 +60,11 @@ class Leaderboard:
         GRAY = (150, 150, 150)
         CYAN = "#4FC3F7"
 
-        # clear screen and draw background for LB
+        # Clear screen and draw background for leaderboard.
         screen.fill(BLACK)
         screen.blit(self.bg_surf, (0, 0))
 
-        # draw title
+        # Draw title.
         font = pygame.font.SysFont("comicsansms", 35)  # font for title
         title_surface = font.render("Leaderboard", True, WHITE)
         screen.blit(
@@ -80,7 +76,7 @@ class Leaderboard:
         column_titles = self.leaderboard.keys()
         column_spacing = screen.get_width() // len(column_titles)
 
-        # draw columns
+        # Draw columns.
         for i, column_title in enumerate(column_titles):
             x_pos = i * column_spacing + column_spacing // 2
 
