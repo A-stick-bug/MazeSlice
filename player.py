@@ -11,13 +11,13 @@ EXPERIMENTAL_SLIDING = True
 
 class Player(Circle):
     """
-    Represents the player, handling movement, actions, and temporary effects.
-    Inherits from the `Circle` class.
+    Represents the player and its actions.
+    Inherits from `Circle` class.
     """
 
     def __init__(self, x, y, z, radius=18):
         """
-        Initialize player with position, movement, and action cooldowns.
+        Initialize player with position and attributes.
 
         Args:
             x (float): Player's x-coordinate.
@@ -74,7 +74,7 @@ class Player(Circle):
 
     def handle_movement(self, maze):
         """
-        Manage player movement, collisions, dashing, and teleporting.
+        Manage movement and actions.
 
         Args:
             maze (Maze): Maze object for collision checks.
@@ -203,7 +203,7 @@ class Player(Circle):
 
     def display_player(self):
         """
-        Render the player sprite on the screen based on current state.
+        Render the player sprite on screen.
         """
         from main import screen  # Importing here to avoid circular imports
         if self.current_surf is None:
@@ -240,7 +240,7 @@ class Player(Circle):
 
     def get_parameters(self):
         """
-        Get parameters for collision detection.
+        Get collision detection parameters.
 
         Returns:
             tuple: (x, y, z, radius).
@@ -249,7 +249,7 @@ class Player(Circle):
 
     def teleport(self, maze):
         """
-        Teleport player to a random valid position.
+        Teleport player to a random position.
 
         Args:
             maze (Maze): Maze object for valid position checks.
@@ -286,7 +286,7 @@ class Player(Circle):
 
     def handle_timers(self):
         """
-        Manage timers for temporary effects like speed boosts and teleporting.
+        Manage timers for effects.
         """
         current_time = pygame.time.get_ticks() / 1000
         # Handle speed boost timer
@@ -320,7 +320,7 @@ class Player(Circle):
 
     def apply_speed_boost(self, duration=5.0):
         """
-        Apply a speed boost for a set duration.
+        Apply a speed boost temporarily.
 
         Args:
             duration (float, optional): Boost duration in seconds. Defaults to 5.0.
@@ -340,7 +340,7 @@ class Player(Circle):
 
     def reduce_dash_cooldown(self):
         """
-        Decrease the dash cooldown, not going below 0.5 seconds.
+        Decrease dash cooldown period.
         """
         self.dash_cooldown = max(0.5, self.dash_cooldown - 0.1)
         from main import DEBUG_MODE
@@ -349,7 +349,7 @@ class Player(Circle):
 
     def reduce_teleport_cooldown(self):
         """
-        Decrease the teleport cooldown, not going below 2.0 seconds.
+        Decrease teleport cooldown period.
         """
         self.teleport_cooldown = max(2.0, self.teleport_cooldown - 0.5)
         from main import DEBUG_MODE

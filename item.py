@@ -12,6 +12,9 @@ class Item(Cylinder):
     Attributes:
         collected: True if collected by player and False otherwise.
         z: The midpoint Z-coordinate of the item.
+    
+    Notes:
+        Also includes inherited attributes from Cylinder.
     """
 
     def __init__(self, x: float, y: float, start_z: int, end_z: int,
@@ -44,7 +47,9 @@ class Item(Cylinder):
         return colors.get(self.type, (255, 255, 255))  # Default white
 
     def display(self, screen, player_z) -> None:
-        """Displays the item on the screen if it is within the visible Z-layer.
+        """Displays the item on the screen.
+        
+        Displayed only if it is within the visible Z-layer.
         Not displayed if collected.
         """
         if not self.collected and self.start_z <= player_z <= self.end_z:
@@ -56,8 +61,9 @@ class Item(Cylinder):
             )
 
     def check_collision(self, player: Player) -> bool:
-        """Checks collision with the player. If collision occurs, mark as
-        collected.
+        """Checks collision with the player.
+        
+        If collision occurs, mark as collected.
 
         Args:
             player: The player to check collision with.
