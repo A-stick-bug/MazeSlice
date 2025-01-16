@@ -14,9 +14,8 @@ class Item(Cylinder):
         z: The midpoint Z-coordinate of the item.
     """
 
-    def __init__(
-        self, x: float, y: float, start_z: int, end_z: int, radius: int, type: str
-    ):
+    def __init__(self, x: float, y: float, start_z: int, end_z: int,
+                 radius: int, type: str):
         """
         Initializes the Item with position, size, type, and color.
 
@@ -61,7 +60,7 @@ class Item(Cylinder):
         collected.
 
         Args:
-            Player: The player to check collision with.
+            player: The player to check collision with.
 
         Returns True if collides with player, False otherwise.
         """

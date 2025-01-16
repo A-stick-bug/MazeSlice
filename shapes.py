@@ -208,7 +208,7 @@ class Sphere(Circle):
         Determines whether this sphere collides with another circle, considering 3D distance.
 
         Args:
-            other (Circle): Another circle to check collision against.
+            other (Circle or Item): Another circle to check collision against.
 
         Returns:
             bool: True if the sphere collides with the circle, False otherwise.

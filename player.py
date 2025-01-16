@@ -69,7 +69,7 @@ class Player(Circle):
             # Set the current sprite to the default
             self.current_surf = self.original_surf
         except pygame.error as e:
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print(f"Failed to load player images: {e}")
             self.current_surf = None  # Fallback if image loading fails
@@ -139,7 +139,7 @@ class Player(Circle):
                 # Reset velocity after dash
                 if self.velocity.length() > 0:
                     self.velocity = self.velocity.normalize() * self.max_speed
-                from main import DEBUG_MODE;
+                from main import DEBUG_MODE
                 if DEBUG_MODE:
                     print("Dash ended.")
 
@@ -180,7 +180,7 @@ class Player(Circle):
                         # If still blocked, revert to old position
                         self.x, self.y = old_location[:2]
                     else:
-                        # Successful slide; exit loop
+                        # Successful slide exit loop
                         break
 
                     # Rotate velocity vector counter-clockwise by 'angle' degrees
@@ -191,7 +191,7 @@ class Player(Circle):
                         # If still blocked, revert to old position
                         self.x, self.y = old_location[:2]
                     else:
-                        # Successful slide; exit loop
+                        # Successful slide exit loop
                         break
 
         # Attempt to move along the Z-axis (if vertical movement is desired)
@@ -217,7 +217,7 @@ class Player(Circle):
         """
         from main import screen  # Importing here to avoid circular imports
         if self.current_surf is None:
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print("Player image not loaded. Cannot display player.")
             return
@@ -281,7 +281,7 @@ class Player(Circle):
             if maze.is_move_allowed(Player(temp_x, temp_y, temp_z)):
                 has_found = True
                 self.set_position(temp_x, temp_y, temp_z)
-                from main import DEBUG_MODE;
+                from main import DEBUG_MODE
                 if DEBUG_MODE:
                     print(f"Player teleported to ({temp_x}, {temp_y}, {temp_z})")
             attempts += 1
@@ -293,7 +293,7 @@ class Player(Circle):
             self.teleport_end_time = pygame.time.get_ticks() / 1000 + 0.5  # 0.5 seconds duration
             self.is_teleporting = True
         else:
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print("Teleport failed: No free position found.")
 
@@ -312,7 +312,7 @@ class Player(Circle):
             # Only revert sprite if not teleporting
             if not self.is_teleporting:
                 self.current_surf = self.original_surf
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print("Speed boost ended.")
 
@@ -322,7 +322,7 @@ class Player(Circle):
             # Only revert sprite if speed boost is not active
             if not self.speed_boost_active:
                 self.current_surf = self.original_surf
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print("Teleport effect ended.")
 
@@ -349,11 +349,11 @@ class Player(Circle):
             self.speed_boost_active = True
             self.speed_boost_end_time = pygame.time.get_ticks() / 1000 + duration
             self.current_surf = self.dash_surf  # Switch to Dash sprite
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print("Speed boost activated!")
         else:
-            from main import DEBUG_MODE;
+            from main import DEBUG_MODE
             if DEBUG_MODE:
                 print("Speed boost is already active. Cannot stack boosts.")
 
@@ -364,7 +364,7 @@ class Player(Circle):
         Ensures that the cooldown does not go below a minimum threshold.
         """
         self.dash_cooldown = max(0.5, self.dash_cooldown - 0.1)
-        from main import DEBUG_MODE;
+        from main import DEBUG_MODE
         if DEBUG_MODE:
             print(f"Dash cooldown reduced to {self.dash_cooldown} seconds.")
 
@@ -375,6 +375,6 @@ class Player(Circle):
         Ensures that the cooldown does not go below a minimum threshold.
         """
         self.teleport_cooldown = max(2.0, self.teleport_cooldown - 0.5)
-        from main import DEBUG_MODE;
+        from main import DEBUG_MODE
         if DEBUG_MODE:
             print(f"Teleport cooldown reduced to {self.teleport_cooldown} seconds.")
