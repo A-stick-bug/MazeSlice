@@ -12,6 +12,9 @@ class Item(Cylinder):
     Attributes:
         collected: True if collected by player and False otherwise.
         z: The midpoint Z-coordinate of the item.
+    
+    Notes:
+        Also includes inherited attributes from Cylinder.
     """
 
     def __init__(self, x: float, y: float, start_z: int, end_z: int,

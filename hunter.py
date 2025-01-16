@@ -13,6 +13,9 @@ class Hunter(Circle):
 
     Attributes:
         initial_location (tuple[float, float, int]): Initial location of the hunter.
+    
+    Notes:
+        Also includes inherited attributes from Circle.
     """
 
     def __init__(self, x: float, y: float, z: int, radius: int, speed=0.0,
