@@ -11,6 +11,7 @@ class Item(Cylinder):
 
     Attributes:
         collected: True if collected by player and False otherwise.
+        z: The midpoint Z-coordinate of the item.
     """
 
     def __init__(
@@ -32,11 +33,7 @@ class Item(Cylinder):
         self.type = type
         self.color = self.get_color_by_type()
         self.collected = False  # Flag to check if the item has been collected
-
-    @property
-    def z(self):
-        """Returns the midpoint Z-coordinate of the item."""
-        return (self.start_z + self.end_z) / 2
+        self.z = (self.start_z + self.end_z) / 2
 
     def get_color_by_type(self):
         """Returns color based on item type."""
