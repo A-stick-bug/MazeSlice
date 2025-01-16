@@ -675,7 +675,8 @@ class GameController:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 print(f"Mouse coordinates: {event.pos}")
 
-    def display_text(self, text, x, y, font_size=36, color=(255, 255, 255)) -> None:
+    def display_text(self, text, x, y, font_size=36,
+                     color=(255, 255, 255)) -> None:
         """Utility method to display text on the screen.
 
         Args:
@@ -712,7 +713,8 @@ class GameController:
             True if the player reached the end, otherwise False
         """
         if self.player.collides_with_circle(self.maze.get_end_location()):
-            print("Win condition met!")
+            if DEBUG_MODE:
+                print("Win condition met!")
             return True
         return False
 
@@ -724,7 +726,8 @@ class GameController:
             otherwise False
         """
         if self.maze.collide_hunters(self.player):
-            print("Lost condition met!")
+            if DEBUG_MODE:
+                print("Lost condition met!")
             return True
         return False
 
