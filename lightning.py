@@ -59,13 +59,12 @@ class Lightning:
         # Generation of individual segments.
         self.lightning_segments = []
         curr_pos = list(start)
-        # print(curr_pos)
 
         # Used for keeping track of when each segment should display.
         curr_time = 0
         duration = 60
 
-        # Loop to generate each segment. Ends if finished.
+        # Loop to generate each segment. End if finished.
         # As distance always decreases, this while loop eventually finishes.
         # But this is also laggy so the max amount of segments is capped.
         total_cnt = 0
@@ -86,7 +85,7 @@ class Lightning:
                 )
                 break
 
-            distance = random.randint(35, 60)
+            distance = random.randint(35, 65)
 
             # Randomly generate potential segments.
             # There are always more than 1 / 3 chance of succeeding.
