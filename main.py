@@ -44,6 +44,8 @@ class StartLocation(Circle):
     Attributes:
         surf: A pygame surface for the spawn point image
         angle: The current angle of rotation for the spawn point image
+    Notes:
+        Also includes inherited attributes from Circle
     """
 
     def __init__(self, x: float, y: float, z: int, radius: int):
@@ -84,6 +86,8 @@ class EndLocation(Circle):
 
     Attributes:
         surf: A pygame surface for the end location image
+    Notes:
+        Also includes inherited attributes from Circle
     """
 
     def __init__(self, x: float, y: float, z: int, radius: int):

@@ -13,12 +13,8 @@ def dist(a, b):
 class LightningSegment:
     """Represents an individual segment of lightning."""
 
-    def __init__(
-        self,
-        start: tuple[float, float],
-        end: tuple[float, float],
-        color: tuple[int, int, int],
-    ):
+    def __init__(self, start: tuple[float, float], end: tuple[float, float],
+                 color: tuple[int, int, int]):
         """Initializes a lightning segment with its start position, end
         position and color.
 

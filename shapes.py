@@ -224,7 +224,8 @@ class Sphere(Circle):
 class Cylinder:
     """Represents a cylinder in 3D space using a stack of circles."""
 
-    def __init__(self, x: float, y: float, start_z: int, end_z: int, radius: int):
+    def __init__(self, x: float, y: float, start_z: int, end_z: int,
+                 radius: int):
         """Initializes the Cylinder instance with position, z-range, and radius.
 
         Args:

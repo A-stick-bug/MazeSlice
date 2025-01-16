@@ -15,9 +15,8 @@ class Hunter(Circle):
         initial_location (tuple[float, float, int]): Initial location of the hunter.
     """
 
-    def __init__(
-        self, x: float, y: float, z: int, radius: int, speed=0.0, color=(255, 119, 0)
-    ):
+    def __init__(self, x: float, y: float, z: int, radius: int, speed=0.0,
+                 color=(255, 119, 0)):
         """Initializes a hunter with its position, radius, speed and color.
 
         Args:
