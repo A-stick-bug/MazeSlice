@@ -38,14 +38,6 @@ class Item(Cylinder):
         """Returns the midpoint Z-coordinate of the item."""
         return (self.start_z + self.end_z) / 2
 
-    def get_type(self) -> str:
-        """Returns the type of the item."""
-        return self.type
-
-    def get_color(self):
-        """Returns the color of the item."""
-        return self.color
-
     def get_color_by_type(self):
         """Returns color based on item type."""
         colors = {
