@@ -129,94 +129,95 @@ class Circle:
 
 
 class Sphere(Circle):
-    """
-    Represents a sphere in 3D space, extending the Circle class with 3D-specific behaviors.
+    """Represents a sphere in 3D space.
 
-    Attributes:
+    Notes:
         Inherits all attributes from the Circle class.
     """
 
-    def __init__(self, x, y, z, radius):
-        """
-        Initializes the Sphere instance with position and radius.
+    def __init__(self, x: float, y: float, z: int, radius: int):
+        """Initializes the Sphere instance with position and radius.
 
         Args:
-            x (float): The x-coordinate of the sphere's center.
-            y (float): The y-coordinate of the sphere's center.
-            z (int): The z-coordinate (layer) of the sphere.
-            radius (int): The radius of the sphere.
+            x: The x-coordinate of the sphere's center.
+            y: The y-coordinate of the sphere's center.
+            z: The z-coordinate of the sphere's center.
+            radius: The radius of the sphere.
         """
         super().__init__(x, y, z, radius)
 
-    def get_cross_section_radius(self, radius_3d, z_distance) -> float:
-        """
-        Calculates the apparent radius of the sphere's cross-section based on its z-distance.
+    def get_cross_section_radius(self, radius_3d: int,
+                                 z_distance: int) -> float:
+        """Calculates the apparent radius of the sphere's cross-section.
 
         Args:
-            radius_3d (int): The actual radius of the sphere.
-            z_distance (float): The absolute distance in the z-axis from the viewing layer.
+            radius_3d: The actual radius of the sphere
+            z_distance: The absolute distance in the z-axis from the viewing layer
 
         Returns:
-            float: The radius of the visible cross-section. Returns 0 if the sphere is too far.
+            The radius of the visible cross-section.
         """
-        if z_distance >= radius_3d:  # Too far to appear
+        if z_distance >= radius_3d:  # too far to appear
             return 0
         return (radius_3d ** 2 - z_distance ** 2) ** 0.5
 
-    def display(self, screen, from_z, color=(0, 0, 255)) -> None:
-        """
-        Renders the sphere as a projected circle on the given Pygame screen based on z-distance.
+    def display(self, screen: pygame.Surface, from_z: int,
+                color=(0, 0, 255)) -> None:
+        """Renders the sphere as a projected circle.
 
-        Additionally draws a semi-transparent shadow to represent depth.
+        Also draws a semi-transparent shadow to represent depth.
 
         Args:
-            screen (pygame.Surface): The Pygame surface to draw the sphere on.
-            from_z (int): The current viewing z-layer.
-            color (tuple, optional): RGB color of the sphere. Defaults to blue (0, 0, 255).
+            screen: The Pygame surface to draw the sphere on
+            from_z: The current viewing z-layer
+            color: RGB color of the sphere. Defaults to blue (0, 0, 255)
         """
         z_distance = abs(self.z - from_z)
         circle_radius = self.get_cross_section_radius(self.radius, z_distance)
-        if circle_radius > 0:  # visible obstacle
+
+        # visible obstacle, draw opaque
+        if circle_radius > 0:
             pygame.draw.circle(
                 surface=screen,
                 color=color,
                 center=(self.x, self.y),
                 radius=int(circle_radius),
             )
-        # Draw shadow of obstacle
+        # draw shadow of obstacle
         shadow_z_distance = max(0, abs(self.z - from_z) - 10)
         shadow_circle_radius = self.get_cross_section_radius(self.radius, shadow_z_distance)
         if shadow_circle_radius > 0:
-            # Surface for transparency
+            # surface for transparency
             transparent_surface = pygame.Surface(
                 (self.radius * 2, self.radius * 2),
                 pygame.SRCALPHA
             )
-            # Draw on transparent surface
+            # draw circle on transparent surface and display
             pygame.draw.circle(
                 surface=transparent_surface,
-                color=(0, 0, 255, 128),  # Blue color with 50% transparency (alpha = 128)
+                color=(0, 0, 255, 128),  # blue with 50% transparency
                 center=(self.radius, self.radius),
                 radius=shadow_circle_radius
             )
-
-            # Blit the transparent surface onto the main screen
             screen.blit(transparent_surface, (self.x - self.radius, self.y - self.radius))
 
     def collides_with_circle(self, other) -> bool:
-        """
-        Determines whether this sphere collides with another circle, considering 3D distance.
+        """Determines whether this sphere collides with a circle.
 
         Args:
-            other (Circle or Item): Another circle to check collision against.
+            other: Circle to check collision against.
 
         Returns:
             bool: True if the sphere collides with the circle, False otherwise.
         """
         z_dist = abs(other.z - self.z)
         proj_rad = self.get_cross_section_radius(self.radius, z_dist)
-        if proj_rad == 0:  # Does not appear in cross-section
+
+        # does not appear in cross-section
+        if proj_rad == 0:
             return False
+
+        # check collision using the line connecting the two circle's centers
         planar_dist = dist((other.x, other.y), (self.x, self.y))
         return planar_dist < proj_rad + other.radius
 
