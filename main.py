@@ -408,6 +408,9 @@ class GameController:
         stopwatch: Stopwatch for the current game
         main_menu_surf: pygame surface for the main menu display
         pause_menu_surf: pygame surface for the pause menu display
+        help_menu_surf: pygame surface for the help menu display
+        loser_menu: pygame surface for the loser menu display
+        winner_menu: pygame surface for the winner menu display
     """
 
     def __init__(self):
