@@ -360,39 +360,23 @@ class Maze:
         return True
 
     def get_start_location(self) -> StartLocation:
-        """Returns the start location of the maze.
-
-        Returns:
-            StartLocation: The start location of the maze
-        """
+        """Returns the start location of the maze."""
         return self.start_location
 
     def get_end_location(self) -> EndLocation:
-        """Returns the end location of the maze.
-
-        Returns:
-            EndLocation: The end location of the maze
-        """
+        """Returns the end location of the maze."""
         return self.end_location
 
     def get_power_ups(self) -> list[Item]:
-        """Return a list of all power ups in the maze.
-
-        Returns:
-            list[Item]: A list of power up items in the maze
-        """
+        """Return a list of all power ups in the maze."""
         return self.power_ups
 
     def get_hunters(self) -> list[Hunter]:
-        """Return a list of all hunters in the maze.
-
-        Returns:
-            list[Hunter]: A list of hunter objects in the maze
-        """
+        """Return a list of all hunters in the maze."""
         return self.hunters
 
     def clear_lightnings(self) -> None:
-        """Remove effects by clearing `self.lightnings`"""
+        """Remove teleport lightning effects"""
         self.lightnings.clear()
 
 
