@@ -247,7 +247,9 @@ class Cylinder:
         self.radius = radius
 
     def display(self, screen, from_z) -> None:
-        """Renders the cylinder on the given Pygame screen if the viewing layer is within its z-range.
+        """Renders the cylinder on the given Pygame screen
+        
+        Only display if the viewing layer is within its z-range.
 
         Args:
             screen (pygame.Surface): The Pygame surface to draw the cylinder on.
