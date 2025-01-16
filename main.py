@@ -43,8 +43,8 @@ class StartLocation(Circle):
     """A starting location represented as a circular object.
 
     Attributes:
-        surf: A pygame surface for the spawn point image
-        angle: The current angle of rotation for the spawn point image
+        surf: A pygame surface for the start location image
+        angle: The current angle of rotation for the start location image
     Notes:
         Also includes inherited attributes from Circle
     """
@@ -53,8 +53,8 @@ class StartLocation(Circle):
         """Initializes the start location with its position and radius.
 
         Args:
-            x: The x-coordinate of the spawn point
-            y: The y-coordinate of the spawn point
+            x: The x-coordinate of the start location
+            y: The y-coordinate of the start location
             z: The z-coordinate for depth or layering
             radius: The radius of the circle representing the start location
         """
@@ -70,7 +70,7 @@ class StartLocation(Circle):
         Args:
             screen: The pygame screen where the start location should be drawn
             from_z: The z-coordinate to check if the start location should be displayed
-            color: Color of spawn point. Defaults to blue (0, 0, 255)
+            color: Color of start location. Defaults to blue (0, 0, 255)
         """
         if self.z == from_z:
             rotated_surf = pygame.transform.rotate(self.surf, self.angle)
@@ -78,7 +78,7 @@ class StartLocation(Circle):
             screen.blit(rotated_surf, start_rect)
 
     def rotate(self) -> None:
-        """Rotates the spawn point image by a small increment."""
+        """Rotates the start location image by a small increment."""
         self.angle += 0.2
 
 
@@ -95,10 +95,10 @@ class EndLocation(Circle):
         """Initializes the end location with its position and radius.
 
         Args:
-            x: X-coordinate of the end location
-            y: Y-coordinate of the end location
-            z: Z-coordinate of the end location
-            radius: Radius of the end location
+            x: The x-coordinate of the end location
+            y: The y-coordinate of the end location
+            z: The z-coordinate for depth or layering
+            radius: The radius of the circle representing the end location
         """
         super().__init__(x, y, z, radius)
         self.surf = pygame.image.load(
