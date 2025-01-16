@@ -11,21 +11,19 @@ EXPERIMENTAL_SLIDING = True
 
 class Player(Circle):
     """
-    Represents the player in the game, handling movement, actions like dashing and teleporting,
-    and temporary effects such as speed boosts.
-
-    Inherits from the `Circle` class, which provides basic properties like position and radius.
+    Represents the player, handling movement, actions, and temporary effects.
+    Inherits from the `Circle` class.
     """
 
     def __init__(self, x, y, z, radius=18):
         """
-        Initializes the Player instance with position, movement attributes, and action cooldowns.
+        Initialize player with position, movement, and action cooldowns.
 
         Args:
-            x (float): The x-coordinate of the player's position.
-            y (float): The y-coordinate of the player's position.
-            z (float): The z-coordinate of the player's position.
-            radius (int, optional): The radius of the player's representation. Defaults to 12.
+            x (float): Player's x-coordinate.
+            y (float): Player's y-coordinate.
+            z (float): Player's z-coordinate.
+            radius (int, optional): Player's radius. Defaults to 18.
         """
         super().__init__(x, y, z, radius)
         # Movement attributes
@@ -76,15 +74,10 @@ class Player(Circle):
 
     def handle_movement(self, maze):
         """
-        Handles player movement with collision detection, momentum, wall grabbing,
-        dash, and teleport mechanics.
-
-        Processes user input for movement, applies acceleration and friction,
-        manages dashing mechanics, updates position with collision checks,
-        and handles temporary effects.
+        Manage player movement, collisions, dashing, and teleporting.
 
         Args:
-            maze (Maze): The maze object to check for collision and movement permissions.
+            maze (Maze): Maze object for collision checks.
         """
         keys = pygame.key.get_pressed()
         current_time = pygame.time.get_ticks() / 1000  # Current time in seconds
@@ -113,7 +106,7 @@ class Player(Circle):
         if not accel.z:
             self.velocity.z *= (1 - self.friction)
 
-        # Clamp velocity to the maximum speed
+        # Clamp velocity to max speed
         self.velocity.x = max(-self.max_speed, min(self.velocity.x, self.max_speed))
         self.velocity.y = max(-self.max_speed, min(self.velocity.y, self.max_speed))
 
@@ -210,10 +203,7 @@ class Player(Circle):
 
     def display_player(self):
         """
-        Renders the player as an image on the screen with visual indicators
-        based on active states like teleporting or speed boost.
-
-        The sprite changes based on the player's current state.
+        Render the player sprite on the screen based on current state.
         """
         from main import screen  # Importing here to avoid circular imports
         if self.current_surf is None:
@@ -228,12 +218,12 @@ class Player(Circle):
 
     def set_position(self, x, y, z):
         """
-        Updates the player's position to the specified coordinates.
+        Update player's position.
 
         Args:
-            x (float): The new x-coordinate.
-            y (float): The new y-coordinate.
-            z (float): The new z-coordinate.
+            x (float): New x-coordinate.
+            y (float): New y-coordinate.
+            z (float): New z-coordinate.
         """
         self.x = x
         self.y = y
@@ -241,31 +231,28 @@ class Player(Circle):
 
     def get_location(self):
         """
-        Retrieves the current location of the player.
+        Get current player location.
 
         Returns:
-            tuple: A tuple containing the x, y, and z coordinates (x, y, z).
+            tuple: (x, y, z) coordinates.
         """
         return self.x, self.y, self.z
 
     def get_parameters(self):
         """
-        Retrieves the player's parameters necessary for collision detection.
+        Get parameters for collision detection.
 
         Returns:
-            tuple: A tuple containing the x, y, z coordinates and radius (x, y, z, radius).
+            tuple: (x, y, z, radius).
         """
         return self.x, self.y, self.z, self.radius
 
     def teleport(self, maze):
         """
-        Teleports the player to a random valid position within the game area.
-
-        Selects a random position that is not obstructed by the maze. If a valid position
-        is found within the maximum number of attempts, the player's position is updated.
+        Teleport player to a random valid position.
 
         Args:
-            maze (Maze): The maze object to check for valid teleport locations.
+            maze (Maze): Maze object for valid position checks.
         """
         from main import WIDTH, HEIGHT
         has_found = False
@@ -299,10 +286,7 @@ class Player(Circle):
 
     def handle_timers(self):
         """
-        Manages timers for temporary effects such as speed boosts and teleporting.
-
-        Checks if any temporary effect durations have expired and reverts the effects
-        accordingly.
+        Manage timers for temporary effects like speed boosts and teleporting.
         """
         current_time = pygame.time.get_ticks() / 1000
         # Handle speed boost timer
@@ -336,13 +320,10 @@ class Player(Circle):
 
     def apply_speed_boost(self, duration=5.0):
         """
-        Applies a speed boost to the player for a specified duration.
-
-        Increases the player's maximum speed and sets a timer to revert the speed boost
-        after the duration expires. Prevents stacking of multiple speed boosts.
+        Apply a speed boost for a set duration.
 
         Args:
-            duration (float, optional): Duration of the speed boost in seconds. Defaults to 5.0.
+            duration (float, optional): Boost duration in seconds. Defaults to 5.0.
         """
         if not self.speed_boost_active:
             self.max_speed += 2  # Increase max_speed
@@ -359,9 +340,7 @@ class Player(Circle):
 
     def reduce_dash_cooldown(self):
         """
-        Reduces the cooldown period required before the player can dash again.
-
-        Ensures that the cooldown does not go below a minimum threshold.
+        Decrease the dash cooldown, not going below 0.5 seconds.
         """
         self.dash_cooldown = max(0.5, self.dash_cooldown - 0.1)
         from main import DEBUG_MODE
@@ -370,9 +349,7 @@ class Player(Circle):
 
     def reduce_teleport_cooldown(self):
         """
-        Reduces the cooldown period required before the player can teleport again.
-
-        Ensures that the cooldown does not go below a minimum threshold.
+        Decrease the teleport cooldown, not going below 2.0 seconds.
         """
         self.teleport_cooldown = max(2.0, self.teleport_cooldown - 0.5)
         from main import DEBUG_MODE
