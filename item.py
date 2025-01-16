@@ -33,11 +33,6 @@ class Item(Cylinder):
         self.color = self.get_color_by_type()
         self.collected = False  # Flag to check if the item has been collected
 
-    @property
-    def z(self):
-        """Returns the midpoint Z-coordinate of the item."""
-        return (self.start_z + self.end_z) / 2
-
     def get_color_by_type(self):
         """Returns color based on item type."""
         colors = {
@@ -82,7 +77,7 @@ class Item(Cylinder):
             from main import DEBUG_MODE
 
             if DEBUG_MODE:
-                print(f"Item collected: {self.type} at ({self.x}, {self.y}, {self.z})")
+                print(f"Item collected: {self.type} at ({self.x}, {self.y}, {player.z})")
             return True
         return False
 
