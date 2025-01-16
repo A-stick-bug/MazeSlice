@@ -110,7 +110,7 @@ class Player(Circle):
         if not accel.z:
             self.velocity.z *= (1 - self.friction)
 
-        # Clamp velocity
+        # Clamp velocity to the maximum speed
         self.velocity.x = max(-self.max_speed, min(self.velocity.x, self.max_speed))
         self.velocity.y = max(-self.max_speed, min(self.velocity.y, self.max_speed))
 
@@ -142,6 +142,7 @@ class Player(Circle):
         old_location = self.get_location()
 
         if not EXPERIMENTAL_SLIDING:
+            # Simple collision handling without sliding
             # Attempt to move along the X-axis
             self.x += self.velocity.x
             if not maze.is_move_allowed(self):
@@ -153,25 +154,37 @@ class Player(Circle):
                 self.y = old_location[1]
 
         else:
+            # Experimental sliding collision handling
             self.x += self.velocity.x
             self.y += self.velocity.y
             if not maze.is_move_allowed(self):
+                # If movement is blocked, revert to old location
                 self.x, self.y = old_location[:2]
-                max_angle = 60
+                max_angle = 60  # Maximum angle to attempt sliding
+
+                # Attempt to slide by rotating the velocity vector incrementally
                 for angle in range(1, max_angle + 1):
-                    rad = angle / 180 * math.pi
+                    rad = angle / 180 * math.pi  # Convert angle to radians
+
+                    # Rotate velocity vector clockwise by 'angle' degrees
                     self.x += math.cos(rad) * self.velocity.x - math.sin(rad) * self.velocity.y
                     self.y += math.sin(rad) * self.velocity.x + math.cos(rad) * self.velocity.y
                     if not maze.is_move_allowed(self):
+                        # If still blocked, revert to old position
                         self.x, self.y = old_location[:2]
                     else:
+                        # Successful slide; exit loop
                         break
-                    rad = - rad
+
+                    # Rotate velocity vector counter-clockwise by 'angle' degrees
+                    rad = -rad
                     self.x += math.cos(rad) * self.velocity.x - math.sin(rad) * self.velocity.y
                     self.y += math.sin(rad) * self.velocity.x + math.cos(rad) * self.velocity.y
                     if not maze.is_move_allowed(self):
+                        # If still blocked, revert to old position
                         self.x, self.y = old_location[:2]
                     else:
+                        # Successful slide; exit loop
                         break
 
         # Attempt to move along the Z-axis (if vertical movement is desired)
@@ -309,16 +322,19 @@ class Player(Circle):
         Applies a speed boost to the player for a specified duration.
 
         Increases the player's maximum speed and sets a timer to revert the speed boost
-        after the duration expires.
+        after the duration expires. Prevents stacking of multiple speed boosts.
 
         Args:
             duration (float, optional): Duration of the speed boost in seconds. Defaults to 5.0.
         """
-        self.max_speed += 2  # Increase max_speed
-        self.speed_boost_active = True
-        self.speed_boost_end_time = pygame.time.get_ticks() / 1000 + duration
-        self.current_surf = self.dash_surf  # Switch to Dash sprite
-        print("Speed boost activated!")
+        if not self.speed_boost_active:
+            self.max_speed += 2  # Increase max_speed
+            self.speed_boost_active = True
+            self.speed_boost_end_time = pygame.time.get_ticks() / 1000 + duration
+            self.current_surf = self.dash_surf  # Switch to Dash sprite
+            print("Speed boost activated!")
+        else:
+            print("Speed boost is already active. Cannot stack boosts.")
 
     def reduce_dash_cooldown(self):
         """
