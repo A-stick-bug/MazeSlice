@@ -33,7 +33,7 @@ class Hunter(Circle):
         self.initial_location = (x, y, z)
 
     def z_distance_from_player(self, player: Player) -> int:
-        """Returns the difference between the hunter and the player's
+        """Returns the difference between the hunter and player's
         respective Z-coordinates."""
         return abs(self.z - player.z)
 
@@ -105,7 +105,9 @@ class Hunter(Circle):
             )
 
     def check_collision(self, player: Player) -> bool:
-        """Checks collision with the player. If collision occurs, end the game.
+        """Checks collision with the player.
+        
+        If collision occurs, end the game.
 
         Returns True if collides with player and False otherwise.
         """
