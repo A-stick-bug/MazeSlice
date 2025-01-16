@@ -5,7 +5,7 @@ import pygame
 
 
 class Leaderboard:
-    """Leaderboard that keeps track of top 10 scores in each difficulty level.
+    """Leaderboard that keeps track of top 10 scores in each difficulty.
 
     Attributes:
         bg_surf: A pygame surface for the background.
@@ -40,7 +40,8 @@ class Leaderboard:
             json.dump(self.leaderboard, f)
 
     def add_score(self, difficulty: str, score: float) -> None:
-        """Add a score to the leaderboard in the given difficulty level,
+        """Add a score to the leaderboard in the given difficulty level.
+        
         Increasing property will be maintained
         
         Args:
